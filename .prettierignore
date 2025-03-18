@@ -1,6 +1,13 @@
 # Ignore artifacts:
 build
 coverage
+
+# Ignore packages:
 node_modules
+
+# Ignore native build files
 ios
 android
+
+# Ignore storybook
+storybook.requires.ts
