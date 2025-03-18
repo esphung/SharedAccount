@@ -3,11 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "lint": "eslint .",
-    "start": "react-native start",
-    "test": "jest"
+    "android": "npx @react-native-community/cli run-android",
+    "ios": "npx @react-native-community/cli run-ios",
+    "lint": "npx eslint .",
+    "format:check": "npx prettier --check .",
+    "format": "npx prettier --write .",
+    "start": "npx @react-native-community/cli start",
+    "test": "npx jest",
+    "clean": "rm -rf node_modules && rm -rf ios/Pods && rm -rf Gemfile.lock && bundle install && rm -rf ios/Podfile.lock && rm -rf yarn.lock && yarn install && cd ios && pod install && cd ..",
+    "prepare": "npx husky"
   },
   "dependencies": {
     "react": "19.0.0",
@@ -17,6 +21,8 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
@@ -28,12 +34,19 @@
     "@types/react": "^19.0.0",
     "@types/react-test-renderer": "^19.0.0",
     "eslint": "^8.19.0",
+    "husky": "^9.1.7",
     "jest": "^29.6.3",
-    "prettier": "2.8.8",
+    "lint-staged": "^15.5.0",
+    "prettier": "3.5.3",
     "react-test-renderer": "19.0.0",
     "typescript": "5.0.4"
   },
   "engines": {
     "node": ">=18"
+  },
+  "packageManager": "yarn@4.7.0",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.{js,jsx,ts,tsx}": "eslint --fix"
   }
 }
