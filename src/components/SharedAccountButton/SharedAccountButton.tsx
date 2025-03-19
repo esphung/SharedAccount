@@ -1,10 +1,10 @@
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import React from "react";
 import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import SharedAccountText from "../SharedAccountText/SharedAccountText";
 
 type SharedAccountButtonProps = {
   title: string;

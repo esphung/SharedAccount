@@ -1,7 +1,10 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./src/components/*"]
+    }
   },
   "jsx": "react-native",
   "exclude": [

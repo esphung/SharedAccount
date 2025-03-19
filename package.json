@@ -14,7 +14,7 @@
     "clean": "rm -rf node_modules && rm -rf ios/Pods && rm -rf Gemfile.lock && bundle install && rm -rf ios/Podfile.lock && rm -rf yarn.lock && yarn install && cd ios && pod install && cd ..",
     "prepare": "npx husky",
     "storybook-generate": "sb-rn-get-stories",
-    "precommit": "yarn lint && yarn format:check && yarn typecheck"
+    "precommit": "yarn lint && yarn format && yarn typecheck"
   },
   "dependencies": {
     "react": "19.0.0",
@@ -44,6 +44,7 @@
     "@types/react-dom": "^19",
     "@types/react-test-renderer": "^19.0.0",
     "babel-loader": "^8.4.1",
+    "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^8.19.0",
     "husky": "^9.1.7",
     "jest": "^29.6.3",
