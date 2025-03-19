@@ -1,4 +1,4 @@
-import ExpenseBuilder from "@builders/ExpenseBuilder";
+import LocalDatabaseBuilder from "@builders/LocalDatabaseBuilder";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import MoneyFunctions from "@helpers/MoneyFunctions";
 import colors from "@themes/colors";
@@ -6,13 +6,31 @@ import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { BarChart } from "react-native-svg-charts";
 
-const spendingData = [
-  new ExpenseBuilder().setCategory("Food").build(),
-  new ExpenseBuilder().setCategory("Shopping").build(),
-  new ExpenseBuilder().setCategory("Travel").build(),
-  new ExpenseBuilder().setCategory("Entertainment").build(),
-  new ExpenseBuilder().setCategory("Others").build(),
-];
+const mockLocalDatabase = new LocalDatabaseBuilder().build();
+const { transactions: spendingData } = mockLocalDatabase;
+
+// const spendingData = [
+//   new TransactionBuilder("expense")
+//     .setCategory("Food")
+//     .setAmount(100000)
+//     .build(),
+//   new TransactionBuilder("expense")
+//     .setCategory("Shopping")
+//     .setAmount(200000)
+//     .build(),
+//   new TransactionBuilder("expense")
+//     .setCategory("Travel")
+//     .setAmount(150000)
+//     .build(),
+//   new TransactionBuilder("expense")
+//     .setCategory("Entertainment")
+//     .setAmount(50000)
+//     .build(),
+//   new TransactionBuilder("expense")
+//     .setCategory("Others")
+//     .setAmount(100000)
+//     .build(),
+// ];
 
 const SpendingStats = () => {
   const totalLast30Days = spendingData.reduce(
@@ -31,7 +49,7 @@ const SpendingStats = () => {
 
       <FlatList
         data={spendingData}
-        keyExtractor={(item) => item.category}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.barContainer}>
             <SharedAccountText style={styles.category}>
@@ -40,7 +58,7 @@ const SpendingStats = () => {
             <View
               style={[
                 styles.bar,
-                { width: `${(item.amount / totalLast30Days) * 100}%` },
+                { width: `${(item.amount / totalLast30Days) * 500}%` },
               ]}
             />
           </View>
@@ -55,6 +73,7 @@ const SpendingStats = () => {
 
       {/* Bar Chart */}
       <BarChart
+        // horizontal
         style={styles.chart}
         data={spendingData.map((item) => {
           return item.amount;
@@ -92,7 +111,9 @@ const styles = StyleSheet.create({
     height: 150,
     marginTop: 20,
   },
-  container: {},
+  container: {
+    height: "100%",
+  },
   title: {
     color: colors.dark,
     fontSize: 20,

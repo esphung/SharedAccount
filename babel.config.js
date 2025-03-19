@@ -13,6 +13,8 @@ module.exports = {
           "@builders": "./src/builders",
           "@themes": "./src/themes",
           "@helpers": "./src/helpers",
+          "@screens": "./src/screens",
+          "@navigators": "./src/navigators",
         },
       },
     ],

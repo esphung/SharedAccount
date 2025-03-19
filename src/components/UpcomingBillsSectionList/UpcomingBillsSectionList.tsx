@@ -3,12 +3,12 @@ import UpcomingBillsSectionListItem from "@components/UpcomingBillsSectionList/U
 import { DateTime } from "luxon";
 import React from "react";
 import { SectionList } from "react-native";
-import type { RecurringExpense } from "types/RecurringExpense";
+import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import UpcomingBillsSectionListFooter from "./UpcomingBillsSectionListFooter";
 
 type SectionData = {
   title: string;
-  data: RecurringExpense[];
+  data: ScheduledTransaction[];
 };
 
 // Function to add recurrence to a date
@@ -24,10 +24,10 @@ const getNextDate = (date: Date, interval: "weekly" | "monthly" | "yearly") => {
 
 // Generate upcoming expenses for the next 6 months
 const generateUpcomingBills = (
-  expenses: RecurringExpense[],
+  expenses: ScheduledTransaction[],
   monthsAhead: number = 6,
-): RecurringExpense[] => {
-  const upcomingBills: RecurringExpense[] = [];
+): ScheduledTransaction[] => {
+  const upcomingBills: ScheduledTransaction[] = [];
   const today = new Date();
   const endLimit = new Date();
   endLimit.setMonth(today.getMonth() + monthsAhead);
@@ -46,8 +46,10 @@ const generateUpcomingBills = (
 };
 
 // Group expenses by month
-const groupBillsByMonth = (expenses: RecurringExpense[]): SectionData[] => {
-  const grouped: { [key: string]: RecurringExpense[] } = {};
+const groupBillsByMonth = (expenses: ScheduledTransaction[]): SectionData[] => {
+  const grouped: {
+    [key: string]: ScheduledTransaction[];
+  } = {};
 
   // sort expenses by year - so that we can group them by month
   const sortedExpenses = expenses.sort(
@@ -61,7 +63,9 @@ const groupBillsByMonth = (expenses: RecurringExpense[]): SectionData[] => {
     if (!grouped[monthYear]) {
       grouped[monthYear] = [];
     }
-    grouped[monthYear].push(expense);
+    grouped[monthYear].push({
+      ...expense,
+    });
   });
 
   return Object.keys(grouped)
@@ -74,14 +78,14 @@ const groupBillsByMonth = (expenses: RecurringExpense[]): SectionData[] => {
     }));
 };
 
-const RecurringExpensesList = ({
-  recurringExpenses,
+const UpcomingBillsSectionList = ({
+  scheduledTransactions,
 }: {
-  recurringExpenses: RecurringExpense[];
+  scheduledTransactions: ScheduledTransaction[];
 }) => {
   const upcomingBills = React.useMemo(
-    () => generateUpcomingBills(recurringExpenses),
-    [recurringExpenses],
+    () => generateUpcomingBills(scheduledTransactions),
+    [scheduledTransactions],
   );
   const sections = React.useMemo(
     () => groupBillsByMonth(upcomingBills),
@@ -107,4 +111,4 @@ const RecurringExpensesList = ({
   );
 };
 
-export default RecurringExpensesList;
+export default UpcomingBillsSectionList;

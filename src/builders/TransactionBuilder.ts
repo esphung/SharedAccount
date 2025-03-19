@@ -1,31 +1,31 @@
 import BaseBuilder from "@builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
-import { DateTime } from "luxon";
-import type { Expense } from "types/Expense";
+import type { Transaction } from "types/Transaction";
 
-export default class ExpenseBuilder extends BaseBuilder<Expense> {
-  constructor() {
-    const initial: Expense = {
-      id: faker.database.mongodbObjectId(),
-      sharedAccountId: faker.database.mongodbObjectId(),
-      userId: faker.database.mongodbObjectId(),
+export default class TransactionBuilder extends BaseBuilder<Transaction> {
+  constructor(type: "expense" | "credit") {
+    const initial: Transaction = {
+      id: `txn_${faker.database.mongodbObjectId()}`,
+      sharedAccountId: `acct_${faker.database.mongodbObjectId()}`,
+      userId: `usr_${faker.database.mongodbObjectId()}`,
       amount: faker.number.int({ min: 100, max: 10000 }),
       category: faker.commerce.department(),
-      date: DateTime.now().toJSDate(),
-      type: "expense",
+      name: faker.company.name(),
+      date: faker.date.recent(),
+      type,
     };
     super(initial);
   }
 
-  setId(id: string): this {
+  setId(id: `txn_${string}`): this {
     return this.set("id", id);
   }
 
-  setSharedAccountId(sharedAccountId: string): this {
+  setSharedAccountId(sharedAccountId: `acct_${string}`): this {
     return this.set("sharedAccountId", sharedAccountId);
   }
 
-  setUserId(userId: string): this {
+  setUserId(userId: `usr_${string}`): this {
     return this.set("userId", userId);
   }
 
@@ -47,5 +47,9 @@ export default class ExpenseBuilder extends BaseBuilder<Expense> {
 
   setType(type: "expense"): this {
     return this.set("type", type);
+  }
+
+  setName(name: string): this {
+    return this.set("name", name);
   }
 }

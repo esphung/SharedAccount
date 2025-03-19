@@ -4,13 +4,13 @@ import colors from "@themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import type { RecurringExpense } from "types/RecurringExpense";
+import type { ScheduledTransaction } from "types/ScheduledTransaction";
 
 export default function UpcomingBillsSectionListItem({
   item,
   isPast,
 }: {
-  item: RecurringExpense;
+  item: ScheduledTransaction;
   isPast: boolean;
 }) {
   return (
@@ -25,12 +25,11 @@ export default function UpcomingBillsSectionListItem({
       </View>
       <View>
         <SharedAccountText style={[styles.amount, isPast && styles.pastAmount]}>
-          {/* ${item.amount.toFixed(2)} */}
-          {/* {new Money(item.amount, "USD").getAmount() / 100} */}
+          {item.type === "credit" ? "+" : "-"}
           {MoneyFunctions.formatMoney(item.amount)}
         </SharedAccountText>
         <SharedAccountText style={styles.dueDate}>
-          {DateTime.fromJSDate(item.startDate).toFormat("LLL d")}
+          {DateTime.fromJSDate(item.startDate).toFormat("MMM d")}
         </SharedAccountText>
       </View>
     </View>
