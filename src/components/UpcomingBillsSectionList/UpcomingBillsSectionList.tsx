@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import React from "react";
 import { SectionList } from "react-native";
 import type { RecurringExpense } from "types/RecurringExpense";
+import UpcomingBillsSectionListFooter from "./UpcomingBillsSectionListFooter";
 
 type SectionData = {
   title: string;
@@ -101,6 +102,7 @@ const RecurringExpensesList = ({
         const isPast = item.startDate < new Date();
         return <UpcomingBillsSectionListItem item={item} isPast={isPast} />;
       }}
+      ListFooterComponent={UpcomingBillsSectionListFooter}
     />
   );
 };
