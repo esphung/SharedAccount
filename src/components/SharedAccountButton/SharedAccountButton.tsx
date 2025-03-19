@@ -8,10 +8,23 @@ type SharedAccountButtonProps = {
   type?: keyof typeof styles;
 } & TouchableOpacityProps;
 
+const disabledStyle = {
+  backgroundColor: "rgb(200, 200, 200)",
+};
+
 export default function SharedAccountButton(props: SharedAccountButtonProps) {
-  const { title, type = "primary", ...rest } = props;
+  const { title, type = "primary", style, disabled, ...rest } = props;
   return (
-    <TouchableOpacity style={styles[type]} activeOpacity={0.8} {...rest}>
+    <TouchableOpacity
+      disabled={disabled}
+      style={StyleSheet.flatten([
+        styles[type],
+        style,
+        disabled && disabledStyle,
+      ])}
+      activeOpacity={0.8}
+      {...rest}
+    >
       <SharedAccountText type="buttonTitle">{title}</SharedAccountText>
     </TouchableOpacity>
   );
@@ -29,12 +42,5 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: "rgb(106, 178, 193)",
     borderRadius: 8,
-  },
-  text: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    padding: 4,
   },
 });

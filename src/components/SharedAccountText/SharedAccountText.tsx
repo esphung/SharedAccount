@@ -54,4 +54,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
+  expenseFormError: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "red",
+  },
+  expenseFormLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });

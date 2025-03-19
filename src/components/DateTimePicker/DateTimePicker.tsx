@@ -1,65 +1,62 @@
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import { DateTime } from "luxon";
 import React, { useState } from "react";
+import { View, type ViewStyle } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+const getHumanDateStr = (date: Date): string => {
+  const currentDate = DateTime.now();
+  if (DateTime.fromJSDate(date).hasSame(currentDate, "day")) {
+    // return "Today" if the date is today
+    return "(Today)";
+  }
+  if (
+    // return "Tomorrow" if the date is tomorrow
+    DateTime.fromJSDate(date).hasSame(currentDate.plus({ days: 1 }), "day")
+  ) {
+    return "(Tomorrow)";
+  }
+  return "";
+};
+
 const DateTimePicker = ({
-  initialDate = DateTime.now().toJSDate(),
+  selectedDate,
   onChangeDate,
+  containerStyle,
 }: {
-  initialDate: Date;
-  onChangeDate?: (date: number) => void;
+  selectedDate: Date;
+  onChangeDate?: (date: Date) => void;
+  containerStyle?: ViewStyle;
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  const humanDayLabelText = React.useMemo(() => {
-    // return "Today" if the date is today
-    if (DateTime.fromJSDate(selectedDate).hasSame(DateTime.now(), "day")) {
-      return "Today";
-    }
-    // return "Tomorrow" if the date is tomorrow
-    else if (
-      DateTime.fromJSDate(selectedDate).hasSame(
-        DateTime.now().plus({ days: 1 }),
-        "day",
-      )
-    ) {
-      return "Tomorrow";
-    }
-    // return the day of the week if the date is within the next week
-    else if (
-      DateTime.fromJSDate(selectedDate).hasSame(DateTime.now(), "week")
-    ) {
-      return DateTime.fromJSDate(selectedDate).toFormat("cccc");
-    }
-    // return the date if the date is more than a week away
-    return DateTime.fromJSDate(selectedDate).toFormat("cccc, LLL dd, yyyy");
-  }, [selectedDate]);
+  const onConfirmCallback = React.useCallback((date: Date) => {
+    setDatePickerVisible(false);
+    onChangeDate?.(date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <>
+    <View style={containerStyle}>
       <SharedAccountButton
+        type="secondary"
         onPress={() => setDatePickerVisible(true)}
-        title={selectedDate ? humanDayLabelText : "Select Date"}
+        title={
+          selectedDate
+            ? `${DateTime.fromJSDate(selectedDate).toFormat("cccc, LLL dd, yyyy")} ${getHumanDateStr(selectedDate)}`.trim()
+            : "Select Date"
+        }
       />
       <DateTimePickerModal
         date={selectedDate}
         isVisible={isDatePickerVisible}
         mode="date"
-        onConfirm={(date) => {
-          setSelectedDate(date);
-          setDatePickerVisible(false);
-
-          // convert to millis
-          const millis = date.getTime();
-          onChangeDate?.(millis);
-        }}
+        onConfirm={onConfirmCallback}
         onCancel={() => setDatePickerVisible(false)}
       />
 
       {/* {listMemoized} */}
-    </>
+    </View>
   );
 };
 
