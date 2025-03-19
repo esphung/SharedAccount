@@ -41,11 +41,12 @@ const groupTransactionsByDate = (
 type TransactionListProps = {
   transactions: Transaction[];
   users: User[];
+  onPressAddTransaction: () => void;
 };
 
 // Main Component
 const TransactionList = (props: TransactionListProps) => {
-  const { transactions, users } = props;
+  const { transactions, users, onPressAddTransaction } = props;
   const expenses = transactions.filter(
     (transaction): transaction is Transaction<"expense"> =>
       transaction.type === "expense",
@@ -58,6 +59,12 @@ const TransactionList = (props: TransactionListProps) => {
   const sections = React.useMemo(
     () => groupTransactionsByDate(expenses, credits),
     [expenses, credits],
+  );
+
+  const renderListFooter = React.useCallback(
+    () => <TransactionListFooter onPress={onPressAddTransaction} />,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return (
@@ -75,7 +82,7 @@ const TransactionList = (props: TransactionListProps) => {
       ListHeaderComponent={
         <TransactionListHeader title="Recent Transactions" type="listHeader" />
       }
-      ListFooterComponent={TransactionListFooter}
+      ListFooterComponent={renderListFooter}
     />
   );
 };

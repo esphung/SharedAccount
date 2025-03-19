@@ -10,6 +10,18 @@ const { transactions, users } = mockLocalDatabase;
 const meta = {
   title: "TransactionList",
   component: TransactionList,
+  argTypes: {
+    transactions: {
+      control: {
+        type: "object",
+      },
+    },
+    users: {
+      control: {
+        type: "object",
+      },
+    },
+  },
   args: {
     transactions,
     users,
@@ -31,4 +43,12 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    transactions,
+    users,
+    onPressAddTransaction: () => {
+      console.debug("[TransactionList] onPressAddTransaction");
+    },
+  },
+};
