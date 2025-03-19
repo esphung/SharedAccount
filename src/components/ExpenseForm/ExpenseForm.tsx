@@ -29,7 +29,7 @@ const ExpenseForm = ({
     formState: { errors, isValid },
   } = useForm<{ amount: number; category: string; date: Date }>({
     defaultValues: {
-      amount: undefined,
+      amount: 0,
       category: items[0].value,
       date: new Date(),
     },
@@ -53,7 +53,7 @@ const ExpenseForm = ({
         rules={{
           required: "Amount is required",
           min: {
-            value: 0.01,
+            value: 0,
             message: "Amount must be greater than 0",
           },
         }}
@@ -95,6 +95,7 @@ const ExpenseForm = ({
       )}
 
       {/* Date Picker */}
+      <SharedAccountText type="expenseFormLabel">Date:</SharedAccountText>
       <Controller
         control={control}
         name="date"

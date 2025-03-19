@@ -23,7 +23,8 @@
     "react-hook-form": "^7.54.2",
     "react-native": "0.78.0",
     "react-native-currency-input": "^1.1.1",
-    "react-native-modal-datetime-picker": "^18.0.0"
+    "react-native-modal-datetime-picker": "^18.0.0",
+    "ts-money": "^0.4.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
