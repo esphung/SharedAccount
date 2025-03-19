@@ -1,3 +1,5 @@
+import TransactionListFooter from "@components/TransactionList/TransactionListFooter";
+import TransactionListHeader from "@components/TransactionList/TransactionListHeader";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
 import { DateTime } from "luxon";
 import React from "react";
@@ -5,8 +7,6 @@ import { SectionList } from "react-native";
 import type { Credit } from "types/Credit";
 import type { Expense } from "types/Expense";
 import type { User } from "types/User";
-import TransactionListFooter from "./TransactionListFooter";
-import TransactionListHeader from "./TransactionListHeader";
 
 // Utility Functions
 const getUserById = (userId: string, users: User[] = []) =>
