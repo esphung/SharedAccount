@@ -8,9 +8,4 @@ import { name as appName } from "./app.json";
 import { showStorybook } from "./package.json";
 import App from "./src/App";
 
-AppRegistry.registerComponent(appName, () => {
-  if (showStorybook) {
-    return Storybook;
-  }
-  return App;
-});
+AppRegistry.registerComponent(appName, () => (showStorybook ? Storybook : App));
