@@ -1,19 +1,11 @@
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import RootStack from "@navigators/RootStack/RootStack";
+import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <SharedAccountText>Hello World!</SharedAccountText>
-    </View>
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-});

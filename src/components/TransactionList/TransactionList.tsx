@@ -4,8 +4,7 @@ import TransactionListItem from "@components/TransactionList/TransactionListItem
 import { DateTime } from "luxon";
 import React from "react";
 import { SectionList } from "react-native";
-import type { Credit } from "types/Credit";
-import type { Expense } from "types/Expense";
+import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
 
 // Utility Functions
@@ -14,11 +13,11 @@ const getUserById = (userId: string, users: User[] = []) =>
 
 // Group Transactions by Date
 const groupTransactionsByDate = (
-  expensesArray: Expense[],
-  creditsArray: Credit[],
+  expensesArray: Transaction<"expense">[],
+  creditsArray: Transaction<"credit">[],
 ) => {
   const transactions = [...expensesArray, ...creditsArray];
-  const grouped: { title: string; data: (Expense | Credit)[] }[] = [];
+  const grouped: { title: string; data: Transaction[] }[] = [];
   transactions.forEach((transaction) => {
     const date = new Date(transaction.date).toDateString();
     const existingGroup = grouped.find((group) => group.title === date);
@@ -40,7 +39,7 @@ const groupTransactionsByDate = (
 
 // Props
 type TransactionListProps = {
-  transactions: (Credit | Expense)[];
+  transactions: Transaction[];
   users: User[];
 };
 
@@ -48,10 +47,12 @@ type TransactionListProps = {
 const TransactionList = (props: TransactionListProps) => {
   const { transactions, users } = props;
   const expenses = transactions.filter(
-    (transaction): transaction is Expense => transaction.type === "expense",
+    (transaction): transaction is Transaction<"expense"> =>
+      transaction.type === "expense",
   );
   const credits = transactions.filter(
-    (transaction): transaction is Credit => transaction.type === "credit",
+    (transaction): transaction is Transaction<"credit"> =>
+      transaction.type === "credit",
   );
 
   const sections = React.useMemo(

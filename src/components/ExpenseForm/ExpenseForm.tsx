@@ -24,7 +24,7 @@ const ExpenseForm = ({
   items?: {
     label: string;
     value: string;
-  }[]; // Expense categories
+  }[];
 }) => {
   const {
     control,

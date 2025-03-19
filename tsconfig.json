@@ -7,7 +7,9 @@
       "types/*": ["./src/types/*"],
       "@builders/*": ["./src/builders/*"],
       "@themes/*": ["./src/themes/*"],
-      "@helpers/*": ["./src/helpers/*"]
+      "@helpers/*": ["./src/helpers/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@navigators/*": ["./src/navigators/*"]
     }
   },
   "jsx": "react-native",

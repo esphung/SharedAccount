@@ -2,8 +2,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@themes/colors";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import type { Credit } from "types/Credit";
-import type { Expense } from "types/Expense";
+import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
 
 const formatCurrency = (amount: number) => {
@@ -15,7 +14,7 @@ export default function TransactionListItem({
   item,
   user,
 }: {
-  item: Expense | Credit;
+  item: Transaction;
   user?: User;
 }) {
   return (
@@ -34,7 +33,7 @@ export default function TransactionListItem({
         <SharedAccountText type="listItemTitle">{user?.name}</SharedAccountText>
         <SharedAccountText type="listItemSubtitle">
           {item.type === "credit"
-            ? `+ ${formatCurrency(item.amount)} (from ${item.source})`
+            ? `+ ${formatCurrency(item.amount)} (from ${item.name})`
             : `- ${formatCurrency(item.amount)} (${item.category})`}
         </SharedAccountText>
       </View>

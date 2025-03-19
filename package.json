@@ -18,12 +18,15 @@
   },
   "dependencies": {
     "@react-native-picker/picker": "^2.11.0",
+    "@react-navigation/native": "^7.0.15",
+    "@react-navigation/native-stack": "^7.2.1",
     "luxon": "^3.5.0",
     "react": "19.0.0",
     "react-hook-form": "^7.54.2",
     "react-native": "0.78.0",
     "react-native-currency-input": "patch:react-native-currency-input@npm%3A1.1.1#~/.yarn/patches/react-native-currency-input-npm-1.1.1-f03b6f15ba.patch",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-screens": "^4.9.2",
     "react-native-svg-charts": "^5.4.0",
     "ts-money": "^0.4.8"
   },
