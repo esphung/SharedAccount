@@ -9,6 +9,8 @@ module.exports = {
         extensions: [".js", ".jsx", ".ts", ".tsx"],
         alias: {
           "@components": "./src/components",
+          types: "./src/types",
+          "@builders": "./src/builders",
         },
       },
     ],

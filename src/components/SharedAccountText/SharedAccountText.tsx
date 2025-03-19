@@ -1,5 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, TextProps } from "react-native";
+import type { TextProps } from "react-native";
+// eslint-disable-next-line no-restricted-imports
+import { StyleSheet, Text } from "react-native";
 
 type SharedAccountTextProps = {
   type?: keyof typeof styles;
