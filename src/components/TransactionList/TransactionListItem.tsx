@@ -1,11 +1,11 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@themes/colors";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
 
-const formatCurrency = (amount: number) => {
+const convertCentsToUSD = (amount: number) => {
   // convert cents to dollars
   return `$${(amount / 100).toFixed(2)}`;
 };
@@ -13,12 +13,14 @@ const formatCurrency = (amount: number) => {
 export default function TransactionListItem({
   item,
   user,
+  onPress,
 }: {
   item: Transaction;
   user?: User;
+  onPress: (id: string) => void;
 }) {
   return (
-    <View style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={() => onPress(item.id)}>
       {/* User Avatar */}
       {user?.avatar && (
         <Image
@@ -33,8 +35,8 @@ export default function TransactionListItem({
         <SharedAccountText type="listItemTitle">{user?.name}</SharedAccountText>
         <SharedAccountText type="listItemSubtitle">
           {item.type === "credit"
-            ? `+ ${formatCurrency(item.amount)} (from ${item.name})`
-            : `- ${formatCurrency(item.amount)} (${item.category})`}
+            ? `+ ${convertCentsToUSD(item.amount)} (from ${item.name})`
+            : `- ${convertCentsToUSD(item.amount)} (${item.category})`}
         </SharedAccountText>
       </View>
       {/* Text-based Indicator for Expense or Credit */}
@@ -44,7 +46,7 @@ export default function TransactionListItem({
       >
         {item.type === "credit" ? "↑" : "↓"}
       </SharedAccountText>
-    </View>
+    </TouchableOpacity>
   );
 }
 

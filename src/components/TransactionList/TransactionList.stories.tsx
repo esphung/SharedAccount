@@ -25,6 +25,12 @@ const meta = {
   args: {
     transactions,
     users,
+    onShowAddTxnSheet: () => {
+      console.debug("[TransactionList] onShowAddTxnSheet");
+    },
+    onPress: (id: string) => {
+      console.debug("[TransactionList] onPress", id);
+    },
   },
   decorators: [
     (Story: React.FC) => (
@@ -47,8 +53,11 @@ export const Default: Story = {
   args: {
     transactions,
     users,
-    onPressAddTransaction: () => {
-      console.debug("[TransactionList] onPressAddTransaction");
+    onShowAddTxnSheet: () => {
+      console.debug("[TransactionList] onShowAddTxnSheet");
+    },
+    onPress: (id: string) => {
+      console.debug("[TransactionList] onPress", id);
     },
   },
 };

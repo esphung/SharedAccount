@@ -9,7 +9,9 @@
       "@themes/*": ["./src/themes/*"],
       "@helpers/*": ["./src/helpers/*"],
       "@screens/*": ["./src/screens/*"],
-      "@navigators/*": ["./src/navigators/*"]
+      "@navigators/*": ["./src/navigators/*"],
+      "@models/*": ["./src/models/*"],
+      "@repositories/*": ["./src/repositories/*"]
     }
   },
   "jsx": "react-native",

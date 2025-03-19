@@ -6,9 +6,11 @@ import { StyleSheet, View } from "react-native";
 export default function AddExpenseSheet({
   modalVisible,
   setModalVisible,
+  onSubmit,
 }: {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  onSubmit: (data: { amount: number; category: string; date: Date }) => void;
 }) {
   return (
     <SheetModal
@@ -22,6 +24,7 @@ export default function AddExpenseSheet({
             onSubmit={(data) => {
               console.debug("[AppTabs] ExpenseForm onSubmit:", data);
               setModalVisible(!modalVisible);
+              onSubmit(data);
             }}
           />
         </View>

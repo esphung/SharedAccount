@@ -41,28 +41,31 @@ const groupTransactionsByDate = (
 type TransactionListProps = {
   transactions: Transaction[];
   users: User[];
-  onPressAddTransaction: () => void;
+  onShowAddTxnSheet: () => void;
+  onPress: (id: string) => void;
 };
 
 // Main Component
 const TransactionList = (props: TransactionListProps) => {
-  const { transactions, users, onPressAddTransaction } = props;
-  const expenses = transactions.filter(
-    (transaction): transaction is Transaction<"expense"> =>
-      transaction.type === "expense",
-  );
-  const credits = transactions.filter(
-    (transaction): transaction is Transaction<"credit"> =>
-      transaction.type === "credit",
-  );
+  const { transactions = [], users = [], onShowAddTxnSheet, onPress } = props;
 
   const sections = React.useMemo(
-    () => groupTransactionsByDate(expenses, credits),
-    [expenses, credits],
+    () =>
+      groupTransactionsByDate(
+        transactions.filter(
+          (transaction): transaction is Transaction<"expense"> =>
+            transaction.type === "expense",
+        ),
+        transactions.filter(
+          (transaction): transaction is Transaction<"credit"> =>
+            transaction.type === "credit",
+        ),
+      ),
+    [transactions],
   );
 
   const renderListFooter = React.useCallback(
-    () => <TransactionListFooter onPress={onPressAddTransaction} />,
+    () => <TransactionListFooter onPress={onShowAddTxnSheet} />,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
@@ -73,7 +76,9 @@ const TransactionList = (props: TransactionListProps) => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => {
         const user = getUserById(item.userId, users);
-        return <TransactionListItem item={item} user={user} />;
+        return (
+          <TransactionListItem item={item} user={user} onPress={onPress} />
+        );
       }}
       renderSectionHeader={({ section: { title } }) => (
         <TransactionListHeader title={title} type="listSectionHeader" />

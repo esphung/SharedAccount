@@ -28,45 +28,9 @@ const SpendingStats = ({
     [transactions],
   );
 
-  // const processedBarChartData = React.useCallback(
-  //   (type: "expense" | "credit") => {
-  //     const sorted = transactions
-  //       .filter(
-  //         (item) =>
-  //           item.date.getTime() >=
-  //           new Date().getTime() - 30 * 24 * 60 * 60 * 1000,
-  //       )
-  //       .filter((item) => item.type === type);
-  //     // group by days from current date's month
-  //     const grouped = sorted.reduce(
-  //       (acc, item) => {
-  //         const date = DateTime.fromJSDate(item.date);
-  //         const day = date.day;
-  //         if (acc[day]) {
-  //           acc[day] += item.amount;
-  //         } else {
-  //           acc[day] = item.amount;
-  //         }
-  //         return acc;
-  //       },
-  //       {} as Record<number, number>,
-  //     );
-  //     // convert to array
-  //     const result = Object.keys(grouped).map((key) => ({
-  //       date: DateTime.now()
-  //         .set({ day: parseInt(key, 10) })
-  //         .toJSDate(),
-  //       amount: grouped[parseInt(key, 10)],
-  //     }));
-  //     return result;
-  //   },
-  //   [transactions],
-  // );
-
   const processedBarChartData = React.useCallback(
     (type: "expense" | "credit") => {
       const list: {
-        id: `day_${string}`;
         date: Date;
         amount: number;
         type: "credit" | "expense";
@@ -87,8 +51,8 @@ const SpendingStats = ({
           .reduce((sum, transaction) => sum + transaction.amount, 0); // sum of all transactions for the day
 
         list.push({
-          id: `day_${i}`,
-          date: DateTime.now().minus({ days: i }).toJSDate(),
+          // date: DateTime.now().minus({ days: i }).toJSDate(),
+          date: DateTime.now().set({ day: i }).toJSDate(),
           amount: averageForDay,
           type,
         });
@@ -127,6 +91,20 @@ const SpendingStats = ({
     [transactions],
   );
 
+  const memoizedCreditData = React.useMemo(
+    () => processedBarChartData("credit"),
+    [processedBarChartData],
+  );
+
+  const memoizedExpenseData = React.useMemo(
+    () => processedBarChartData("expense"),
+    [processedBarChartData],
+  );
+
+  // console.debug("[SpendingStats] memoizedCreditData:", memoizedCreditData);
+
+  console.debug("[SpendingStats] Transactions:", transactions);
+
   return (
     <View style={styles.container}>
       <SharedAccountText type="screenHeader">
@@ -136,13 +114,14 @@ const SpendingStats = ({
         <SharedAccountText type="listHeader" style={styles.greenText}>
           Deposited {MoneyFunctions.formatMoney(totalThisMonth("credit"))}
         </SharedAccountText>
-        <BarChartHorizontalWithLabels data={processedBarChartData("credit")} />
+        {/* <BarChartHorizontalWithLabels data={memoizedCreditData} /> */}
+        <BarChartHorizontalWithLabels data={memoizedCreditData} />
       </View>
       <View style={styles.southPanel}>
         <SharedAccountText type="listHeader" style={styles.greenText}>
           Spent {MoneyFunctions.formatMoney(totalThisMonth("expense"))}
         </SharedAccountText>
-        <BarChartHorizontalWithLabels data={processedBarChartData("expense")} />
+        <BarChartHorizontalWithLabels data={memoizedExpenseData} />
       </View>
     </View>
   );
