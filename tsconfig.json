@@ -6,7 +6,8 @@
       "@components/*": ["./src/components/*"],
       "types/*": ["./src/types/*"],
       "@builders/*": ["./src/builders/*"],
-      "@themes/*": ["./src/themes/*"]
+      "@themes/*": ["./src/themes/*"],
+      "@helpers/*": ["./src/helpers/*"]
     }
   },
   "jsx": "react-native",

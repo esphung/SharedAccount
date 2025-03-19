@@ -1,18 +1,10 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import MoneyFunctions from "@helpers/MoneyFunctions";
 import colors from "@themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Money } from "ts-money";
 import type { RecurringExpense } from "types/RecurringExpense";
-
-// Function to format money - takes an amount in cents and returns a formatted string
-const formatMoney = (amount: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(new Money(amount, "USD").getAmount() / 100);
-};
 
 export default function UpcomingBillsSectionListItem({
   item,
@@ -35,7 +27,7 @@ export default function UpcomingBillsSectionListItem({
         <SharedAccountText style={[styles.amount, isPast && styles.pastAmount]}>
           {/* ${item.amount.toFixed(2)} */}
           {/* {new Money(item.amount, "USD").getAmount() / 100} */}
-          {formatMoney(item.amount)}
+          {MoneyFunctions.formatMoney(item.amount)}
         </SharedAccountText>
         <SharedAccountText style={styles.dueDate}>
           {DateTime.fromJSDate(item.startDate).toFormat("LLL d")}

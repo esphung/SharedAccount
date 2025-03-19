@@ -12,6 +12,7 @@ module.exports = {
           types: "./src/types",
           "@builders": "./src/builders",
           "@themes": "./src/themes",
+          "@helpers": "./src/helpers",
         },
       },
     ],

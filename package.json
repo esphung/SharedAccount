@@ -24,6 +24,7 @@
     "react-native": "0.78.0",
     "react-native-currency-input": "patch:react-native-currency-input@npm%3A1.1.1#~/.yarn/patches/react-native-currency-input-npm-1.1.1-f03b6f15ba.patch",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-svg-charts": "^5.4.0",
     "ts-money": "^0.4.8"
   },
   "devDependencies": {
@@ -50,6 +51,7 @@
     "@types/luxon": "^3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19",
+    "@types/react-native-svg-charts": "^5",
     "@types/react-test-renderer": "^19.0.0",
     "babel-loader": "^8.4.1",
     "babel-plugin-module-resolver": "^5.0.2",
