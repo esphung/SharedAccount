@@ -12,7 +12,7 @@ import { StyleSheet, View } from "react-native";
 type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
 
 export default function HomeScreen(_: Props) {
-  const { transactions, startListening } = useTransactions();
+  const { state: transactions, startListening } = useTransactions();
 
   useEffect(() => {
     const sub = startListening();

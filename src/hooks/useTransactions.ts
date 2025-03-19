@@ -1,25 +1,26 @@
-import { useRepository } from "@providers/RepositoryProvider";
+import { useRepository } from "@contexts/RepositoryProvider";
 import { useCallback, useState } from "react";
 import type { Transaction } from "types/Transaction";
+import type { UseDataSource } from "types/UseDataSource";
 
-const useTransactions = () => {
-  // Get the transaction repository
+const useTransactions: UseDataSource<Transaction> = () => {
+  // Get the item repository
   const { transactionRepo } = useRepository();
 
-  // Local state for transactions
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  // Local state for items
+  const [state, setState] = useState<Transaction[]>([]);
 
   // Fetch transactions from the repository
-  const fetchTransactions = useCallback(async () => {
-    const txns = await transactionRepo.getTransactions();
-    setTransactions(txns);
+  const fetchItems = useCallback(async () => {
+    const InputModeOptions = await transactionRepo.getTransactions();
+    setState(InputModeOptions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Start listening for live updates
   const startListening = useCallback(() => {
     // Subscribe to live updates
-    transactionRepo.getLiveTransactions(setTransactions);
+    transactionRepo.getLiveTransactions(setState);
     return () => {
       // Unsubscribe when component unmounts
       transactionRepo.stopListening();
@@ -27,25 +28,21 @@ const useTransactions = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Return the transactions and functions to interact with them
-  return {
-    transactions,
-    fetchTransactions,
-    startListening,
-    deleteTransaction: (id: string) => {
-      return transactionRepo.deleteTransaction(id);
-    },
-    addTransaction: ({
-      amount,
-      category,
-      date,
-      type = "expense",
-    }: {
-      amount: number;
-      category: string;
-      date: Date;
-      type?: "credit" | "expense";
-    }) => {
+  // Delete a transaction
+  const deleteItem = useCallback((id: string) => {
+    return transactionRepo.deleteTransaction(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Add a transaction
+  const addItem = useCallback(
+    (params: Partial<Transaction>) => {
+      const {
+        amount = 0,
+        category = "",
+        date = new Date(),
+        type = "expense",
+      } = params;
       return transactionRepo.addTransaction({
         id: `txn_${new Date().getTime()}`,
         userId: `usr_${new Date().getTime()}`,
@@ -58,6 +55,17 @@ const useTransactions = () => {
         type,
       });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  // Return the transactions and functions to interact with them
+  return {
+    state,
+    fetchItems,
+    startListening,
+    deleteItem,
+    addItem,
   };
 };
 

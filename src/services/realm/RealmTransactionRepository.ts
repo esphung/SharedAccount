@@ -1,4 +1,4 @@
-import RealmTransaction from "@models/realm/RealmTransaction";
+import RealmTransaction from "./models/RealmTransaction";
 import Realm, { UpdateMode } from "realm";
 import type { Transaction } from "types/Transaction";
 import type { TransactionRepository } from "types/TransactionRepository";

@@ -18,11 +18,11 @@ export default function ExpensesScreen(_: Props) {
 
   // hooks
   const {
-    transactions,
-    fetchTransactions,
+    state: transactions,
+    fetchItems: fetchTransactions,
     startListening,
-    addTransaction,
-    deleteTransaction,
+    addItem: addTransaction,
+    deleteItem: deleteTransaction,
   } = useTransactions();
 
   // effects

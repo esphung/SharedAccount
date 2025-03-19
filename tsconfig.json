@@ -10,10 +10,10 @@
       "@helpers/*": ["./src/helpers/*"],
       "@screens/*": ["./src/screens/*"],
       "@navigators/*": ["./src/navigators/*"],
-      "@models/*": ["./src/models/*"],
       "@repositories/*": ["./src/repositories/*"],
-      "@providers/*": ["./src/providers/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@contexts/*": ["./src/contexts/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "jsx": "react-native",
