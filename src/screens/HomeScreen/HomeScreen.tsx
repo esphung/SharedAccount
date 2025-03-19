@@ -1,30 +1,26 @@
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import SpendingStats from "@components/SpendingStats/SpendingStats";
+import useTransactions from "@hooks/useTransactions";
 import type {
   AppTabsParamList,
   AppTabsScreens,
 } from "@navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import RepositoryFactory from "@repositories/RepositoryFactory";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import type { Transaction } from "types/Transaction";
 
 type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
 
-// TODO: Move to context
-const transactionRepo = RepositoryFactory.createTransactionRepository();
-
 export default function HomeScreen(_: Props) {
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  const { transactions, startListening } = useTransactions();
 
-  // TODO: Move to context
-  React.useEffect(() => {
-    async function fetchTransactions() {
-      const txns = await transactionRepo.getTransactions();
-      setTransactions(txns);
-    }
-    fetchTransactions();
+  useEffect(() => {
+    const sub = startListening();
+
+    return () => {
+      sub();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

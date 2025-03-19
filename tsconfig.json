@@ -11,7 +11,9 @@
       "@screens/*": ["./src/screens/*"],
       "@navigators/*": ["./src/navigators/*"],
       "@models/*": ["./src/models/*"],
-      "@repositories/*": ["./src/repositories/*"]
+      "@repositories/*": ["./src/repositories/*"],
+      "@providers/*": ["./src/providers/*"],
+      "@hooks/*": ["./src/hooks/*"]
     }
   },
   "jsx": "react-native",

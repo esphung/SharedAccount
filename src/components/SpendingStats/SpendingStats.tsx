@@ -101,10 +101,6 @@ const SpendingStats = ({
     [processedBarChartData],
   );
 
-  // console.debug("[SpendingStats] memoizedCreditData:", memoizedCreditData);
-
-  console.debug("[SpendingStats] Transactions:", transactions);
-
   return (
     <View style={styles.container}>
       <SharedAccountText type="screenHeader">

@@ -1,5 +1,6 @@
 import RealmTransaction from "@models/realm/RealmTransaction";
 import RootStack from "@navigators/RootStack/RootStack";
+import { RepositoryProvider } from "@providers/RepositoryProvider";
 import { NavigationContainer } from "@react-navigation/native";
 import { RealmProvider } from "@realm/react";
 import React from "react";
@@ -15,10 +16,12 @@ export default function App() {
     }
   }, []);
   return (
-    <RealmProvider schema={[RealmTransaction]} schemaVersion={1}>
-      <NavigationContainer>
-        <RootStack />
-      </NavigationContainer>
-    </RealmProvider>
+    <RepositoryProvider>
+      <RealmProvider schema={[RealmTransaction]} schemaVersion={1}>
+        <NavigationContainer>
+          <RootStack />
+        </NavigationContainer>
+      </RealmProvider>
+    </RepositoryProvider>
   );
 }

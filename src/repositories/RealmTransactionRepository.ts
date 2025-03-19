@@ -7,9 +7,41 @@ export default class RealmTransactionRepository
   implements TransactionRepository
 {
   private realm: Realm;
+  private listener: Realm.Results<
+    Realm.Object<RealmTransaction, never> & RealmTransaction
+  > | null = null;
 
   constructor() {
     this.realm = new Realm({ schema: [RealmTransaction], schemaVersion: 1 });
+  }
+
+  getLiveTransactions(callback: (expenses: Transaction[]) => void): void {
+    const realmObjects = this.realm.objects<RealmTransaction>("Transaction");
+
+    this.listener = realmObjects;
+
+    realmObjects.addListener((collection) => {
+      // map to JSON and then parse to avoid Realm.Object
+      const json = collection.toJSON();
+      const parsed = JSON.parse(JSON.stringify(json));
+      const transactions: Transaction[] = parsed.map(
+        (transaction: Transaction) => {
+          return {
+            ...transaction,
+            date: new Date(transaction.date),
+          };
+        },
+      );
+      // Notify UI of changes
+      callback(transactions);
+    });
+  }
+
+  stopListening(): void {
+    if (this.listener) {
+      this.listener.removeAllListeners();
+      this.listener = null;
+    }
   }
 
   async getTransactions(): Promise<Transaction[]> {

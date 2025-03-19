@@ -17,6 +17,8 @@ module.exports = {
           "@navigators": "./src/navigators",
           "@models": "./src/models",
           "@repositories": "./src/repositories",
+          "@providers": "./src/providers",
+          "@hooks": "./src/hooks",
         },
       },
     ],
