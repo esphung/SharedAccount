@@ -1,4 +1,5 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import colors from "@themes/colors";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import type { Credit } from "types/Credit";
@@ -40,7 +41,7 @@ export default function TransactionListItem({
       {/* Text-based Indicator for Expense or Credit */}
       <SharedAccountText
         type="transactionType"
-        style={[item.type === "credit" ? styles.credit : styles.expense]}
+        style={item.type === "credit" ? styles.credit : styles.expense}
       >
         {item.type === "credit" ? "↑" : "↓"}
       </SharedAccountText>
@@ -50,26 +51,26 @@ export default function TransactionListItem({
 
 // Styles
 const styles = StyleSheet.create({
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
   avatar: {
-    width: 40,
-    height: 40,
     borderRadius: 20,
+    height: 40,
     marginRight: 10,
+    width: 40,
+  },
+  credit: {
+    color: colors.green,
+  },
+  expense: {
+    color: colors.red,
+  },
+  item: {
+    alignItems: "center",
+    borderBottomColor: colors.light,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    padding: 10,
   },
   transactionDetails: {
     flex: 1,
-  },
-  credit: {
-    color: "green",
-  },
-  expense: {
-    color: "red",
   },
 });

@@ -11,6 +11,7 @@ module.exports = {
           "@components": "./src/components",
           types: "./src/types",
           "@builders": "./src/builders",
+          "@themes": "./src/themes",
         },
       },
     ],

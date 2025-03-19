@@ -1,5 +1,7 @@
+import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import React from "react";
-import { View, type ViewStyle } from "react-native";
+import type { ViewProps } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { CurrencyInputProps } from "react-native-currency-input";
 import CurrencyInput from "react-native-currency-input";
 import type { Currency } from "ts-money";
@@ -8,11 +10,14 @@ import { Currencies, Money } from "ts-money";
 export type SharedAccountCurrencyInputProps = {
   value: number;
   onChange: (value: number) => void;
-  containerStyle?: ViewStyle;
+  containerStyle?: ViewProps["style"];
   currency?: Currency;
 } & Omit<CurrencyInputProps, "value" | "onChange">;
 
-function SharedAccountCurrencyInput(props: SharedAccountCurrencyInputProps) {
+const SharedAccountCurrencyInput = React.forwardRef<
+  CurrencyInput,
+  SharedAccountCurrencyInputProps
+>((props, ref) => {
   const {
     value,
     onChange,
@@ -21,8 +26,9 @@ function SharedAccountCurrencyInput(props: SharedAccountCurrencyInputProps) {
     ...rest
   } = props;
   return (
-    <View style={containerStyle}>
+    <View style={StyleSheet.flatten([containerStyle])}>
       <CurrencyInput
+        // ref={ref}
         placeholder={"Enter amount"}
         value={new Money(value, currency).toDecimal()}
         onChangeValue={(newValue) => {
@@ -35,10 +41,13 @@ function SharedAccountCurrencyInput(props: SharedAccountCurrencyInputProps) {
         precision={2}
         maxLength={12}
         maxValue={100000}
+        renderTextInput={(textInputProps) => (
+          <SharedAccountTextInput ref={ref} {...textInputProps} />
+        )}
         {...rest}
       />
     </View>
   );
-}
+});
 
 export default SharedAccountCurrencyInput;

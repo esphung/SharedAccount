@@ -1,0 +1,31 @@
+diff --git a/src/CurrencyInput.tsx b/src/CurrencyInput.tsx
+index 6c7e844144e53427f63e7ce891a54c8fdfcd18da..6d7dcbc4b197308387dad9171169d6aab6b382d7 100644
+--- a/src/CurrencyInput.tsx
++++ b/src/CurrencyInput.tsx
+@@ -1,8 +1,8 @@
+ import * as React from 'react';
+ import { TextInput } from 'react-native';
+ 
+-import formatNumber, { addSignPrefixAndSuffix } from './utils/formatNumber';
+ import type { CurrencyInputProps } from './props';
++import formatNumber, { addSignPrefixAndSuffix } from './utils/formatNumber';
+ 
+ export type CurrencyInput = TextInput;
+ 
+@@ -172,14 +172,13 @@ export const CurrencyInput = React.forwardRef<TextInput, CurrencyInputProps>(fun
+       ...rest,
+       value: textInputValue,
+       onChangeText: handleChangeText,
+-      ref: ref,
+     }),
+-    [handleChangeText, props?.selection, ref, rest, suffix, textInputValue]
++    [handleChangeText, props?.selection, rest, suffix, textInputValue]
+   );
+ 
+   if (renderTextInput) {
+     return renderTextInput(nextProps);
+   }
+ 
+-  return <TextInput {...nextProps} />;
++  return <TextInput ref={ref} {...nextProps} />;
+ });

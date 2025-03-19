@@ -1,10 +1,20 @@
 module.exports = {
   root: true,
-  plugins: ["@typescript-eslint"],
-  extends: ["plugin:@typescript-eslint/recommended", "@react-native"],
+  plugins: ["@typescript-eslint", "react-native", "react"],
+  extends: [
+    "plugin:@typescript-eslint/recommended",
+    "@react-native",
+    "plugin:react-native/all",
+  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "./tsconfig.json",
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  env: {
+    "react-native/react-native": true,
   },
   rules: {
     quotes: ["error", "double"],
@@ -27,5 +37,6 @@ module.exports = {
         ],
       },
     ],
+    "react-native/no-raw-text": ["error", { skip: ["SharedAccountText"] }],
   },
 };

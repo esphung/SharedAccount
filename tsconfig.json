@@ -5,7 +5,8 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "types/*": ["./src/types/*"],
-      "@builders/*": ["./src/builders/*"]
+      "@builders/*": ["./src/builders/*"],
+      "@themes/*": ["./src/themes/*"]
     }
   },
   "jsx": "react-native",

@@ -1,46 +1,89 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import colors from "@themes/colors";
 import React from "react";
 import type { TouchableOpacityProps } from "react-native";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
+type ButtonStyleKeys = keyof typeof styles;
+
+type ButtonTextStyleKey = `${string}Text`;
+
+type ExcludeExtraStyles = Exclude<
+  ButtonStyleKeys,
+  "disabled" | ButtonTextStyleKey
+>;
+
 type SharedAccountButtonProps = {
   title: string;
-  type?: keyof typeof styles;
+  type?: ExcludeExtraStyles;
 } & TouchableOpacityProps;
-
-const disabledStyle = {
-  backgroundColor: "rgb(200, 200, 200)",
-};
 
 export default function SharedAccountButton(props: SharedAccountButtonProps) {
   const { title, type = "primary", style, disabled, ...rest } = props;
+
+  const memoizedStyle = React.useMemo(() => {
+    const typeStyle = {
+      borderColor: colors.transparent,
+      ...styles[type],
+    };
+    return StyleSheet.flatten([typeStyle, style, disabled && styles.disabled]);
+  }, [type, disabled, style]);
+
   return (
     <TouchableOpacity
       disabled={disabled}
-      style={StyleSheet.flatten([
-        styles[type],
-        style,
-        disabled && disabledStyle,
-      ])}
-      activeOpacity={0.8}
+      style={memoizedStyle}
+      activeOpacity={0.7}
       {...rest}
     >
-      <SharedAccountText type="buttonTitle">{title}</SharedAccountText>
+      <SharedAccountText
+        type="buttonTitle"
+        style={StyleSheet.flatten([
+          disabled && styles.disabledText,
+          // @ts-expect-error - type is a string
+          styles[`${type}Text` as ButtonTextStyleKey],
+        ])}
+      >
+        {title}
+      </SharedAccountText>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  secondary: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: "rgb(46, 52, 54)",
-    borderRadius: 8,
+  disabled: {
+    backgroundColor: colors.disabled,
+    opacity: 0.4,
   },
+  disabledText: {
+    color: colors.white,
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
   primary: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "rgb(106, 178, 193)",
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
+  secondary: {
+    backgroundColor: colors.secondary,
     borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
+  suggestionItem: {
+    alignItems: "flex-start",
+    borderColor: colors.secondary,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginVertical: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
+  suggestionItemText: {
+    color: colors.dark,
   },
 });

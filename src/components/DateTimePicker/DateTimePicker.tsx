@@ -1,7 +1,9 @@
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import { DateTime } from "luxon";
-import React, { useState } from "react";
-import { View, type ViewStyle } from "react-native";
+import React from "react";
+import type { ViewStyle } from "react-native";
+import { View } from "react-native";
+import type { DateTimePickerProps } from "react-native-modal-datetime-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const getHumanDateStr = (date: Date): string => {
@@ -19,45 +21,61 @@ const getHumanDateStr = (date: Date): string => {
   return "";
 };
 
-const DateTimePicker = ({
-  selectedDate,
-  onChangeDate,
-  containerStyle,
-}: {
-  selectedDate: Date;
-  onChangeDate?: (date: Date) => void;
-  containerStyle?: ViewStyle;
-}) => {
-  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+const DateTimePicker = React.forwardRef<
+  DateTimePickerModal,
+  {
+    selectedDate: Date;
+    onChangeDate?: (date: Date) => void;
+    containerStyle?: ViewStyle;
+    isDatePickerVisible: boolean;
+    onDatePickerVisibilityChange: (isVisible: boolean) => void;
+  } & Omit<DateTimePickerProps, "date" | "onConfirm" | "onCancel">
+>(
+  (
+    {
+      selectedDate,
+      onChangeDate,
+      containerStyle,
+      isDatePickerVisible: isDatePickerVisibleProp,
+      onDatePickerVisibilityChange: onDatePickerVisibilityChangeProp,
+      ...rest
+    },
+    ref,
+  ) => {
+    // const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  const onConfirmCallback = React.useCallback((date: Date) => {
-    setDatePickerVisible(false);
-    onChangeDate?.(date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const onConfirmCallback = React.useCallback((date: Date) => {
+      // setDatePickerVisible(false);
+      onDatePickerVisibilityChangeProp(false);
+      onChangeDate?.(date);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  return (
-    <View style={containerStyle}>
-      <SharedAccountButton
-        type="secondary"
-        onPress={() => setDatePickerVisible(true)}
-        title={
-          selectedDate
-            ? `${DateTime.fromJSDate(selectedDate).toFormat("cccc, LLL dd, yyyy")} ${getHumanDateStr(selectedDate)}`.trim()
-            : "Select Date"
-        }
-      />
-      <DateTimePickerModal
-        date={selectedDate}
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={onConfirmCallback}
-        onCancel={() => setDatePickerVisible(false)}
-      />
+    return (
+      <View style={containerStyle}>
+        <SharedAccountButton
+          type="secondary"
+          onPress={() => onDatePickerVisibilityChangeProp(true)}
+          title={
+            selectedDate
+              ? `${DateTime.fromJSDate(selectedDate).toFormat("cccc, LLL dd, yyyy")} ${getHumanDateStr(selectedDate)}`.trim()
+              : "Select Date"
+          }
+        />
+        <DateTimePickerModal
+          ref={ref}
+          date={selectedDate}
+          isVisible={isDatePickerVisibleProp}
+          mode="date"
+          onConfirm={onConfirmCallback}
+          onCancel={() => onDatePickerVisibilityChangeProp(false)}
+          {...rest}
+        />
 
-      {/* {listMemoized} */}
-    </View>
-  );
-};
+        {/* {listMemoized} */}
+      </View>
+    );
+  },
+);
 
 export default DateTimePicker;

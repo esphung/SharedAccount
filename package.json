@@ -22,7 +22,7 @@
     "react": "19.0.0",
     "react-hook-form": "^7.54.2",
     "react-native": "0.78.0",
-    "react-native-currency-input": "^1.1.1",
+    "react-native-currency-input": "patch:react-native-currency-input@npm%3A1.1.1#~/.yarn/patches/react-native-currency-input-npm-1.1.1-f03b6f15ba.patch",
     "react-native-modal-datetime-picker": "^18.0.0",
     "ts-money": "^0.4.8"
   },
@@ -54,6 +54,8 @@
     "babel-loader": "^8.4.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^8.19.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-native": "^5.0.0",
     "husky": "^9.1.7",
     "jest": "^29.6.3",
     "prettier": "3.5.3",

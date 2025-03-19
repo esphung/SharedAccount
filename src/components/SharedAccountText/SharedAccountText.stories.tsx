@@ -1,5 +1,6 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import type { Meta, StoryObj } from "@storybook/react";
+import colors from "@themes/colors";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -19,14 +20,14 @@ const meta = {
 } satisfies Meta<typeof SharedAccountText>;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
   btnTitleContainer: {
+    backgroundColor: colors.secondary,
+    borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "rgb(46, 52, 54)",
-    borderRadius: 8,
+  },
+  container: {
+    padding: 16,
   },
 });
 

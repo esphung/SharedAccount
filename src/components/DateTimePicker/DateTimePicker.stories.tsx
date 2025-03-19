@@ -5,10 +5,13 @@ import { StyleSheet, View } from "react-native";
 
 const RenderItem = () => {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
   return (
     <DateTimePicker
       selectedDate={selectedDate}
       onChangeDate={setSelectedDate}
+      isDatePickerVisible={isDatePickerVisible}
+      onDatePickerVisibilityChange={setDatePickerVisible}
     />
   );
 };
@@ -38,6 +41,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     selectedDate: new Date(),
+    isDatePickerVisible: false,
+    onDatePickerVisibilityChange: () => {},
   },
   render: RenderItem,
 };

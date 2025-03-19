@@ -1,7 +1,8 @@
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
+import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import React, { useState } from "react";
-import type { TextInputProps, ViewStyle } from "react-native";
-import { FlatList, StyleSheet, TextInput, View } from "react-native";
+import type { TextInput, TextInputProps, ViewStyle } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
 type Item = {
   label: string;
@@ -17,24 +18,16 @@ type Props = {
     required?: boolean;
   };
   containerStyle?: ViewStyle;
-};
+} & TextInputProps;
 
 const AutoSuggestInput = React.forwardRef<TextInput, Props>((props, ref) => {
   // props
-  const {
-    value = "",
-    textInputProps,
-    onChange,
-    items = [],
-    containerStyle,
-  } = props;
+  const { value, textInputProps, onChange, items = [], containerStyle } = props;
 
   // state
-  const [text, setText] = React.useState<string>(value);
+  const [text, setText] = React.useState(value);
   const [suggestions, setSuggestions] = React.useState<Item[]>(items);
   const [isFocused, setIsFocused] = useState(false);
-
-  const { ...restTextInputProps } = textInputProps || {};
 
   // callbacks
   const handleTextChange = React.useCallback(
@@ -83,12 +76,11 @@ const AutoSuggestInput = React.forwardRef<TextInput, Props>((props, ref) => {
     return (
       <FlatList
         style={styles.suggestionList}
-        // scrollEnabled={false}
         data={suggestions}
         keyExtractor={(item) => item.label}
         renderItem={({ item }) => (
           <SharedAccountButton
-            style={styles.suggestionItem}
+            type="suggestionItem"
             title={item.value}
             onPress={() => handleItemPress(item)}
           >
@@ -102,13 +94,13 @@ const AutoSuggestInput = React.forwardRef<TextInput, Props>((props, ref) => {
 
   return (
     <View style={containerStyle}>
-      <TextInput
+      <SharedAccountTextInput
         ref={ref}
         value={text}
         onChangeText={handleTextChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        {...restTextInputProps}
+        {...textInputProps}
       />
       {memoizedSuggestionsList}
     </View>
@@ -118,10 +110,6 @@ const AutoSuggestInput = React.forwardRef<TextInput, Props>((props, ref) => {
 const styles = StyleSheet.create({
   suggestionList: {
     paddingTop: 8,
-  },
-  suggestionItem: {
-    marginVertical: 4,
-    alignItems: "flex-start",
   },
 });
 
