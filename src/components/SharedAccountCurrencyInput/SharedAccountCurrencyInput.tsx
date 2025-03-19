@@ -7,7 +7,7 @@ import CurrencyInput from "react-native-currency-input";
 import type { Currency } from "ts-money";
 import { Currencies, Money } from "ts-money";
 
-export type SharedAccountCurrencyInputProps = {
+type SharedAccountCurrencyInputProps = {
   value: number;
   onChange: (value: number) => void;
   containerStyle?: ViewProps["style"];

@@ -8,7 +8,7 @@ import ScheduledTransactionBuilder from "./ScheduledTransactionBuilder";
 import TransactionBuilder from "./TransactionBuilder";
 import UserBuilder from "./UserBuilder";
 
-export type LocalDatabase = {
+type LocalDatabase = {
   users: User[];
   transactions: Transaction[];
   scheduledTransactions: ScheduledTransaction[];

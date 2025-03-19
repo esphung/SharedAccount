@@ -2,8 +2,7 @@ import React from "react";
 import type { ViewProps } from "react-native";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-export type SharedAccountScreenProps = {
-  // add props here
+type SharedAccountScreenProps = {
   children?: React.ReactNode;
 } & ViewProps;
 

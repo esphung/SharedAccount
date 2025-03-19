@@ -34,7 +34,6 @@ const ExpenseForm = ({
   } = useForm<{ amount: number; category: string; date: Date }>({
     defaultValues: {
       amount: 0,
-      // category: items[0].value,
       date: new Date(),
     },
   });
@@ -140,22 +139,27 @@ const ExpenseForm = ({
             message: "Invalid category",
           },
         }}
-        render={({ field: { onChange, value } }) => (
-          <AutoSuggestInput
-            ref={autoSuggestInputRef}
-            value={value}
-            onChange={onChange}
-            items={items}
-            containerStyle={styles.input}
-            textInputProps={{
-              autoCapitalize: "none",
-              autoCorrect: false,
-              onSubmitEditing: () => {
+        render={({ field: { onChange, value } }) => {
+          return (
+            <AutoSuggestInput
+              ref={autoSuggestInputRef}
+              value={value}
+              items={items}
+              containerStyle={styles.input}
+              textInputProps={{
+                autoCapitalize: "none",
+                autoCorrect: false,
+                onSubmitEditing: () => {
+                  focusNextInput("category");
+                },
+              }}
+              onChange={(item) => {
+                onChange(item);
                 focusNextInput("category");
-              },
-            }}
-          />
-        )}
+              }}
+            />
+          );
+        }}
       />
       {errors.category && (
         <SharedAccountText type="expenseFormError">
