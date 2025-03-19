@@ -1,26 +1,34 @@
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
+import SpendingStats from "@components/SpendingStats/SpendingStats";
 import type {
-  RootStackParamList,
-  RootStackScreens,
-} from "@navigators/RootStack/RootStack";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+  AppTabsParamList,
+  AppTabsScreens,
+} from "@navigators/AppTabs/AppTabs";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-type Props = NativeStackScreenProps<RootStackParamList, RootStackScreens.Home>;
+type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
 
 export default function HomeScreen(_: Props) {
   return (
-    <View style={styles.container}>
-      <SharedAccountText>HomeScreen</SharedAccountText>
-    </View>
+    <SharedAccountScreen>
+      <View style={styles.content}>
+        <SpendingStats
+          transactions={
+            [
+              // TODO: Replace with real data
+            ]
+          }
+        />
+      </View>
+    </SharedAccountScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
+  content: {
     flex: 1,
-    justifyContent: "center",
+    paddingHorizontal: 16,
   },
 });

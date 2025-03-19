@@ -1,23 +1,8 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "@screens/HomeScreen/HomeScreen";
+import AppTabs from "@navigators/AppTabs/AppTabs";
 import React from "react";
 
-export enum RootStackScreens {
-  Home = "HomeScreen",
-}
-
-export type RootStackParamList = {
-  [RootStackScreens.Home]: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
 function RootStack() {
-  return (
-    <Stack.Navigator initialRouteName={RootStackScreens.Home}>
-      <Stack.Screen name={RootStackScreens.Home} component={HomeScreen} />
-    </Stack.Navigator>
-  );
+  return <AppTabs />;
 }
 
 export default RootStack;

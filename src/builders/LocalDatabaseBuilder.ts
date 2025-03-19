@@ -1,5 +1,6 @@
 import BaseBuilder from "@builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
+import { DateTime } from "luxon";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
@@ -26,18 +27,23 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
     ];
 
     const transactions: Transaction[] = [
-      ...Array.from({ length: 20 }, () => {
+      ...Array.from({ length: 40 }, (_, i) => {
         const fakeUserId: `usr_${string}` = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
         return new TransactionBuilder(
           faker.helpers.arrayElement(["credit", "expense"]),
         )
           .setSharedAccountId(fakeSharedAccountId)
+          .setDate(
+            DateTime.fromJSDate(faker.date.recent())
+              .plus({ days: i })
+              .toJSDate(),
+          )
           .setUserId(fakeUserId)
           .build();
       }),
     ];
     const scheduledTransactions: ScheduledTransaction[] = [];
-    Array.from({ length: 2 }, () => {
+    Array.from({ length: 40 }, () => {
       const transaction = new ScheduledTransactionBuilder(
         faker.helpers.arrayElement(["credit", "expense"]),
       )

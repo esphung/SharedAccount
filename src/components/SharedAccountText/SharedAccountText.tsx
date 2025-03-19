@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
-
   // eslint-disable-next-line react-native/no-unused-styles
   expenseFormError: {
     color: colors.danger,
