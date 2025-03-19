@@ -19,7 +19,8 @@
   "dependencies": {
     "luxon": "^3.5.0",
     "react": "19.0.0",
-    "react-native": "0.78.0"
+    "react-native": "0.78.0",
+    "react-native-modal-datetime-picker": "^18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
