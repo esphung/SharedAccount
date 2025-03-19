@@ -8,9 +8,12 @@ type SharedAccountTextProps = {
 } & TextProps;
 
 export default function SharedAccountText(props: SharedAccountTextProps) {
-  const { children, ...rest } = props;
+  const { children, style, ...rest } = props;
   return (
-    <Text style={styles[props.type || "primary"]} {...rest}>
+    <Text
+      style={StyleSheet.flatten([styles[props.type || "primary"], style])}
+      {...rest}
+    >
       {children}
     </Text>
   );
@@ -27,20 +30,28 @@ const styles = StyleSheet.create({
   },
   listHeader: {
     fontSize: 18,
-    fontWeight: "900",
+    fontWeight: "700",
   },
   listItemTitle: {
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "600",
   },
   listItemSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "400",
+  },
+  transactionType: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
   buttonTitle: {
     fontSize: 16,
     fontWeight: "700",
     color: "white",
     textAlign: "center",
+  },
+  listSectionHeader: {
+    fontSize: 16,
+    fontWeight: "700",
   },
 });

@@ -8,7 +8,12 @@ module.exports = {
   },
   rules: {
     quotes: ["error", "double"],
-    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        prefer: "type-imports",
+      },
+    ],
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "no-restricted-imports": [
       "error",

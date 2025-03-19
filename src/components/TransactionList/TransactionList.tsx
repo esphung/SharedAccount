@@ -1,6 +1,4 @@
-import CreditBuilder from "@builders/CreditBuilder";
-import ExpenseBuilder from "@builders/ExpenseBuilder";
-import UserBuilder from "@builders/UserBuilder";
+import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import { DateTime } from "luxon";
 import React from "react";
@@ -9,55 +7,13 @@ import type { Credit } from "types/Credit";
 import type { Expense } from "types/Expense";
 import type { User } from "types/User";
 
-// Sample Data
-const users: User[] = [
-  new UserBuilder().build(),
-  new UserBuilder().setEmail("bob@gmail.com").build(),
-];
-
-const expenses: Expense[] = [
-  new ExpenseBuilder()
-    .setUserId(users[0].id)
-    .setDate(DateTime.fromFormat("2025-03-18", "yyyy-MM-dd").toJSDate())
-    .build(),
-  new ExpenseBuilder()
-    .setUserId(users[0].id)
-    .setDate(DateTime.fromFormat("2025-03-22", "yyyy-MM-dd").toJSDate())
-    .build(),
-
-  new ExpenseBuilder()
-    .setUserId(users[1].id)
-    .setDate(DateTime.fromFormat("2025-03-01", "yyyy-MM-dd").toJSDate())
-    .build(),
-  new ExpenseBuilder()
-    .setUserId(users[1].id)
-    .setDate(DateTime.fromFormat("2025-03-19", "yyyy-MM-dd").toJSDate())
-    .build(),
-];
-
-const credits: Credit[] = [
-  new CreditBuilder()
-    .setUserId(users[0].id)
-    .setDate(DateTime.fromFormat("2025-03-01", "yyyy-MM-dd").toJSDate())
-    .build(),
-  new CreditBuilder()
-    .setUserId(users[1].id)
-    .setDate(DateTime.fromFormat("2025-03-19", "yyyy-MM-dd").toJSDate())
-    .build(),
-  new CreditBuilder()
-    .setUserId(users[0].id)
-    .setDate(DateTime.fromFormat("2025-03-19", "yyyy-MM-dd").toJSDate())
-    .build(),
-  new CreditBuilder()
-    .setUserId(users[0].id)
-    .setDate(DateTime.fromFormat("2025-03-22", "yyyy-MM-dd").toJSDate())
-    .build(),
-];
-
 // Utility Functions
-const getUserById = (userId: string) =>
+const getUserById = (userId: string, users: User[] = []) =>
   users.find((user) => user.id === userId);
-const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
+const formatCurrency = (amount: number) => {
+  // convert cents to dollars
+  return `$${(amount / 100).toFixed(2)}`;
+};
 
 // Group Transactions by Date
 const groupTransactionsByDate = (
@@ -85,8 +41,17 @@ const groupTransactionsByDate = (
   return grouped;
 };
 
+// Props
+type TransactionListProps = {
+  expenses?: Expense[];
+  credits?: Credit[];
+  users: User[];
+};
+
 // Main Component
-const TransactionList = () => {
+const TransactionList = (props: TransactionListProps) => {
+  const { expenses = [], credits = [], users = [] } = props;
+
   const sections = groupTransactionsByDate(expenses, credits);
 
   return (
@@ -94,7 +59,7 @@ const TransactionList = () => {
       sections={sections}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => {
-        const user = getUserById(item.userId);
+        const user = getUserById(item.userId, users);
         return (
           <View style={styles.item}>
             {/* User Avatar */}
@@ -108,10 +73,10 @@ const TransactionList = () => {
             )}
             {/* Transaction Info */}
             <View style={styles.transactionDetails}>
-              <SharedAccountText style={styles.userName}>
+              <SharedAccountText type="listItemTitle">
                 {user?.name}
               </SharedAccountText>
-              <SharedAccountText style={styles.transactionText}>
+              <SharedAccountText type="listItemSubtitle">
                 {item.type === "credit"
                   ? `+ ${formatCurrency(item.amount)} (from ${item.source})`
                   : `- ${formatCurrency(item.amount)} (${item.category})`}
@@ -119,10 +84,8 @@ const TransactionList = () => {
             </View>
             {/* Text-based Indicator for Expense or Credit */}
             <SharedAccountText
-              style={[
-                styles.transactionType,
-                item.type === "credit" ? styles.credit : styles.expense,
-              ]}
+              type="transactionType"
+              style={[item.type === "credit" ? styles.credit : styles.expense]}
             >
               {item.type === "credit" ? "↑" : "↓"}
             </SharedAccountText>
@@ -130,9 +93,21 @@ const TransactionList = () => {
         );
       }}
       renderSectionHeader={({ section: { title } }) => (
-        <SharedAccountText style={styles.header}>{title}</SharedAccountText>
+        <SharedAccountText type="listSectionHeader" style={styles.header}>
+          {title}
+        </SharedAccountText>
       )}
       stickySectionHeadersEnabled={false}
+      ListHeaderComponent={
+        <SharedAccountText type="listHeader" style={styles.header}>
+          Recent Transactions
+        </SharedAccountText>
+      }
+      ListFooterComponent={
+        <View style={styles.footer}>
+          <SharedAccountButton type="secondary" title="Add an expense" />
+        </View>
+      }
     />
   );
 };
@@ -140,12 +115,10 @@ const TransactionList = () => {
 // Styles
 const styles = StyleSheet.create({
   header: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 8,
-    backgroundColor: "#f2f2f2",
     padding: 8,
-    borderRadius: 5,
+  },
+  footer: {
+    padding: 20,
   },
   item: {
     flexDirection: "row",
@@ -162,18 +135,6 @@ const styles = StyleSheet.create({
   },
   transactionDetails: {
     flex: 1,
-  },
-  userName: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  transactionText: {
-    fontSize: 16,
-  },
-  transactionType: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginLeft: 10,
   },
   credit: {
     color: "green",
