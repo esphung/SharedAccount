@@ -34,12 +34,13 @@ const credits: Credit[] = [
   ),
 ];
 
+const transactions: (Credit | Expense)[] = [...expenses, ...credits];
+
 const meta = {
   title: "TransactionList",
   component: TransactionList,
   args: {
-    expenses,
-    credits,
+    transactions,
     users,
   },
   decorators: [
