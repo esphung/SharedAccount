@@ -1,5 +1,5 @@
+import AutoSuggestInput from "@components/AutoSuggestInput/AutoSuggestInput";
 import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
-import DropdownPicker from "@components/DropdownPicker/DropdownPicker";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
@@ -10,6 +10,7 @@ import { StyleSheet, View } from "react-native";
 const ExpenseForm = ({
   onSubmit,
   items = [
+    // TODO: Add from store
     { label: "Food", value: "Food" },
     { label: "Transportation", value: "Transportation" },
     { label: "Entertainment", value: "Entertainment" },
@@ -80,12 +81,23 @@ const ExpenseForm = ({
         name="category"
         rules={{ required: "Category is required" }}
         render={({ field: { onChange, value } }) => (
-          <DropdownPicker
-            items={items}
-            selectedValue={value}
-            onChange={onChange}
-            containerStyle={styles.categoryPicker}
-          />
+          <>
+            {/* <DropdownPicker
+              items={items}
+              selectedValue={value}
+              onChange={onChange}
+              containerStyle={styles.categoryPicker}
+            /> */}
+            {/* {(items.find((item) => item.value === value) === undefined || */}
+            {/* value === "Other") && ( */}
+            <AutoSuggestInput
+              value={value}
+              onChange={onChange}
+              items={items}
+              containerStyle={styles.input}
+            />
+            {/* )} */}
+          </>
         )}
       />
       {errors.category && (
