@@ -1,4 +1,4 @@
-import colors from "@themes/colors";
+import colors from "@config/themes/colors";
 import React from "react";
 import type { TextProps } from "react-native";
 // eslint-disable-next-line no-restricted-imports

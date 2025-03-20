@@ -1,4 +1,4 @@
-import BaseBuilder from "@builders/BaseBuilder";
+import BaseBuilder from "@data/models/builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
 import type { Transaction } from "types/Transaction";
 

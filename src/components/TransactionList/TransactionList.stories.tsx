@@ -1,4 +1,4 @@
-import LocalDatabaseBuilder from "@builders/LocalDatabaseBuilder";
+import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
 import TransactionList from "@components/TransactionList/TransactionList";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";

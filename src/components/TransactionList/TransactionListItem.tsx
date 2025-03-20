@@ -1,5 +1,5 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import colors from "@themes/colors";
+import colors from "@config/themes/colors";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import type { Transaction } from "types/Transaction";

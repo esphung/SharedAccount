@@ -1,4 +1,4 @@
-import colors from "@themes/colors";
+import colors from "@config/themes/colors";
 import React from "react";
 import type { TextInputProps } from "react-native";
 import { StyleSheet, TextInput } from "react-native";

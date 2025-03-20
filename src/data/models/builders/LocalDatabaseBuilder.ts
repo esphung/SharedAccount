@@ -1,12 +1,12 @@
-import BaseBuilder from "@builders/BaseBuilder";
+import BaseBuilder from "@data/models/builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
 import { DateTime } from "luxon";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
-import ScheduledTransactionBuilder from "./ScheduledTransactionBuilder";
-import TransactionBuilder from "./TransactionBuilder";
-import UserBuilder from "./UserBuilder";
+import ScheduledTransactionBuilder from "@data/models/builders/ScheduledTransactionBuilder";
+import TransactionBuilder from "@data/models/builders/TransactionBuilder";
+import UserBuilder from "@data/models/builders/UserBuilder";
 
 type LocalDatabase = {
   users: User[];

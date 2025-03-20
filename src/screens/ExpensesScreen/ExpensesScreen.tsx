@@ -1,11 +1,11 @@
 import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import useTransactions from "@hooks/useTransactions";
 import type {
   AppTabsParamList,
   AppTabsScreens,
 } from "@navigators/AppTabs/AppTabs";
+import useTransactions from "@presentation/hooks/useTransactions";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React, { useState } from "react";
 import { Alert } from "react-native";

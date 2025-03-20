@@ -1,6 +1,6 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import MoneyFunctions from "@helpers/MoneyFunctions";
-import colors from "@themes/colors";
+import MoneyFunctions from "../../utils/MoneyFunctions";
+import colors from "@config/themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
 import { StyleSheet, View } from "react-native";

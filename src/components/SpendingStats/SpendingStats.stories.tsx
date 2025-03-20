@@ -1,4 +1,4 @@
-import LocalDatabaseBuilder from "@builders/LocalDatabaseBuilder";
+import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
 import SpendingStats from "@components/SpendingStats/SpendingStats";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";

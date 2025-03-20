@@ -1,4 +1,4 @@
-import BaseBuilder from "@builders/BaseBuilder";
+import BaseBuilder from "@data/models/builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 
@@ -15,6 +15,7 @@ export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTr
       repeatInterval: faker.helpers.arrayElement(["monthly"]),
       name: faker.company.name(),
       type,
+      monthsOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     };
     super(initial);
   }
@@ -57,5 +58,13 @@ export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTr
 
   setStartDate(startDate: Date): this {
     return this.set("startDate", startDate);
+  }
+
+  setDescription(description: string): this {
+    return this.set("description", description);
+  }
+
+  setMonthsOfYear(monthsOfYear: number[]): this {
+    return this.set("monthsOfYear", monthsOfYear);
   }
 }

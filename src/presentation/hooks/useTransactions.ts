@@ -1,4 +1,4 @@
-import { useRepository } from "@contexts/RepositoryProvider";
+import useRepository from "@domain/contexts/useRepository";
 import { useCallback, useState } from "react";
 import type { Transaction } from "types/Transaction";
 import type { UseDataSource } from "types/UseDataSource";

@@ -1,4 +1,5 @@
-import RealmTransaction from "./models/RealmTransaction";
+import { realmSchema, realmSchemaVerison } from "@config/realmSchema";
+import type RealmTransaction from "@data/models/realm/RealmTransaction";
 import Realm, { UpdateMode } from "realm";
 import type { Transaction } from "types/Transaction";
 import type { TransactionRepository } from "types/TransactionRepository";
@@ -12,7 +13,10 @@ export default class RealmTransactionRepository
   > | null = null;
 
   constructor() {
-    this.realm = new Realm({ schema: [RealmTransaction], schemaVersion: 1 });
+    this.realm = new Realm({
+      schema: realmSchema,
+      schemaVersion: realmSchemaVerison,
+    });
   }
 
   getLiveTransactions(callback: (expenses: Transaction[]) => void): void {

@@ -1,4 +1,4 @@
-import RealmTransactionRepository from "@services/realm/RealmTransactionRepository";
+import RealmTransactionRepository from "@data/repositories/realm/RealmTransactionRepository";
 import type { TransactionRepository } from "types/TransactionRepository";
 
 export default class RepositoryFactory {

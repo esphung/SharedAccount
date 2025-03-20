@@ -1,5 +1,5 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import colors from "@themes/colors";
+import colors from "@config/themes/colors";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
