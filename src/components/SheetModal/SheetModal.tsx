@@ -4,7 +4,7 @@ import { Button, Modal, StyleSheet, View } from "react-native";
 
 const SheetModal = (
   props: {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     modalVisible: boolean;
     setModalVisible: (modalVisible: boolean) => void;
     onDismiss?: () => void;
@@ -12,7 +12,7 @@ const SheetModal = (
 ) => {
   const {
     children,
-    presentationStyle,
+    presentationStyle = "formSheet",
     modalVisible,
     setModalVisible,
     onDismiss,

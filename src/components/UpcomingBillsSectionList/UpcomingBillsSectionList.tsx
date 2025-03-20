@@ -56,15 +56,17 @@ const groupBillsByMonth = (expenses: ScheduledTransaction[]): SectionData[] => {
     (a, b) => a.startDate.getTime() - b.startDate.getTime(),
   );
 
-  sortedExpenses.forEach((expense) => {
-    const date = expense.startDate;
+  sortedExpenses.forEach((item) => {
+    const date = item.startDate;
+
+    // const date = item.startDate;
     const monthYear = DateTime.fromJSDate(date).toFormat("LLLL yyyy");
 
     if (!grouped[monthYear]) {
       grouped[monthYear] = [];
     }
     grouped[monthYear].push({
-      ...expense,
+      ...item,
     });
   });
 
@@ -80,8 +82,12 @@ const groupBillsByMonth = (expenses: ScheduledTransaction[]): SectionData[] => {
 
 const UpcomingBillsSectionList = ({
   scheduledTransactions,
+  onPress,
+  onPressAddNew,
 }: {
   scheduledTransactions: ScheduledTransaction[];
+  onPress: (id: string) => void;
+  onPressAddNew: () => void;
 }) => {
   const upcomingBills = React.useMemo(
     () => generateUpcomingBills(scheduledTransactions),
@@ -91,6 +97,11 @@ const UpcomingBillsSectionList = ({
     () => groupBillsByMonth(upcomingBills),
     [upcomingBills],
   );
+
+  const renderListFooter = React.useCallback(() => {
+    return <UpcomingBillsSectionListFooter onPress={onPressAddNew} />;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SectionList
@@ -118,10 +129,11 @@ const UpcomingBillsSectionList = ({
             item={item}
             isPast={isPast}
             isSameMonth={isSameMonth}
+            onPress={onPress}
           />
         );
       }}
-      ListFooterComponent={UpcomingBillsSectionListFooter}
+      ListFooterComponent={renderListFooter}
     />
   );
 };

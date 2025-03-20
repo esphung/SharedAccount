@@ -2,7 +2,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import MoneyFunctions from "../../utils/MoneyFunctions";
 
@@ -10,10 +10,12 @@ export default function UpcomingBillsSectionListItem({
   item,
   isPast,
   isSameMonth,
+  onPress,
 }: {
   item: ScheduledTransaction;
   isPast: boolean;
   isSameMonth: boolean;
+  onPress: (id: string) => void;
 }) {
   const memoizedUpdateColorStyle = React.useMemo(() => {
     return StyleSheet.flatten([
@@ -22,7 +24,7 @@ export default function UpcomingBillsSectionListItem({
     ]);
   }, [isPast, isSameMonth]);
   return (
-    <View style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={() => onPress(item.id)}>
       <View>
         <SharedAccountText
           style={StyleSheet.flatten([
@@ -56,7 +58,7 @@ export default function UpcomingBillsSectionListItem({
             : DateTime.fromJSDate(item.startDate).toFormat("MMM d")}
         </SharedAccountText>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

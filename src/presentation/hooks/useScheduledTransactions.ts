@@ -1,18 +1,18 @@
 import useRepository from "@domain/contexts/useRepository";
 import { useCallback, useState } from "react";
-import type { Transaction } from "types/Transaction";
+import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import type { UseDataSource } from "types/UseDataSource";
 
-const useTransactions: UseDataSource<Transaction> = () => {
+const useScheduledTransactions: UseDataSource<ScheduledTransaction> = () => {
   // Get the item repository
-  const { transactionRepo } = useRepository();
+  const { scheduledTransactionRepo } = useRepository();
 
   // Local state for items
-  const [state, setState] = useState<Transaction[]>([]);
+  const [state, setState] = useState<ScheduledTransaction[]>([]);
 
   // Fetch transactions from the repository
   const fetchItems = useCallback(async () => {
-    const InputModeOptions = await transactionRepo.getAll();
+    const InputModeOptions = await scheduledTransactionRepo.getAll();
     setState(InputModeOptions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -20,40 +20,28 @@ const useTransactions: UseDataSource<Transaction> = () => {
   // Start listening for live updates
   const startListening = useCallback(() => {
     // Subscribe to live updates
-    transactionRepo.getLiveData(setState);
+    scheduledTransactionRepo.getLiveData(setState);
     return () => {
       // Unsubscribe when component unmounts
-      transactionRepo.stopListening();
+      scheduledTransactionRepo.stopListening();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Delete a transaction
   const deleteItem = useCallback((id: string) => {
-    return transactionRepo.delete(id);
+    return scheduledTransactionRepo.delete(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Add a transaction
   const addItem = useCallback(
-    (params: Partial<Transaction>) => {
-      const {
-        amount = 0,
-        category = "",
-        date = new Date(),
-        type = "expense",
-      } = params;
-      return transactionRepo.add({
-        id: `txn_${new Date().getTime()}`,
-        userId: `usr_${new Date().getTime()}`,
-        amount,
-        description: "Test",
-        name: "Test",
-        category,
-        date,
-        sharedAccountId: `acct_${new Date().getTime()}`,
-        type,
-      });
+    (params: Partial<ScheduledTransaction>) => {
+      const id: `schd_${string}` = `schd_${Math.random().toString(36).substr(2, 9)}`;
+      return scheduledTransactionRepo.add({
+        ...params,
+        id: params.id || id,
+      } as ScheduledTransaction);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -69,4 +57,4 @@ const useTransactions: UseDataSource<Transaction> = () => {
   };
 };
 
-export default useTransactions;
+export default useScheduledTransactions;

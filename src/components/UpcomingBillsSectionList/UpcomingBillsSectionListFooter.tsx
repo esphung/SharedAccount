@@ -2,10 +2,14 @@ import SharedAccountButton from "@components/SharedAccountButton/SharedAccountBu
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-export default function UpcomingBillsSectionListFooter() {
+export default function UpcomingBillsSectionListFooter({
+  onPress,
+}: {
+  onPress: () => void;
+}) {
   return (
     <View style={styles.footer}>
-      <SharedAccountButton title="Add a bill" onPress={() => {}} />
+      <SharedAccountButton title="Add a bill" onPress={onPress} />
     </View>
   );
 }

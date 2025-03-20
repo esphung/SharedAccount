@@ -1,12 +1,16 @@
 import { createContext, useContext } from "react";
-import type { TransactionRepository } from "types/TransactionRepository";
+import type { DataModelRepository } from "types/DataModelRepository";
+import type { ScheduledTransaction } from "types/ScheduledTransaction";
+import type { Transaction } from "types/Transaction";
 
 export const RepositoryContext = createContext<{
-  transactionRepo: TransactionRepository;
+  transactionRepo: DataModelRepository<Transaction>;
+  scheduledTransactionRepo: DataModelRepository<ScheduledTransaction>;
 } | null>(null);
 
 const useRepository = (): {
-  transactionRepo: TransactionRepository;
+  transactionRepo: DataModelRepository<Transaction>;
+  scheduledTransactionRepo: DataModelRepository<ScheduledTransaction>;
 } => {
   const context = useContext(RepositoryContext);
   if (!context) {

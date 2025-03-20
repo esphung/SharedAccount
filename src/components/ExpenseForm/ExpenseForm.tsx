@@ -3,7 +3,6 @@ import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import { DateTime } from "luxon";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { TextInput } from "react-native";
@@ -30,7 +29,6 @@ const ExpenseForm = ({
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
   } = useForm<{ amount: number; category: string; date: Date }>({
     defaultValues: {
       amount: 0,
@@ -44,44 +42,44 @@ const ExpenseForm = ({
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  // focus on the next input when the user presses "next" on the keyboard
-  const focusNextInput = (currentKey?: string) => {
-    const values = getValues();
-    const refs = {
-      amount: currencyInputRef,
-      category: autoSuggestInputRef,
-      date: datePickerRef,
-    };
-    const validators: Record<
-      keyof typeof values,
-      (value: string | number | Date) => boolean
-    > = {
-      amount: (value) => value === 0,
-      category: (value) => !value || String(value).trim().length === 0,
-      date: (value) => !value || DateTime.isDateTime(value),
-    };
-    (Object.keys(values) as (keyof typeof values)[]).forEach((key) => {
-      if (key === currentKey) {
-        return;
-      } else if (validators.amount(values[key])) {
-        const ref = refs[key as keyof typeof refs];
-        setTimeout(() => {
-          ref.current?.focus();
-        }, 0);
-        return;
-      }
-      if (!values[key]) {
-        const ref = refs[key as keyof typeof refs];
-        ref.current?.focus();
-        return;
-      }
-    });
-  };
+  // // focus on the next input when the user presses "next" on the keyboard
+  // const focusNextInput = (currentKey?: string) => {
+  //   const values = getValues();
+  //   const refs = {
+  //     amount: currencyInputRef,
+  //     category: autoSuggestInputRef,
+  //     date: datePickerRef,
+  //   };
+  //   const validators: Record<
+  //     keyof typeof values,
+  //     (value: string | number | Date) => boolean
+  //   > = {
+  //     amount: (value) => value === 0,
+  //     category: (value) => !value || String(value).trim().length === 0,
+  //     date: (value) => !value || DateTime.isDateTime(value),
+  //   };
+  //   (Object.keys(values) as (keyof typeof values)[]).forEach((key) => {
+  //     if (key === currentKey) {
+  //       return;
+  //     } else if (validators.amount(values[key])) {
+  //       const ref = refs[key as keyof typeof refs];
+  //       setTimeout(() => {
+  //         ref.current?.focus();
+  //       }, 0);
+  //       return;
+  //     }
+  //     if (!values[key]) {
+  //       const ref = refs[key as keyof typeof refs];
+  //       ref.current?.focus();
+  //       return;
+  //     }
+  //   });
+  // };
 
-  React.useEffect(() => {
-    focusNextInput();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // React.useEffect(() => {
+  //   focusNextInput();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const submitExpense = (data: {
     amount: number;
@@ -113,9 +111,9 @@ const ExpenseForm = ({
               onChange={onChange}
               containerStyle={styles.input}
               returnKeyType="done"
-              onSubmitEditing={() => {
-                focusNextInput("amount");
-              }}
+              // onSubmitEditing={() => {
+              //   focusNextInput("amount");
+              // }}
             />
           );
         }}
@@ -149,13 +147,13 @@ const ExpenseForm = ({
               textInputProps={{
                 autoCapitalize: "none",
                 autoCorrect: false,
-                onSubmitEditing: () => {
-                  focusNextInput("category");
-                },
+                // onSubmitEditing: () => {
+                //   focusNextInput("category");
+                // },
               }}
               onChange={(item) => {
                 onChange(item);
-                focusNextInput("category");
+                // focusNextInput("category");
               }}
             />
           );

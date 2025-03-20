@@ -6,7 +6,7 @@ import type { ScheduledTransaction } from "types/ScheduledTransaction";
 export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTransaction> {
   constructor(type: "credit" | "expense") {
     const initial: ScheduledTransaction = {
-      id: `scheduled_${faker.database.mongodbObjectId()}`,
+      id: `schd_${faker.database.mongodbObjectId()}`,
       sharedAccountId: `acct_${faker.database.mongodbObjectId()}`,
       amount: faker.number.int({ min: 1000, max: 100000 }),
       category: faker.lorem.word(),
@@ -23,7 +23,7 @@ export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTr
     super(initial);
   }
 
-  setId(id: `scheduled_${string}`): this {
+  setId(id: `schd_${string}`): this {
     return this.set("id", id);
   }
 

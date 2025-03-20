@@ -6,9 +6,16 @@ const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const transactionRepo = RepositoryFactory.createTransactionRepository();
+  const scheduledTransactionRepo =
+    RepositoryFactory.createScheduledTransactionRepository();
 
   return (
-    <RepositoryContext.Provider value={{ transactionRepo }}>
+    <RepositoryContext.Provider
+      value={{
+        transactionRepo,
+        scheduledTransactionRepo,
+      }}
+    >
       {children}
     </RepositoryContext.Provider>
   );
