@@ -1,7 +1,7 @@
+import ExpensesScreen from "@presentation/screens/ExpensesScreen/ExpensesScreen";
+import HomeScreen from "@presentation/screens/HomeScreen/HomeScreen";
+import SettingsScreen from "@presentation/screens/SettingsScreen/SettingsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
-import HomeScreen from "@screens/HomeScreen/HomeScreen";
-import SettingsScreen from "@screens/SettingsScreen/SettingsScreen";
 
 export enum AppTabsScreens {
   Home = "HomeScreen",

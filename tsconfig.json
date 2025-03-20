@@ -8,7 +8,7 @@
       "@builders/*": ["./src/builders/*"],
       "@themes/*": ["./src/themes/*"],
       "@helpers/*": ["./src/helpers/*"],
-      "@screens/*": ["./src/screens/*"],
+      "@screens/*": ["src/presentation/screens/*"],
       "@navigators/*": ["./src/navigators/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@data/*": ["./src/data/*"],
