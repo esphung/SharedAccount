@@ -1,35 +1,59 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import MoneyFunctions from "../../utils/MoneyFunctions";
 import colors from "@config/themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
+import MoneyFunctions from "../../utils/MoneyFunctions";
 
 export default function UpcomingBillsSectionListItem({
   item,
   isPast,
+  isSameMonth,
 }: {
   item: ScheduledTransaction;
   isPast: boolean;
+  isSameMonth: boolean;
 }) {
+  const memoizedUpdateColorStyle = React.useMemo(() => {
+    return StyleSheet.flatten([
+      isPast && styles.pastAmount,
+      !isPast && isSameMonth && styles.incomingAmount,
+    ]);
+  }, [isPast, isSameMonth]);
   return (
     <View style={styles.item}>
       <View>
-        <SharedAccountText style={styles.billName}>
+        <SharedAccountText
+          style={StyleSheet.flatten([
+            styles.billName,
+            memoizedUpdateColorStyle,
+          ])}
+        >
           {item.name}
         </SharedAccountText>
-        <SharedAccountText style={styles.category}>
+        <SharedAccountText
+          style={StyleSheet.flatten([
+            styles.category,
+            memoizedUpdateColorStyle,
+          ])}
+        >
           {item.category}
         </SharedAccountText>
       </View>
       <View>
-        <SharedAccountText style={[styles.amount, isPast && styles.pastAmount]}>
+        <SharedAccountText
+          style={StyleSheet.flatten([styles.amount, memoizedUpdateColorStyle])}
+        >
           {item.type === "credit" ? "+" : "-"}
           {MoneyFunctions.formatMoney(item.amount)}
         </SharedAccountText>
-        <SharedAccountText style={styles.dueDate}>
-          {DateTime.fromJSDate(item.startDate).toFormat("MMM d")}
+        <SharedAccountText
+          style={StyleSheet.flatten([styles.dueDate, memoizedUpdateColorStyle])}
+        >
+          {__DEV__
+            ? DateTime.fromJSDate(item.startDate).toFormat("MMM d h:mm a")
+            : DateTime.fromJSDate(item.startDate).toFormat("MMM d")}
         </SharedAccountText>
       </View>
     </View>
@@ -55,6 +79,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "right",
   },
+  incomingAmount: {
+    color: colors.warning,
+  },
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -62,6 +89,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   pastAmount: {
-    color: colors.green, // Green color if the date has passed
+    color: colors.success,
+    opacity: 0.5,
+    textDecorationLine: "line-through",
   },
 });

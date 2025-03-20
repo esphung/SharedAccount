@@ -103,8 +103,23 @@ const UpcomingBillsSectionList = ({
         <UpcomingBillsSectionListHeader title={title} />
       )}
       renderItem={({ item }) => {
-        const isPast = item.startDate < new Date();
-        return <UpcomingBillsSectionListItem item={item} isPast={isPast} />;
+        const isPast =
+          item.startDate <=
+          DateTime.now()
+            .plus({ minute: -1 })
+            // .endOf("day") // count all items as NOT past until the end of the day
+            .toJSDate();
+
+        const isSameMonth =
+          DateTime.fromJSDate(item.startDate).toFormat("LLLL yyyy") ===
+          DateTime.now().toFormat("LLLL yyyy");
+        return (
+          <UpcomingBillsSectionListItem
+            item={item}
+            isPast={isPast}
+            isSameMonth={isSameMonth}
+          />
+        );
       }}
       ListFooterComponent={UpcomingBillsSectionListFooter}
     />

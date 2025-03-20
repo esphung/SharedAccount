@@ -1,12 +1,12 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
+import ScheduledTransactionBuilder from "@data/models/builders/ScheduledTransactionBuilder";
+import TransactionBuilder from "@data/models/builders/TransactionBuilder";
+import UserBuilder from "@data/models/builders/UserBuilder";
 import { faker } from "@faker-js/faker";
 import { DateTime } from "luxon";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
-import ScheduledTransactionBuilder from "@data/models/builders/ScheduledTransactionBuilder";
-import TransactionBuilder from "@data/models/builders/TransactionBuilder";
-import UserBuilder from "@data/models/builders/UserBuilder";
 
 type LocalDatabase = {
   users: User[];
@@ -43,8 +43,10 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
       }),
     ];
     const scheduledTransactions: ScheduledTransaction[] = [];
-    Array.from({ length: 40 }, () => {
+    Array.from({ length: 4 }, () => {
       const transaction = new ScheduledTransactionBuilder(
+        // faker.helpers.arrayElement(["credit", "expense"]),
+        // every other transaction is a credit
         faker.helpers.arrayElement(["credit", "expense"]),
       )
         .setSharedAccountId(fakeSharedAccountId)
@@ -53,6 +55,14 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
         .build();
       scheduledTransactions.push(transaction);
     });
+    scheduledTransactions.push(
+      new ScheduledTransactionBuilder("expense")
+        .setSharedAccountId(fakeSharedAccountId)
+        .setName("NEW TEST DEBUG")
+        .setStartDate(DateTime.now().toJSDate())
+        .setAmount(100)
+        .build(),
+    );
     const initial: LocalDatabase = {
       users,
       transactions,

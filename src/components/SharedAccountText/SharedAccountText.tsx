@@ -6,6 +6,7 @@ import { StyleSheet, Text } from "react-native";
 
 type SharedAccountTextProps = {
   type?: keyof typeof styles;
+  style?: TextProps["style"];
 } & TextProps;
 
 export default function SharedAccountText(props: SharedAccountTextProps) {

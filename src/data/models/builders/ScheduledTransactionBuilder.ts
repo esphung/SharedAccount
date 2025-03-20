@@ -1,5 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
 import { faker } from "@faker-js/faker";
+import { DateTime } from "luxon";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
 
 export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTransaction> {
@@ -10,7 +11,9 @@ export default class ScheduledTransactionBuilder extends BaseBuilder<ScheduledTr
       amount: faker.number.int({ min: 1000, max: 100000 }),
       category: faker.lorem.word(),
       dayOfMonth: faker.number.int({ min: 1, max: 28 }),
-      startDate: faker.date.recent(),
+      startDate: DateTime.fromJSDate(faker.date.recent())
+        .plus({ days: 1 })
+        .toJSDate(),
       endDate: faker.date.future(),
       repeatInterval: faker.helpers.arrayElement(["monthly"]),
       name: faker.company.name(),
