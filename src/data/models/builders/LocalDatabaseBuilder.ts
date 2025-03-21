@@ -27,7 +27,7 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
     ];
 
     const transactions: Transaction[] = [
-      ...Array.from({ length: 40 }, (_, i) => {
+      ...Array.from({ length: 80 }, (_, i) => {
         const fakeUserId: `usr_${string}` = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
         return new TransactionBuilder(
           faker.helpers.arrayElement(["credit", "expense"]),

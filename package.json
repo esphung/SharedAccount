@@ -27,6 +27,7 @@
     "react-native": "0.78.0",
     "react-native-currency-input": "patch:react-native-currency-input@npm%3A1.1.1#~/.yarn/patches/react-native-currency-input-npm-1.1.1-f03b6f15ba.patch",
     "react-native-file-access": "^3.1.1",
+    "react-native-keyboard-controller": "^1.16.8",
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-screens": "^4.9.2",
     "react-native-svg-charts": "^5.4.0",

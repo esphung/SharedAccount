@@ -2,7 +2,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import colors from "@config/themes/colors";
 import React, { useState } from "react";
-import type { TextInput } from "react-native";
+import type { TextInput, TextInputProps } from "react-native";
 import {
   FlatList,
   Keyboard,
@@ -16,7 +16,7 @@ type AutoSuggestInputProps = {
   onSelect: (val: string) => void;
   placeholder?: string;
   value?: string;
-};
+} & TextInputProps;
 
 const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
   (
@@ -25,6 +25,7 @@ const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
       suggestions = [],
       onSelect,
       placeholder = "Type something...",
+      ...rest
     },
     ref,
   ) => {
@@ -51,10 +52,11 @@ const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
 
     const handleSelect = React.useCallback(
       (newVal: string) => {
+        const cleanedValue = newVal?.trimEnd();
         if (value !== newVal) {
-          onSelect?.(newVal);
+          onSelect?.(cleanedValue);
         }
-        setQuery(newVal);
+        setQuery(cleanedValue);
         setFiltered([]);
         setShowSuggestions(false);
         Keyboard.dismiss();
@@ -73,10 +75,12 @@ const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
           placeholder={placeholder}
           onSubmitEditing={() => handleSelect(query)}
           onEndEditing={() => handleSelect(query)}
+          {...rest}
         />
 
         {showSuggestions && filtered.length > 0 && (
           <FlatList
+            scrollEnabled={false}
             style={styles.suggestionList}
             data={filtered}
             keyExtractor={(item) => item}
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,
     marginTop: 4,
-    maxHeight: 150,
+    // maxHeight: 150,
   },
 });
 
