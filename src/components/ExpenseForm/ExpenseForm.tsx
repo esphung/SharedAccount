@@ -42,45 +42,6 @@ const ExpenseForm = ({
 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  // // focus on the next input when the user presses "next" on the keyboard
-  // const focusNextInput = (currentKey?: string) => {
-  //   const values = getValues();
-  //   const refs = {
-  //     amount: currencyInputRef,
-  //     category: autoSuggestInputRef,
-  //     date: datePickerRef,
-  //   };
-  //   const validators: Record<
-  //     keyof typeof values,
-  //     (value: string | number | Date) => boolean
-  //   > = {
-  //     amount: (value) => value === 0,
-  //     category: (value) => !value || String(value).trim().length === 0,
-  //     date: (value) => !value || DateTime.isDateTime(value),
-  //   };
-  //   (Object.keys(values) as (keyof typeof values)[]).forEach((key) => {
-  //     if (key === currentKey) {
-  //       return;
-  //     } else if (validators.amount(values[key])) {
-  //       const ref = refs[key as keyof typeof refs];
-  //       setTimeout(() => {
-  //         ref.current?.focus();
-  //       }, 0);
-  //       return;
-  //     }
-  //     if (!values[key]) {
-  //       const ref = refs[key as keyof typeof refs];
-  //       ref.current?.focus();
-  //       return;
-  //     }
-  //   });
-  // };
-
-  // React.useEffect(() => {
-  //   focusNextInput();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   const submitExpense = (data: {
     amount: number;
     category: string;
@@ -108,12 +69,10 @@ const ExpenseForm = ({
             <SharedAccountCurrencyInput
               ref={currencyInputRef}
               value={value}
-              onChange={onChange}
-              containerStyle={styles.input}
               returnKeyType="done"
-              // onSubmitEditing={() => {
-              //   focusNextInput("amount");
-              // }}
+              onChangeValue={(cents) => {
+                onChange(cents);
+              }}
             />
           );
         }}
@@ -131,30 +90,14 @@ const ExpenseForm = ({
         name="category"
         rules={{
           required: "Category is required",
-          pattern: {
-            // check if the value 2 or more words; can have numbers or letters
-            value: /^([a-zA-Z0-9]+\s)*[a-zA-Z0-9]+$/,
-            message: "Invalid category",
-          },
         }}
         render={({ field: { onChange, value } }) => {
           return (
             <AutoSuggestInput
               ref={autoSuggestInputRef}
               value={value}
-              items={items}
-              containerStyle={styles.input}
-              textInputProps={{
-                autoCapitalize: "none",
-                autoCorrect: false,
-                // onSubmitEditing: () => {
-                //   focusNextInput("category");
-                // },
-              }}
-              onChange={(item) => {
-                onChange(item);
-                // focusNextInput("category");
-              }}
+              suggestions={items.map((item) => item.value)}
+              onSelect={onChange}
             />
           );
         }}
@@ -194,20 +137,13 @@ const ExpenseForm = ({
   );
 };
 
-const borderColor = "rgb(206, 212, 218)";
-
 const styles = StyleSheet.create({
   container: {
     gap: 20,
+    paddingVertical: 16,
   },
   datePickerContainer: {
-    marginBottom: 10,
-  },
-  input: {
-    borderColor: borderColor,
-    borderRadius: 5,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: 10,
+    // marginBottom: 10,
   },
 });
 
