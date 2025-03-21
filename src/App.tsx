@@ -1,22 +1,16 @@
+import useDevMenu from "@hooks/useDevMenu";
 import RootStack from "@navigators/RootStack/RootStack";
 import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
-import { DevSettings } from "react-native";
-import { Dirs } from "react-native-file-access";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 
 export default function App() {
-  // Debugging
-  React.useEffect(() => {
-    if (__DEV__) {
-      DevSettings.addMenuItem("Show DB", () => {
-        console.log("DB Path:", Dirs.DocumentDir);
-      });
-    }
-  }, []);
-
+  useDevMenu();
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <KeyboardProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </KeyboardProvider>
   );
 }
