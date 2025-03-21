@@ -1,0 +1,86 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Get provisioning profiles"
+  lane :get_profiles do |options|
+    is_ci = options[:is_ci] || true
+    environment = options[:environment] || "development"
+    get_provisioning_profile(
+      app_identifier: "com.ericphung.sharedaccount",
+      username: ENV["APPLE_DEVELOPER_USERNAME"],
+      team_name: "Eric Phung",
+      output_path: "./.developer",
+      team_id: "5L5HNZENM9",
+      filename: "com.ericphung.sharedaccount.mobileprovision",
+      skip_fetch_profiles: true,
+      skip_certificate_verification: true,
+      # readonly: is_ci,
+      development: environment != "production",
+    )
+    match(type: environment, readonly: is_ci)
+  end
+  desc "Push a new beta build to TestFlight"
+  lane :build do |options|
+    is_ci = options[:is_ci] || true
+    environment = options[:environment] || "development"
+    build_app(
+      workspace: "./ios/SharedAccount.xcworkspace",
+      scheme: "SharedAccount",
+      configuration: "Release",
+      export_method: "app-store",
+      export_options: {
+        compileBitcode: false,
+        provisioningProfiles: {
+          "com.ericphung.sharedaccount": "match AppStore com.ericphung.sharedaccount",
+        }
+      },
+      clean: true,
+      output_directory: "./build",
+      output_name: "SharedAccount.ipa",
+      skip_profile_detection: true
+    )
+  end
+
+  desc "Upload to TestFlight"
+  lane :upload do |options|
+    is_ci = options[:is_ci] || true
+    environment = options[:environment] || "development"
+    upload_to_testflight(
+      api_key_path: "./.developer/appstore_apikey.json",
+      app_identifier: "com.ericphung.sharedaccount",
+      ipa: "./build/SharedAccount.ipa",
+      uses_non_exempt_encryption: false,
+      notify_external_testers: true,
+      team_id: "5L5HNZENM9",
+      team_name: "Eric Phung",
+      itc_provider: "117933692",
+      submit_beta_review: false
+    )
+  end
+
+  desc "Build and upload a new beta build to TestFlight"
+  lane :beta do |options|
+    is_ci = options[:is_ci] || true
+    environment = options[:environment] || "development"
+    if is_ci != true
+      get_profiles(is_ci: is_ci, environment: environment)
+    end
+    build(is_ci: is_ci, environment: environment)
+    upload(is_ci: is_ci, environment: environment)
+  end
+end
