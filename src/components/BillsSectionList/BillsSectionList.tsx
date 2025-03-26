@@ -1,10 +1,9 @@
-import UpcomingBillsSectionListHeader from "@components/UpcomingBillsSectionList/UpcomingBillsSectionListHeader";
-import UpcomingBillsSectionListItem from "@components/UpcomingBillsSectionList/UpcomingBillsSectionListItem";
+import BillsSectionListHeader from "@components/BillsSectionList/BillsSectionListHeader";
+import BillsSectionListItem from "@components/BillsSectionList/BillsSectionListItem";
 import { DateTime } from "luxon";
 import React from "react";
 import { SectionList } from "react-native";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
-import UpcomingBillsSectionListFooter from "./UpcomingBillsSectionListFooter";
 
 type SectionData = {
   title: string;
@@ -80,10 +79,9 @@ const groupBillsByMonth = (expenses: ScheduledTransaction[]): SectionData[] => {
     }));
 };
 
-const UpcomingBillsSectionList = ({
+const BillsSectionList = ({
   scheduledTransactions,
   onPress,
-  onPressAddNew,
 }: {
   scheduledTransactions: ScheduledTransaction[];
   onPress: (id: string) => void;
@@ -98,11 +96,6 @@ const UpcomingBillsSectionList = ({
     [upcomingBills],
   );
 
-  const renderListFooter = React.useCallback(() => {
-    return <UpcomingBillsSectionListFooter onPress={onPressAddNew} />;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <SectionList
       stickySectionHeadersEnabled={false}
@@ -111,7 +104,7 @@ const UpcomingBillsSectionList = ({
         item.id + DateTime.fromJSDate(item.startDate).toMillis().toString()
       }
       renderSectionHeader={({ section: { title } }) => (
-        <UpcomingBillsSectionListHeader title={title} />
+        <BillsSectionListHeader title={title} />
       )}
       renderItem={({ item }) => {
         const isPast =
@@ -125,7 +118,7 @@ const UpcomingBillsSectionList = ({
           DateTime.fromJSDate(item.startDate).toFormat("LLLL yyyy") ===
           DateTime.now().toFormat("LLLL yyyy");
         return (
-          <UpcomingBillsSectionListItem
+          <BillsSectionListItem
             item={item}
             isPast={isPast}
             isSameMonth={isSameMonth}
@@ -133,9 +126,8 @@ const UpcomingBillsSectionList = ({
           />
         );
       }}
-      ListFooterComponent={renderListFooter}
     />
   );
 };
 
-export default UpcomingBillsSectionList;
+export default BillsSectionList;

@@ -3,11 +3,7 @@ import colors from "@config/themes/colors";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-export default function UpcomingBillsSectionListHeader({
-  title,
-}: {
-  title: string;
-}) {
+export default function BillsSectionListHeader({ title }: { title: string }) {
   return (
     <View style={styles.header}>
       <SharedAccountText type="listHeader">{title}</SharedAccountText>
@@ -18,8 +14,6 @@ export default function UpcomingBillsSectionListHeader({
 const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.light,
-    marginTop: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    padding: 8,
   },
 });

@@ -2,7 +2,7 @@ import SharedAccountButton from "@components/SharedAccountButton/SharedAccountBu
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-export default function UpcomingBillsSectionListFooter({
+export default function BillsSectionListFooter({
   onPress,
 }: {
   onPress: () => void;

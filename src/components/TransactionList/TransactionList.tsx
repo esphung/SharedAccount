@@ -30,8 +30,8 @@ const groupTransactionsByDate = (
   // Sort by Date
   grouped.sort((a, b) => {
     return (
-      DateTime.fromFormat(b.title, "EEE MMM dd yyyy").toJSDate().getTime() -
-      DateTime.fromFormat(a.title, "EEE MMM dd yyyy").toJSDate().getTime()
+      DateTime.fromJSDate(new Date(a.title)).toMillis() -
+      DateTime.fromJSDate(new Date(b.title)).toMillis()
     );
   });
   return grouped;
@@ -81,12 +81,9 @@ const TransactionList = (props: TransactionListProps) => {
         );
       }}
       renderSectionHeader={({ section: { title } }) => (
-        <TransactionListHeader title={title} type="listSectionHeader" />
+        <TransactionListHeader title={title} />
       )}
       stickySectionHeadersEnabled={false}
-      ListHeaderComponent={
-        <TransactionListHeader title="Recent Transactions" type="listHeader" />
-      }
       ListFooterComponent={renderListFooter}
     />
   );

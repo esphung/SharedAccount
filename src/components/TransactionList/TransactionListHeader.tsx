@@ -1,16 +1,11 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import colors from "@config/themes/colors";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-export default function TransactionListHeader({
-  title,
-  type,
-}: {
-  title: string;
-  type: "listSectionHeader" | "listHeader";
-}) {
+export default function TransactionListHeader({ title }: { title: string }) {
   return (
-    <SharedAccountText type={type} style={styles.header}>
+    <SharedAccountText type="listHeader" style={styles.header}>
       {title}
     </SharedAccountText>
   );
@@ -18,6 +13,7 @@ export default function TransactionListHeader({
 
 const styles = StyleSheet.create({
   header: {
+    backgroundColor: colors.light,
     padding: 8,
   },
 });

@@ -1,5 +1,6 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
+import { DateTime } from "luxon";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import type { Transaction } from "types/Transaction";
@@ -22,17 +23,17 @@ export default function TransactionListItem({
   return (
     <TouchableOpacity style={styles.item} onPress={() => onPress(item.id)}>
       {/* User Avatar */}
-      {user?.avatar && (
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: user.avatar,
-          }}
-        />
-      )}
+      <Image
+        style={styles.avatar}
+        source={{
+          uri: user?.avatar ? user.avatar : "https://picsum.photos/200/300",
+        }}
+      />
       {/* Transaction Info */}
       <View style={styles.transactionDetails}>
-        <SharedAccountText type="listItemTitle">{user?.name}</SharedAccountText>
+        <SharedAccountText type="listItemTitle">
+          {user?.name || "Unknown User"}
+        </SharedAccountText>
         <SharedAccountText type="listItemSubtitle">
           {item.type === "credit"
             ? `+ ${convertCentsToUSD(item.amount)} (from ${item.name})`
@@ -40,12 +41,17 @@ export default function TransactionListItem({
         </SharedAccountText>
       </View>
       {/* Text-based Indicator for Expense or Credit */}
-      <SharedAccountText
-        type="transactionType"
-        style={item.type === "credit" ? styles.credit : styles.expense}
-      >
-        {item.type === "credit" ? "↑" : "↓"}
-      </SharedAccountText>
+      <View style={styles.rightPanel}>
+        <SharedAccountText
+          type="transactionType"
+          style={item.type === "credit" ? styles.credit : styles.expense}
+        >
+          {item.type === "credit" ? "↑" : "↓"}
+        </SharedAccountText>
+        <SharedAccountText>
+          {DateTime.fromJSDate(item.date).toFormat("MMM d, t")}
+        </SharedAccountText>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -70,6 +76,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: "row",
     padding: 10,
+  },
+  rightPanel: {
+    alignItems: "flex-end",
+    justifyContent: "center",
   },
   transactionDetails: {
     flex: 1,
