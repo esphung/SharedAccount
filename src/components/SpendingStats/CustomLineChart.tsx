@@ -1,4 +1,3 @@
-import colors from "@config/themes/colors";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Grid, LineChart } from "react-native-svg-charts";
@@ -20,11 +19,11 @@ const CustomLineChart = (props: Props) => {
       contentInset={{ top: 20, bottom: 20 }}
     >
       <Grid
-        direction={Grid.Direction.HORIZONTAL}
-        svg={{
-          stroke: colors.dark,
-          strokeWidth: StyleSheet.hairlineWidth,
-        }}
+      // direction={Grid.Direction.HORIZONTAL}
+      // svg={{
+      //   stroke: colors.dark,
+      //   strokeWidth: StyleSheet.hairlineWidth,
+      // }}
       />
     </LineChart>
   );
