@@ -56,7 +56,7 @@ export default function ExpensesScreen(_: Props) {
         users={[]}
         transactions={transactions}
         onShowAddTxnSheet={onShowAddTxnSheet}
-        onPress={(id) => {
+        onPress={(id: string) => {
           console.debug("[ExpensesScreen] Transaction ID:", id);
           Alert.alert("Delete Transaction", "Are you sure?", [
             {

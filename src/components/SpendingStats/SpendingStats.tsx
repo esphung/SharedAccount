@@ -1,16 +1,14 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import colors from "@config/themes/colors";
-import {
-  GroupedBarChartAdapter,
-  LineChartAdapter,
-} from "@data/adapters/ChartAdapters";
 import { DateTime } from "luxon";
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import type { Transaction } from "types/Transaction";
+import StatsRow from "./StatsRow";
+
+import colors from "@config/themes/colors";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import CustomLineChart from "./CustomLineChart";
 import GroupedBarChart from "./GroupedBarChart";
-import StatsRow from "./StatsRow";
 
 const calculateMonthlyTotoal = (
   type: "credit" | "expense",
@@ -62,43 +60,73 @@ const SpendingStats = ({
     return mapTransactionsToRange(transactions, "credit");
   }, [transactions]);
 
-  const barChartData = [
-    ...GroupedBarChartAdapter.mapTuplesToChartList([
-      [creditTransactionsRange, colors.green],
-      [expenseTransactionsRange, colors.red],
-      // __DEV__
-      //   ? [
-      //       // 30 days of random data
-      //       [
-      //         1400, 100, 20000, 9500, -9400, -2400, -800, 8500, -9100, 3500,
-      //         -5300, 5300, -7800, 6600, 9600, 3300, -2600, -3200, 7300, 800,
-      //         1400, -100, 100, -9500, -9400, -24, -800, 8500, -9100, 3500,
-      //       ],
-      //       // Array.from({ length: 30 }, () => 30000),
-      //       colors.dark,
-      //     ]
-      //   : [[], colors.dark],
-    ]),
-  ];
+  const renderTopLabelComponent = (value: number) => (
+    <SharedAccountText style={styles.label}>
+      {Math.round(
+        Number(MoneyFunctions.formatMoney(Number(value)).replace("$", "")),
+      )}
+    </SharedAccountText>
+  );
 
-  const lineChartData = [
-    ...LineChartAdapter.mapTuplesToChartList([
-      [creditTransactionsRange, colors.green],
-      [expenseTransactionsRange, colors.red],
-      // __DEV__
-      //   ? [
-      //       // 30 days of random data
-      //       [
-      //         1400, 100, 20000, 9500, -9400, -2400, -800, 8500, -9100, 3500,
-      //         -5300, 5300, -7800, 6600, 9600, 3300, -2600, -3200, 7300, 800,
-      //         1400, -100, 100, -9500, -9400, -24, -800, 8500, -9100, 3500,
-      //       ],
-      //       // Array.from({ length: 30 }, () => 30000),
-      //       colors.dark,
-      //     ]
-      //   : [[], colors.dark],
-    ]),
-  ];
+  const chartData: {
+    stacks: {
+      value: number;
+      color: string;
+    }[];
+  }[] = React.useMemo(() => {
+    const temp = Array.from({ length: 30 }, (_, i) => i + 1);
+    // zip the two arrays together
+    const zipped = temp.map((item, index) => {
+      const expenseAmount = expenseTransactionsRange[index] || 0;
+      const creditAmount = creditTransactionsRange[index] || 0;
+      const stacks = [
+        {
+          value: expenseAmount,
+          color: colors.red,
+        },
+        {
+          value: creditAmount,
+          color: colors.green,
+        },
+      ];
+      if (creditAmount > expenseAmount) {
+        stacks.reverse();
+      }
+      return {
+        stacks,
+        topLabelComponent: () =>
+          renderTopLabelComponent(
+            creditAmount > expenseAmount ? creditAmount : expenseAmount,
+          ),
+      };
+    });
+
+    return zipped;
+  }, [creditTransactionsRange, expenseTransactionsRange]);
+
+  const lineChartData: {
+    lineData: { pos: number; value: number; dataPointText: string }[];
+    lineData2: { pos: number; value: number; dataPointText: string }[];
+  } = React.useMemo(() => {
+    const lineData = [
+      ...expenseTransactionsRange.map((value, index) => ({
+        pos: index,
+        value,
+        dataPointText:
+          value > 0 ? `${MoneyFunctions.formatMoney(value, 0)}` : "",
+      })),
+    ];
+
+    const lineData2 = [
+      ...creditTransactionsRange.map((value, index) => ({
+        pos: index,
+        value,
+        dataPointText:
+          value > 0 ? `${MoneyFunctions.formatMoney(value, 0)}` : "",
+      })),
+    ];
+    return { lineData, lineData2 };
+  }, [creditTransactionsRange, expenseTransactionsRange]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -113,14 +141,14 @@ const SpendingStats = ({
         amount={calculateMonthlyTotoal("expense", transactions)}
         type="expense"
       />
-      <GroupedBarChart
-        // barChartData={groupedBarChartArr}
-        barChartData={barChartData}
-      />
-      <CustomLineChart
-        lineChartData={lineChartData}
-        // lineChartData={lineChartArray}
-      />
+      <View style={styles.graphsContainer}>
+        <View style={styles.northPanel}>
+          <GroupedBarChart data={chartData} />
+        </View>
+        <View style={styles.southPanel}>
+          <CustomLineChart {...lineChartData} />
+        </View>
+      </View>
     </ScrollView>
   );
 };
@@ -128,6 +156,23 @@ const SpendingStats = ({
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+  },
+  graphsContainer: {
+    flex: 1,
+    gap: 8,
+    marginVertical: 8,
+  },
+  label: {
+    color: colors.dark,
+    fontSize: 4,
+    textAlign: "center",
+    top: -4,
+  },
+  northPanel: {
+    flex: 1,
+  },
+  southPanel: {
+    flex: 1,
   },
 });
 

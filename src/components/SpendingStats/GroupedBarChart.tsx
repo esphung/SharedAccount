@@ -1,41 +1,73 @@
+import MoneyFunctions from "@utils/MoneyFunctions";
 import React from "react";
-import { StyleSheet } from "react-native";
-import { BarChart, Grid } from "react-native-svg-charts";
+import { StyleSheet, useWindowDimensions } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 
-type Props = {
-  barChartData: {
-    data: { value: number }[];
-    svg: { fill: string };
-  }[];
+const getMinimumValue = (data: { stacks: { value: number }[] }[]) => {
+  return Math.min(
+    ...data.map((item) => Math.min(...item.stacks.map((stack) => stack.value))),
+  );
 };
 
-const GroupedBarChart = (props: Props) => {
-  const { barChartData = [] } = props;
-  const yAccessor = ({ item }: { item: { value: number } }) => {
-    return item.value;
-  };
+const getMaximumValue = (data: { stacks: { value: number }[] }[]) => {
+  return Math.max(
+    ...data.map((item) => Math.max(...item.stacks.map((stack) => stack.value))),
+  );
+};
+
+export type BarChartData = {
+  stacks: {
+    value: number;
+    color: string;
+  }[];
+}[];
+
+const GroupedBarChart = ({
+  data,
+}: {
+  data: {
+    stacks: (
+      | {
+          value: number;
+          color: string;
+        }
+      | {
+          value: number;
+          color: string;
+        }
+    )[];
+  }[];
+}) => {
+  const { width } = useWindowDimensions();
   return (
     <BarChart
-      style={styles.barChart}
-      yAccessor={yAccessor}
-      contentInset={{ top: 20, bottom: 20 }}
-      // @ts-expect-error yAccessor is required
-      data={barChartData}
-    >
-      <Grid
-      // direction={Grid.Direction.HORIZONTAL}
-      // svg={{
-      //   stroke: colors.dark,
-      //   strokeWidth: StyleSheet.hairlineWidth,
-      // }}
-      />
-    </BarChart>
+      stackData={data}
+      barWidth={width / 38}
+      spacing={0.1}
+      noOfSections={1}
+      yAxisLabelTexts={[
+        `${MoneyFunctions.formatMoney(getMinimumValue(data), 0)}`,
+        `${MoneyFunctions.formatMoney(getMaximumValue(data), 0)}`,
+      ]}
+      xAxisLabelTextStyle={styles.xAxisLabel}
+      yAxisTextStyle={styles.yAxisText}
+      xAxisLabelTexts={data.map((_, index) => `${index + 1}`)}
+      onPress={(item: {
+        stacks: {
+          value: number;
+          color: string;
+        }[];
+      }) => console.debug({ item: JSON.stringify(item, null, 2) })}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  barChart: {
-    height: 200,
+  xAxisLabel: {
+    fontSize: 6,
+  },
+  yAxisText: {
+    fontSize: 14,
   },
 });
 

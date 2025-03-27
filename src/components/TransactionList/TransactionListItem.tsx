@@ -1,15 +1,11 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import { DateTime } from "luxon";
 import React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import type { Transaction } from "types/Transaction";
 import type { User } from "types/User";
-
-const convertCentsToUSD = (amount: number) => {
-  // convert cents to dollars
-  return `$${(amount / 100).toFixed(2)}`;
-};
 
 export default function TransactionListItem({
   item,
@@ -32,12 +28,12 @@ export default function TransactionListItem({
       {/* Transaction Info */}
       <View style={styles.transactionDetails}>
         <SharedAccountText type="listItemTitle">
-          {user?.name || "Unknown User"}
+          {user?.name || "Some User"}
         </SharedAccountText>
         <SharedAccountText type="listItemSubtitle">
           {item.type === "credit"
-            ? `+ ${convertCentsToUSD(item.amount)} (from ${item.name})`
-            : `- ${convertCentsToUSD(item.amount)} (${item.category})`}
+            ? `+ ${MoneyFunctions.formatMoney(item.amount, 2)} (from ${item.name})`
+            : `- ${MoneyFunctions.formatMoney(item.amount, 2)} (${item.category})`}
         </SharedAccountText>
       </View>
       {/* Text-based Indicator for Expense or Credit */}
