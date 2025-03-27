@@ -1,4 +1,4 @@
-import UpcomingBillsSectionList from "@components/UpcomingBillsSectionList/UpcomingBillsSectionList";
+import BillsSectionList from "@components/BillsSectionList/BillsSectionList";
 import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
@@ -8,8 +8,8 @@ const mockLocalDatabase = new LocalDatabaseBuilder().build();
 const { scheduledTransactions } = mockLocalDatabase;
 
 const meta = {
-  title: "UpcomingBillsSectionList",
-  component: UpcomingBillsSectionList,
+  title: "BillsSectionList",
+  component: BillsSectionList,
   argTypes: {
     scheduledTransactions: {
       control: {
@@ -26,10 +26,10 @@ const meta = {
   args: {
     scheduledTransactions,
     onPress: (id: string) => {
-      console.debug("[UpcomingBillsSectionList] onPress", id);
+      console.debug("[BillsSectionList] onPress", id);
     },
     onPressAddNew: () => {
-      console.debug("[UpcomingBillsSectionList] onPressAddNew");
+      console.debug("[BillsSectionList] onPressAddNew");
     },
   },
   decorators: [
@@ -39,7 +39,7 @@ const meta = {
       </View>
     ),
   ],
-} satisfies Meta<typeof UpcomingBillsSectionList>;
+} satisfies Meta<typeof BillsSectionList>;
 
 const styles = StyleSheet.create({
   container: {},
@@ -53,10 +53,10 @@ export const Default: Story = {
   args: {
     scheduledTransactions,
     onPress: (id: string) => {
-      console.debug("[UpcomingBillsSectionList] onPress", id);
+      console.debug("[BillsSectionList] onPress", id);
     },
     onPressAddNew: () => {
-      console.debug("[UpcomingBillsSectionList] onPressAddNew");
+      console.debug("[BillsSectionList] onPressAddNew");
     },
   },
 };

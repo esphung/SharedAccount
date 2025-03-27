@@ -27,18 +27,23 @@ const groupTransactionsByDate = (
       grouped.push({ title: date, data: [transaction] });
     }
   });
-  // Sort by Date
-  grouped.sort((a, b) => {
-    return (
-      DateTime.fromFormat(b.title, "EEE MMM dd yyyy").toJSDate().getTime() -
-      DateTime.fromFormat(a.title, "EEE MMM dd yyyy").toJSDate().getTime()
-    );
+
+  const sorted = grouped.map((group) => {
+    const sortedData = group.data.sort((a, b) => {
+      return (
+        DateTime.fromJSDate(a.date).toMillis() -
+        DateTime.fromJSDate(b.date).toMillis()
+      );
+    });
+    // group.data = sortedData;
+    return { title: group.title, data: sortedData };
   });
-  return grouped;
+
+  return sorted;
 };
 
 // Props
-type TransactionListProps = {
+type Props = {
   transactions: Transaction[];
   users: User[];
   onShowAddTxnSheet: () => void;
@@ -46,18 +51,22 @@ type TransactionListProps = {
 };
 
 // Main Component
-const TransactionList = (props: TransactionListProps) => {
+const TransactionList = (props: Props) => {
   const { transactions = [], users = [], onShowAddTxnSheet, onPress } = props;
 
   const sections = React.useMemo(
     () =>
       groupTransactionsByDate(
         transactions.filter(
-          (transaction): transaction is Transaction<"expense"> =>
+          (transaction: {
+            type: "expense" | "credit";
+          }): transaction is Transaction<"expense"> =>
             transaction.type === "expense",
         ),
         transactions.filter(
-          (transaction): transaction is Transaction<"credit"> =>
+          (transaction: {
+            type: "expense" | "credit";
+          }): transaction is Transaction<"credit"> =>
             transaction.type === "credit",
         ),
       ),
@@ -81,12 +90,9 @@ const TransactionList = (props: TransactionListProps) => {
         );
       }}
       renderSectionHeader={({ section: { title } }) => (
-        <TransactionListHeader title={title} type="listSectionHeader" />
+        <TransactionListHeader title={title} />
       )}
       stickySectionHeadersEnabled={false}
-      ListHeaderComponent={
-        <TransactionListHeader title="Recent Transactions" type="listHeader" />
-      }
       ListFooterComponent={renderListFooter}
     />
   );

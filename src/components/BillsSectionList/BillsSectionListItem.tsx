@@ -1,12 +1,12 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import { DateTime } from "luxon";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import type { ScheduledTransaction } from "types/ScheduledTransaction";
-import MoneyFunctions from "../../utils/MoneyFunctions";
 
-export default function UpcomingBillsSectionListItem({
+export default function BillsSectionListItem({
   item,
   isPast,
   isSameMonth,
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     color: colors.dark,
     fontSize: 16,
     fontWeight: "bold", // Default color
+    textAlign: "right",
   },
   billName: {
     fontSize: 16,
@@ -87,8 +88,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    padding: 10,
   },
   pastAmount: {
     color: colors.success,

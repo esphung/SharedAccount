@@ -8,7 +8,7 @@ import type {
 import useTransactions from "@presentation/hooks/useTransactions";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Button } from "react-native";
 
 type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
 
@@ -51,11 +51,12 @@ export default function ExpensesScreen(_: Props) {
 
   return (
     <SharedAccountScreen>
+      <Button title="Add an expense" onPress={onShowAddTxnSheet} />
       <TransactionList
         users={[]}
         transactions={transactions}
         onShowAddTxnSheet={onShowAddTxnSheet}
-        onPress={(id) => {
+        onPress={(id: string) => {
           console.debug("[ExpensesScreen] Transaction ID:", id);
           Alert.alert("Delete Transaction", "Are you sure?", [
             {

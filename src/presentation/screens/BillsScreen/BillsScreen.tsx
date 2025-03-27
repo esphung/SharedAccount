@@ -1,6 +1,6 @@
+import BillsSectionList from "@components/BillsSectionList/BillsSectionList";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import SheetModal from "@components/SheetModal/SheetModal";
-import UpcomingBillsSectionList from "@components/UpcomingBillsSectionList/UpcomingBillsSectionList";
 import type {
   AppTabsParamList,
   AppTabsScreens,
@@ -18,7 +18,7 @@ export default function BillsScreen(_: Props) {
     state: scheduledTransactions,
     startListening,
     fetchItems: fetchScheduledTransactions,
-    addItem: addScheduledTransaction,
+    // addItem: addScheduledTransaction,
     deleteItem: deleteScheduledTransaction,
   } = useScheduledTransactions();
 
@@ -36,7 +36,45 @@ export default function BillsScreen(_: Props) {
 
   return (
     <SharedAccountScreen>
-      <UpcomingBillsSectionList
+      <Button
+        title="Add Scheduled Transaction"
+        onPress={() => {
+          setModalVisible(true);
+          // const sharedAccountId: `acct_${string}` = `acct_${Math.random().toString(36).substr(2, 9)}`;
+          // const id: `schd_${string}` = `schd_${Math.random().toString(36).substr(2, 9)}`;
+          // addScheduledTransaction({
+          //   amount: 10000,
+          //   category: "Rent",
+          //   startDate: new Date(),
+          //   endDate: undefined,
+          //   dayOfMonth: 31,
+          //   description: "Rent for the month of July",
+          //   id,
+          //   sharedAccountId,
+          //   type: "expense",
+          //   name: "Rent",
+          //   monthsOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+          //   repeatInterval: "monthly",
+          // })
+          //   .then(() => {
+          //     Alert.alert(
+          //       "Scheduled Transaction Added",
+          //       "Check the console for the new transaction",
+          //     );
+          //     fetchScheduledTransactions();
+          //   })
+          //   .catch((error) => {
+          //     console.error(
+          //       "[BillsScreen] Error adding scheduled transaction:",
+          //       error,
+          //     );
+          //   });
+          console.debug(
+            "[BillsScreen] Add Scheduled Transaction Button Pressed",
+          );
+        }}
+      />
+      <BillsSectionList
         onPressAddNew={() => {
           setModalVisible(true);
         }}
@@ -71,43 +109,6 @@ export default function BillsScreen(_: Props) {
                 },
               },
             ],
-          );
-        }}
-      />
-      <Button
-        title="Add Scheduled Transaction"
-        onPress={() => {
-          const sharedAccountId: `acct_${string}` = `acct_${Math.random().toString(36).substr(2, 9)}`;
-          const id: `schd_${string}` = `schd_${Math.random().toString(36).substr(2, 9)}`;
-          addScheduledTransaction({
-            amount: 10000,
-            category: "Rent",
-            startDate: new Date(),
-            endDate: undefined,
-            dayOfMonth: 31,
-            description: "Rent for the month of July",
-            id,
-            sharedAccountId,
-            type: "expense",
-            name: "Rent",
-            monthsOfYear: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            repeatInterval: "monthly",
-          })
-            .then(() => {
-              Alert.alert(
-                "Scheduled Transaction Added",
-                "Check the console for the new transaction",
-              );
-              fetchScheduledTransactions();
-            })
-            .catch((error) => {
-              console.error(
-                "[BillsScreen] Error adding scheduled transaction:",
-                error,
-              );
-            });
-          console.debug(
-            "[BillsScreen] Add Scheduled Transaction Button Pressed",
           );
         }}
       />

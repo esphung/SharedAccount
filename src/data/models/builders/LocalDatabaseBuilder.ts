@@ -27,26 +27,20 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
     ];
 
     const transactions: Transaction[] = [
-      ...Array.from({ length: 80 }, (_, i) => {
+      ...Array.from({ length: 30 }, (_, i) => {
         const fakeUserId: `usr_${string}` = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
         return new TransactionBuilder(
           faker.helpers.arrayElement(["credit", "expense"]),
         )
           .setSharedAccountId(fakeSharedAccountId)
-          .setDate(
-            DateTime.fromJSDate(faker.date.recent())
-              .plus({ days: i })
-              .toJSDate(),
-          )
+          .setDate(DateTime.now().minus({ days: i }).toJSDate())
           .setUserId(fakeUserId)
           .build();
       }),
     ];
     const scheduledTransactions: ScheduledTransaction[] = [];
-    Array.from({ length: 4 }, () => {
+    Array.from({ length: 20 }, () => {
       const transaction = new ScheduledTransactionBuilder(
-        // faker.helpers.arrayElement(["credit", "expense"]),
-        // every other transaction is a credit
         faker.helpers.arrayElement(["credit", "expense"]),
       )
         .setSharedAccountId(fakeSharedAccountId)

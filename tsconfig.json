@@ -14,7 +14,8 @@
       "@data/*": ["./src/data/*"],
       "@config/*": ["./src/config/*"],
       "@domain/*": ["./src/domain/*"],
-      "@presentation/*": ["./src/presentation/*"]
+      "@presentation/*": ["./src/presentation/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "jsx": "react-native",

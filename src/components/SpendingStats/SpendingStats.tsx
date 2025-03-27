@@ -1,142 +1,178 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import MoneyFunctions from "../../utils/MoneyFunctions";
-import colors from "@config/themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import type { Transaction } from "types/Transaction";
-import BarChartHorizontalWithLabels from "./BarChartHorizontalWithLabels";
+import StatsRow from "./StatsRow";
+
+import colors from "@config/themes/colors";
+import MoneyFunctions from "@utils/MoneyFunctions";
+import CustomLineChart from "./CustomLineChart";
+import GroupedBarChart from "./GroupedBarChart";
+
+const calculateMonthlyTotoal = (
+  type: "credit" | "expense",
+  arr: Transaction[],
+) => {
+  const lastEndOfMonth = DateTime.now().endOf("month");
+  return arr
+    .filter((item) => item.type === type)
+    .filter(
+      (item) =>
+        item.date.getTime() >=
+          DateTime.now().startOf("month").toJSDate().getTime() &&
+        item.date.getTime() < lastEndOfMonth.toJSDate().getTime(),
+    )
+    .reduce((sum, item) => sum + item.amount, 0);
+};
+
+const mapTransactionsToRange = (
+  transactions: Transaction[],
+  type: "credit" | "expense",
+) => {
+  const filtered = transactions.filter((item) => item.type === type);
+  const range = Array.from({ length: 30 }, (_, i) => i + 1);
+  return range.map((day) => {
+    return filtered
+      .filter((item) => {
+        const date = DateTime.fromJSDate(item.date);
+        return (
+          date.day === day &&
+          date.month === DateTime.now().month &&
+          date.year === DateTime.now().year
+        );
+      })
+      .reduce((sum, item) => sum + item.amount, 0);
+  });
+};
 
 const SpendingStats = ({
   transactions = [],
 }: {
   transactions: Transaction[];
 }) => {
-  const totalThisMonth = React.useCallback(
-    (type: "credit" | "expense") => {
-      const lastEndOfMonth = DateTime.now().endOf("month");
-      return transactions
-        .filter((item) => item.type === type)
-        .filter(
-          (item) =>
-            item.date.getTime() >=
-              DateTime.now().startOf("month").toJSDate().getTime() &&
-            item.date.getTime() < lastEndOfMonth.toJSDate().getTime(),
-        )
-        .reduce((sum, item) => sum + item.amount, 0);
-    },
+  const expenseTransactionsRange = React.useMemo(
+    () => mapTransactionsToRange(transactions, "expense"),
     [transactions],
   );
 
-  const processedBarChartData = React.useCallback(
-    (type: "expense" | "credit") => {
-      const list: {
-        date: Date;
-        amount: number;
-        type: "credit" | "expense";
-      }[] = [];
+  const creditTransactionsRange = React.useMemo(() => {
+    return mapTransactionsToRange(transactions, "credit");
+  }, [transactions]);
 
-      // last number of day of the month
-      const firstDay = DateTime.now().startOf("month").day;
-      const lastDay = DateTime.now().endOf("month").day;
+  const renderTopLabelComponent = (value: number) => (
+    <SharedAccountText style={styles.label}>
+      {Math.round(
+        Number(MoneyFunctions.formatMoney(Number(value)).replace("$", "")),
+      )}
+    </SharedAccountText>
+  );
 
-      // fill the list with 0.0 amount for each day
-      for (let i = firstDay; i < lastDay; i++) {
-        const averageForDay = transactions
-          .filter(
-            (transaction) =>
-              DateTime.fromJSDate(transaction.date).day === i &&
-              transaction.type === type,
-          )
-          .reduce((sum, transaction) => sum + transaction.amount, 0); // sum of all transactions for the day
-
-        list.push({
-          // date: DateTime.now().minus({ days: i }).toJSDate(),
-          date: DateTime.now().set({ day: i }).toJSDate(),
-          amount: averageForDay,
-          type,
-        });
-      }
-
-      const sorted = list
-        .filter(
-          (item) =>
-            item.date.getTime() >=
-            new Date().getTime() - 30 * 24 * 60 * 60 * 1000,
-        )
-        .filter((item) => item.type === type);
-      // group by days from current date's month
-      const grouped = sorted.reduce(
-        (acc, item) => {
-          const date = DateTime.fromJSDate(item.date);
-          const day = date.day;
-          if (acc[day]) {
-            acc[day] += item.amount;
-          } else {
-            acc[day] = item.amount;
-          }
-          return acc;
+  const chartData: {
+    stacks: {
+      value: number;
+      color: string;
+    }[];
+  }[] = React.useMemo(() => {
+    const temp = Array.from({ length: 30 }, (_, i) => i + 1);
+    // zip the two arrays together
+    const zipped = temp.map((item, index) => {
+      const expenseAmount = expenseTransactionsRange[index] || 0;
+      const creditAmount = creditTransactionsRange[index] || 0;
+      const stacks = [
+        {
+          value: expenseAmount,
+          color: colors.red,
         },
-        {} as Record<number, number>,
-      );
-      // convert to array
-      const result = Object.keys(grouped).map((key) => ({
-        date: DateTime.now()
-          .set({ day: parseInt(key, 10) })
-          .toJSDate(),
-        amount: grouped[parseInt(key, 10)],
-      }));
-      return result;
-    },
-    [transactions],
-  );
+        {
+          value: creditAmount,
+          color: colors.green,
+        },
+      ];
+      if (creditAmount > expenseAmount) {
+        stacks.reverse();
+      }
+      return {
+        stacks,
+        topLabelComponent: () =>
+          renderTopLabelComponent(
+            creditAmount > expenseAmount ? creditAmount : expenseAmount,
+          ),
+      };
+    });
 
-  const memoizedCreditData = React.useMemo(
-    () => processedBarChartData("credit"),
-    [processedBarChartData],
-  );
+    return zipped;
+  }, [creditTransactionsRange, expenseTransactionsRange]);
 
-  const memoizedExpenseData = React.useMemo(
-    () => processedBarChartData("expense"),
-    [processedBarChartData],
-  );
+  const lineChartData: {
+    lineData: { pos: number; value: number; dataPointText: string }[];
+    lineData2: { pos: number; value: number; dataPointText: string }[];
+  } = React.useMemo(() => {
+    const lineData = [
+      ...expenseTransactionsRange.map((value, index) => ({
+        pos: index,
+        value,
+        dataPointText:
+          value > 0 ? `${MoneyFunctions.formatMoney(value, 0)}` : "",
+      })),
+    ];
+
+    const lineData2 = [
+      ...creditTransactionsRange.map((value, index) => ({
+        pos: index,
+        value,
+        dataPointText:
+          value > 0 ? `${MoneyFunctions.formatMoney(value, 0)}` : "",
+      })),
+    ];
+    return { lineData, lineData2 };
+  }, [creditTransactionsRange, expenseTransactionsRange]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <SharedAccountText type="screenHeader">
         {DateTime.now().toFormat("MMMM yyyy")}
       </SharedAccountText>
-      <View style={styles.northPanel}>
-        <SharedAccountText type="listHeader" style={styles.greenText}>
-          Deposited {MoneyFunctions.formatMoney(totalThisMonth("credit"))}
-        </SharedAccountText>
-        {/* <BarChartHorizontalWithLabels data={memoizedCreditData} /> */}
-        <BarChartHorizontalWithLabels data={memoizedCreditData} />
+      <StatsRow
+        amount={calculateMonthlyTotoal("credit", transactions)}
+        type="credit"
+      />
+      <StatsRow
+        amount={calculateMonthlyTotoal("expense", transactions)}
+        type="expense"
+      />
+      <View style={styles.graphsContainer}>
+        <View style={styles.northPanel}>
+          <GroupedBarChart data={chartData} />
+        </View>
+        <View style={styles.southPanel}>
+          <CustomLineChart {...lineChartData} />
+        </View>
       </View>
-      <View style={styles.southPanel}>
-        <SharedAccountText type="listHeader" style={styles.greenText}>
-          Spent {MoneyFunctions.formatMoney(totalThisMonth("expense"))}
-        </SharedAccountText>
-        <BarChartHorizontalWithLabels data={memoizedExpenseData} />
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
   },
-  greenText: {
-    color: colors.green,
+  graphsContainer: {
+    flex: 1,
+    gap: 8,
+    marginVertical: 8,
+  },
+  label: {
+    color: colors.dark,
+    fontSize: 4,
+    textAlign: "center",
+    top: -4,
   },
   northPanel: {
-    flexShrink: 1,
-    marginTop: 20,
+    flex: 1,
   },
   southPanel: {
-    flexShrink: 1,
-    marginTop: 20,
+    flex: 1,
   },
 });
 

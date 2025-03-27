@@ -9,7 +9,11 @@ export default function AwareScrollView({
   children: React.ReactNode;
 } & KeyboardAvoidingViewProps) {
   return (
-    <KeyboardAwareScrollView bottomOffset={50} {...rest}>
+    <KeyboardAwareScrollView
+      bottomOffset={50}
+      keyboardShouldPersistTaps="always"
+      {...rest}
+    >
       {children}
     </KeyboardAwareScrollView>
   );

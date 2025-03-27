@@ -19,6 +19,7 @@ module.exports = {
           "@config": "./src/config",
           "@domain": "./src/domain",
           "@presentation": "./src/presentation",
+          "@utils": "./src/utils",
         },
       },
     ],

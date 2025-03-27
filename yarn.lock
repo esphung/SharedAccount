@@ -3463,38 +3463,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-path@npm:^1":
-  version: 1.0.11
-  resolution: "@types/d3-path@npm:1.0.11"
-  checksum: 10/faddcf4d636317aed4191afc55e0c49bfc9ccb24ab1594b8d0cd3aee5a522cd1fe51eb8ebc4e43494b6f78d8b0e8cae858495240830d32052ea1c10f0926626c
-  languageName: node
-  linkType: hard
-
-"@types/d3-scale@npm:^1":
-  version: 1.0.22
-  resolution: "@types/d3-scale@npm:1.0.22"
-  dependencies:
-    "@types/d3-time": "npm:^1"
-  checksum: 10/f4a040a9fb3f51052f06fbb2e92bff6b114f398fc3e606e1c7dbf4e284095bb0308a363b016117bee43345d974e2dc55ed22663f11bd82b37f1d349824d39418
-  languageName: node
-  linkType: hard
-
-"@types/d3-shape@npm:^1":
-  version: 1.3.12
-  resolution: "@types/d3-shape@npm:1.3.12"
-  dependencies:
-    "@types/d3-path": "npm:^1"
-  checksum: 10/fcb51938332c9af5d749956385fe5b6a9cd9c174619f6bf5e419efa3c4d0d0b3df919eb971bf94cacd95a24dac10f97bcf373d1fe53dcd9ae2d5dd909cbec7f0
-  languageName: node
-  linkType: hard
-
-"@types/d3-time@npm:^1":
-  version: 1.1.4
-  resolution: "@types/d3-time@npm:1.1.4"
-  checksum: 10/0f393dec4f8c42e0932c5c84efc80c966afc5a9d3e0f5573b769c9fdada4a96c085318a5abf6dbddb7a43f4b531c9f899777a5c2a18123819c0a223363e9a339
-  languageName: node
-  linkType: hard
-
 "@types/graceful-fs@npm:^4.1.3":
   version: 4.1.9
   resolution: "@types/graceful-fs@npm:4.1.9"
@@ -3584,19 +3552,6 @@ __metadata:
   peerDependencies:
     "@types/react": ^19.0.0
   checksum: 10/f15d470242f0b7cca57dd7e991a2852525ac93b2cb92f7e6c104d7bd6a978c3b1d0ba9b8698f23bc19c16b5cd98a6d160007be52c61196952f57cf019f204254
-  languageName: node
-  linkType: hard
-
-"@types/react-native-svg-charts@npm:^5":
-  version: 5.0.16
-  resolution: "@types/react-native-svg-charts@npm:5.0.16"
-  dependencies:
-    "@types/d3-scale": "npm:^1"
-    "@types/d3-shape": "npm:^1"
-    "@types/react": "npm:*"
-    react-native: "npm:*"
-    react-native-svg: "npm:^6.2.1"
-  checksum: 10/c91029ec385076468313c20f65ddf9b24909fd4387e902db22bbc8601f82c368fba1202c6c2e9d32610227eb8de3581685a589e154e1c8a3db1e4b36ce43c1c6
   languageName: node
   linkType: hard
 
@@ -3888,7 +3843,6 @@ __metadata:
     "@types/luxon": "npm:^3"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19"
-    "@types/react-native-svg-charts": "npm:^5"
     "@types/react-test-renderer": "npm:^19.0.0"
     babel-loader: "npm:^8.4.1"
     babel-plugin-module-resolver: "npm:^5.0.2"
@@ -3901,21 +3855,22 @@ __metadata:
     prettier: "npm:3.5.3"
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"
-    react-hook-form: "npm:^7.54.2"
+    react-hook-form: "npm:7.54.2"
     react-native: "npm:0.78.0"
     react-native-currency-input: "patch:react-native-currency-input@npm%3A1.1.1#~/.yarn/patches/react-native-currency-input-npm-1.1.1-f03b6f15ba.patch"
-    react-native-file-access: "npm:^3.1.1"
+    react-native-file-access: "npm:3.1.1"
     react-native-gesture-handler: "npm:^2.24.0"
-    react-native-keyboard-controller: "npm:^1.16.8"
-    react-native-modal-datetime-picker: "npm:^18.0.0"
+    react-native-gifted-charts: "npm:^1.4.58"
+    react-native-keyboard-controller: "npm:1.16.8"
+    react-native-linear-gradient: "npm:^2.8.3"
+    react-native-modal-datetime-picker: "npm:18.0.0"
     react-native-reanimated: "npm:^3.17.1"
     react-native-safe-area-context: "npm:^5.3.0"
     react-native-screens: "npm:^4.9.2"
     react-native-svg: "npm:^15.11.2"
-    react-native-svg-charts: "npm:^5.4.0"
     react-test-renderer: "npm:19.0.0"
-    realm: "npm:^12.14.1"
-    ts-money: "npm:^0.4.8"
+    realm: "npm:12.14.1"
+    ts-money: "npm:0.4.8"
     typescript: "npm:5.0.4"
   languageName: unknown
   linkType: soft
@@ -4829,7 +4784,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1":
+"color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
@@ -4861,23 +4816,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-string@npm:^1.5.2, color-string@npm:^1.9.0":
+"color-string@npm:^1.9.0":
   version: 1.9.1
   resolution: "color-string@npm:1.9.1"
   dependencies:
     color-name: "npm:^1.0.0"
     simple-swizzle: "npm:^0.2.2"
   checksum: 10/72aa0b81ee71b3f4fb1ac9cd839cdbd7a011a7d318ef58e6cb13b3708dca75c7e45029697260488709f1b1c7ac4e35489a87e528156c1e365917d1c4ccb9b9cd
-  languageName: node
-  linkType: hard
-
-"color@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "color@npm:2.0.1"
-  dependencies:
-    color-convert: "npm:^1.9.1"
-    color-string: "npm:^1.5.2"
-  checksum: 10/0faa6b2272f5f180a8eb7ed2c6c1df0709a67f5364643f5496781ae810c627fa6277920d807d14e2c2d7d959dcbda166d0614af5b925540bc2497769e328290e
   languageName: node
   linkType: hard
 
@@ -5145,99 +5090,6 @@ __metadata:
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10/f593cce41ff5ade23f44e77521e3a1bcc2c64107041e1bf6c3c32adc5187d0d60983292fda326154d20b01079e24931aa5b08e4467cc488b60bb1e7f6d478ade
-  languageName: node
-  linkType: hard
-
-"d3-array@npm:^1.2.0":
-  version: 1.2.4
-  resolution: "d3-array@npm:1.2.4"
-  checksum: 10/0071ad73c23d9acba38997d6d3c402d9c1478514c401bd106ed6e049f3800044897f7b450c942dcca9b831e7d6637449bc22c53eeffe054b463c98739d7bf9bf
-  languageName: node
-  linkType: hard
-
-"d3-collection@npm:1":
-  version: 1.0.7
-  resolution: "d3-collection@npm:1.0.7"
-  checksum: 10/73eb77acaa7506ca4d542a8eeca62118738945f54ad3ce5f581bdd610ab156de4b8dfb24b074e8934a474a038e3e4f6751255a60224dd7cce17e9066e83aa97a
-  languageName: node
-  linkType: hard
-
-"d3-color@npm:1":
-  version: 1.4.1
-  resolution: "d3-color@npm:1.4.1"
-  checksum: 10/f264a0ed65cfd8acdee7baeb32c71ed6a6f31d0730b320dc451050982d88ed606d4ce5aaab05a12a0afb0873209f622bed93d4d79b4095e2b063db40aceaf310
-  languageName: node
-  linkType: hard
-
-"d3-format@npm:1":
-  version: 1.4.5
-  resolution: "d3-format@npm:1.4.5"
-  checksum: 10/c1b7d8de6f748875d13879e3c97d3568572fc7e011d41799b20a665737abcbc14ea7cef14b9efccffd91ea41c4c2d26f84b6e1ed8505e24608f8150b4259b4f3
-  languageName: node
-  linkType: hard
-
-"d3-interpolate-path@npm:2.0.0":
-  version: 2.0.0
-  resolution: "d3-interpolate-path@npm:2.0.0"
-  dependencies:
-    d3-interpolate: "npm:^1.1.1"
-  checksum: 10/d1019b933b2b0ce39952271e12897003f9e4bff7aed49efd101f2c5b3de3594b021739f8b408ac41ded49913662f4c56a203fb7ff55d4ea73c639ed8267dc7f0
-  languageName: node
-  linkType: hard
-
-"d3-interpolate@npm:1, d3-interpolate@npm:^1.1.1":
-  version: 1.4.0
-  resolution: "d3-interpolate@npm:1.4.0"
-  dependencies:
-    d3-color: "npm:1"
-  checksum: 10/e2978b047ea934aa46963091cd0ca03cf3c17756fe12d81bce0b2f6b50b6f5084dc54a2395acd26d8f797b8c25022cb7e16eb8e1b49a6ec0eda8f45f28f8cc4b
-  languageName: node
-  linkType: hard
-
-"d3-path@npm:1":
-  version: 1.0.9
-  resolution: "d3-path@npm:1.0.9"
-  checksum: 10/6ce1747837ea2a449d9ea32e169a382978ab09a4805eb408feb6bbc12cb5f5f6ce29aefc252dd9a815d420f4813d672f75578b78b3bbaf7811f54d8c7f93fd11
-  languageName: node
-  linkType: hard
-
-"d3-scale@npm:^1.0.6":
-  version: 1.0.7
-  resolution: "d3-scale@npm:1.0.7"
-  dependencies:
-    d3-array: "npm:^1.2.0"
-    d3-collection: "npm:1"
-    d3-color: "npm:1"
-    d3-format: "npm:1"
-    d3-interpolate: "npm:1"
-    d3-time: "npm:1"
-    d3-time-format: "npm:2"
-  checksum: 10/42faa5b80a6f3168d693d0b88e63c1411ed249933ac26b6bec8af1cbab2151ab667e1e898edb3069ab16253b70b6ac8c27cf6682e7374d680b7981ec6137e458
-  languageName: node
-  linkType: hard
-
-"d3-shape@npm:^1.0.6":
-  version: 1.3.7
-  resolution: "d3-shape@npm:1.3.7"
-  dependencies:
-    d3-path: "npm:1"
-  checksum: 10/1e40fdcfdc8edc9c53a77a6aaea2dbf31bf06df12ebd66cc8d91f76bbde753049ad21dfee0577f7dc5d0a4468554ede4783f6df7d809e291745334dba977c09e
-  languageName: node
-  linkType: hard
-
-"d3-time-format@npm:2":
-  version: 2.3.0
-  resolution: "d3-time-format@npm:2.3.0"
-  dependencies:
-    d3-time: "npm:1"
-  checksum: 10/c217d06034d52f6b2bec3fa2134ab7be823a3a94a963b2580dd2a0e7831f412336ed87e84c3b0c2d02eb855912996e3edee25546e6c1c2246b36feb58fd0bc87
-  languageName: node
-  linkType: hard
-
-"d3-time@npm:1":
-  version: 1.1.0
-  resolution: "d3-time@npm:1.1.0"
-  checksum: 10/24d450997424fe0d53c3bdf9a637a5bdf634236076d6ab761b1966f8cca3b4057fedfc22a520d695d505ff65ddf44e0780065fa3094f66e8df44cdba84af78c8
   languageName: node
   linkType: hard
 
@@ -6671,6 +6523,16 @@ __metadata:
     es-errors: "npm:^1.3.0"
     get-intrinsic: "npm:^1.2.6"
   checksum: 10/a353e3a9595a74720b40fb5bae3ba4a4f826e186e83814d93375182384265676f59e49998b9cdfac4a2225ce95a3d32a68f502a2c5619303987f1c183ab80494
+  languageName: node
+  linkType: hard
+
+"gifted-charts-core@npm:0.1.60":
+  version: 0.1.60
+  resolution: "gifted-charts-core@npm:0.1.60"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/8a1d6c7e038c1e09db2583d10e0e9a78514332d4d517ba22db6b7b058ebbbc6559f6918ad8dd43e964f967647b053fa8267390963d20c2236c05dd85322a71e3
   languageName: node
   linkType: hard
 
@@ -8426,7 +8288,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.16.6, lodash@npm:^4.17.21, lodash@npm:^4.17.5":
+"lodash@npm:^4.17.21, lodash@npm:^4.17.5":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
@@ -9633,15 +9495,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pegjs@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "pegjs@npm:0.10.0"
-  bin:
-    pegjs: bin/pegjs
-  checksum: 10/edc12c9da9afa68ea1274350c3843026355ef3678de0e24213ba0598ee660d40f6752548ba5ddfbcdefee1904545c8a23bb59f331a5e8b3543bee29c21051f67
-  languageName: node
-  linkType: hard
-
 "picocolors@npm:^1.0.0, picocolors@npm:^1.0.1, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
@@ -9826,7 +9679,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.0, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -9940,7 +9793,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.54.2":
+"react-hook-form@npm:7.54.2":
   version: 7.54.2
   resolution: "react-hook-form@npm:7.54.2"
   peerDependencies:
@@ -9997,7 +9850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-file-access@npm:^3.1.1":
+"react-native-file-access@npm:3.1.1":
   version: 3.1.1
   resolution: "react-native-file-access@npm:3.1.1"
   peerDependencies:
@@ -10021,6 +9874,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-gifted-charts@npm:^1.4.58":
+  version: 1.4.58
+  resolution: "react-native-gifted-charts@npm:1.4.58"
+  dependencies:
+    gifted-charts-core: "npm:0.1.60"
+  peerDependencies:
+    expo-linear-gradient: "*"
+    react: "*"
+    react-native: "*"
+    react-native-linear-gradient: "*"
+    react-native-svg: "*"
+  peerDependenciesMeta:
+    expo-linear-gradient:
+      optional: true
+    react-native-linear-gradient:
+      optional: true
+  checksum: 10/f61cc48edcedf0340fa3960bb637664ec38abbb123aa84887a164c3d49439b52f599eb3a24416facad74cb1d8b5b0b356c9076c76d9295c12e2c152d7a09d5c9
+  languageName: node
+  linkType: hard
+
 "react-native-is-edge-to-edge@npm:1.1.6, react-native-is-edge-to-edge@npm:^1.1.6":
   version: 1.1.6
   resolution: "react-native-is-edge-to-edge@npm:1.1.6"
@@ -10031,7 +9904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keyboard-controller@npm:^1.16.8":
+"react-native-keyboard-controller@npm:1.16.8":
   version: 1.16.8
   resolution: "react-native-keyboard-controller@npm:1.16.8"
   dependencies:
@@ -10044,7 +9917,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-modal-datetime-picker@npm:^18.0.0":
+"react-native-linear-gradient@npm:^2.8.3":
+  version: 2.8.3
+  resolution: "react-native-linear-gradient@npm:2.8.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/db18c7ae4b68afe8b6f12c67defeeccda7a3cff4ee14a0b2d92ff2581d53bd2e65bf29837cf2828abb3d8d1f3cef3f808e8cc1c5d4c8da5dd6f1d09e2b9c2c55
+  languageName: node
+  linkType: hard
+
+"react-native-modal-datetime-picker@npm:18.0.0, react-native-modal-datetime-picker@npm:^18.0.0":
   version: 18.0.0
   resolution: "react-native-modal-datetime-picker@npm:18.0.0"
   dependencies:
@@ -10103,23 +9986,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg-charts@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "react-native-svg-charts@npm:5.4.0"
-  dependencies:
-    d3-array: "npm:^1.2.0"
-    d3-interpolate-path: "npm:2.0.0"
-    d3-scale: "npm:^1.0.6"
-    d3-shape: "npm:^1.0.6"
-    prop-types: "npm:^15.6.0"
-  peerDependencies:
-    react: ">=16.0.0-alpha.12"
-    react-native: ">=0.46.0"
-    react-native-svg: ^6.2.1||^7.0.3
-  checksum: 10/ca7245533d08c0f5e461493e02e1cc4c9db2b0ca6421be82924f610f27f7361196ad71a41dd14aac2523a0cebbf843de8ed976b22d1f736f499021392cfbe3ab
-  languageName: node
-  linkType: hard
-
 "react-native-svg@npm:^15.11.2":
   version: 15.11.2
   resolution: "react-native-svg@npm:15.11.2"
@@ -10134,21 +10000,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:^6.2.1":
-  version: 6.5.3
-  resolution: "react-native-svg@npm:6.5.3"
-  dependencies:
-    color: "npm:^2.0.1"
-    lodash: "npm:^4.16.6"
-    pegjs: "npm:^0.10.0"
-  peerDependencies:
-    prop-types: ^15.5.7
-    react: "*"
-    react-native: ">=0.50.0"
-  checksum: 10/295342779195e37809db0f52ecff18a2350034e8b0ee8d38460baf977f8adee792620e1080f4ac88d3dfc2f2d961aa30e03fbfe319e3529d0ae2c317881e9608
-  languageName: node
-  linkType: hard
-
 "react-native-url-polyfill@npm:^2.0.0":
   version: 2.0.0
   resolution: "react-native-url-polyfill@npm:2.0.0"
@@ -10160,7 +10011,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native@npm:*, react-native@npm:0.78.0":
+"react-native@npm:0.78.0":
   version: 0.78.0
   resolution: "react-native@npm:0.78.0"
   dependencies:
@@ -10308,7 +10159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"realm@npm:^12.14.1":
+"realm@npm:12.14.1":
   version: 12.14.1
   resolution: "realm@npm:12.14.1"
   dependencies:
@@ -11501,7 +11352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-money@npm:^0.4.8":
+"ts-money@npm:0.4.8":
   version: 0.4.8
   resolution: "ts-money@npm:0.4.8"
   dependencies:
