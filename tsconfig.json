@@ -3,14 +3,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["./src/components/*"],
-      "types/*": ["./src/types/*"],
+      "@components/*": ["./src/presentation/components/*"],
+      "types/*": ["src/data/models/types/*"],
       "@builders/*": ["./src/builders/*"],
       "@themes/*": ["./src/themes/*"],
       "@helpers/*": ["./src/helpers/*"],
       "@screens/*": ["src/presentation/screens/*"],
-      "@navigators/*": ["./src/navigators/*"],
-      "@hooks/*": ["./src/hooks/*"],
+      "@navigators/*": ["src/presentation/navigators/*"],
+      "@hooks/*": ["src/presentation/hooks/*"],
       "@data/*": ["./src/data/*"],
       "@config/*": ["./src/config/*"],
       "@domain/*": ["./src/domain/*"],
@@ -19,10 +19,5 @@
     }
   },
   "jsx": "react-native",
-  "exclude": [
-    "./node_modules",
-    "./android",
-    "./ios",
-    "./.storybook/storybook.requires.ts"
-  ]
+  "exclude": ["./node_modules", "./android", "./ios", "./.storybook/storybook.requires.ts"]
 }

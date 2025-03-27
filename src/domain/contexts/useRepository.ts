@@ -1,7 +1,7 @@
+import type { ScheduledTransaction } from "@data/models/types/ScheduledTransaction";
+import type { Transaction } from "@data/models/types/Transaction";
+import type { DataModelRepository } from "@data/types/DataModelRepository";
 import { createContext, useContext } from "react";
-import type { DataModelRepository } from "types/DataModelRepository";
-import type { ScheduledTransaction } from "types/ScheduledTransaction";
-import type { Transaction } from "types/Transaction";
 
 export const RepositoryContext = createContext<{
   transactionRepo: DataModelRepository<Transaction>;

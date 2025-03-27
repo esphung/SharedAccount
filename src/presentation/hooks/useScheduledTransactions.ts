@@ -1,7 +1,7 @@
+import type { ScheduledTransaction } from "@data/models/types/ScheduledTransaction";
 import useRepository from "@domain/contexts/useRepository";
+import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { useCallback, useState } from "react";
-import type { ScheduledTransaction } from "types/ScheduledTransaction";
-import type { UseDataSource } from "types/UseDataSource";
 
 const useScheduledTransactions: UseDataSource<ScheduledTransaction> = () => {
   // Get the item repository

@@ -1,7 +1,7 @@
+import type { Transaction } from "@data/models/types/Transaction";
 import useRepository from "@domain/contexts/useRepository";
+import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { useCallback, useState } from "react";
-import type { Transaction } from "types/Transaction";
-import type { UseDataSource } from "types/UseDataSource";
 
 const useTransactions: UseDataSource<Transaction> = () => {
   // Get the item repository
@@ -37,12 +37,7 @@ const useTransactions: UseDataSource<Transaction> = () => {
   // Add a transaction
   const addItem = useCallback(
     (params: Partial<Transaction>) => {
-      const {
-        amount = 0,
-        category = "",
-        date = new Date(),
-        type = "expense",
-      } = params;
+      const { amount = 0, category = "", date = new Date(), type = "expense" } = params;
       return transactionRepo.add({
         id: `txn_${new Date().getTime()}`,
         userId: `usr_${new Date().getTime()}`,

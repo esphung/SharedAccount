@@ -1,18 +1,13 @@
 import BillsSectionList from "@components/BillsSectionList/BillsSectionList";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import SheetModal from "@components/SheetModal/SheetModal";
-import type {
-  AppTabsParamList,
-  AppTabsScreens,
-} from "@navigators/AppTabs/AppTabs";
 import useScheduledTransactions from "@presentation/hooks/useScheduledTransactions";
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React from "react";
 import { Alert, Button } from "react-native";
 
-type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Bills>;
+// type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Bills>;
 
-export default function BillsScreen(_: Props) {
+export default function BillsScreen() {
   // hooks
   const {
     state: scheduledTransactions,
@@ -69,9 +64,7 @@ export default function BillsScreen(_: Props) {
           //       error,
           //     );
           //   });
-          console.debug(
-            "[BillsScreen] Add Scheduled Transaction Button Pressed",
-          );
+          console.debug("[BillsScreen] Add Scheduled Transaction Button Pressed");
         }}
       />
       <BillsSectionList
@@ -80,42 +73,30 @@ export default function BillsScreen(_: Props) {
         }}
         scheduledTransactions={scheduledTransactions}
         onPress={(id) => {
-          Alert.alert(
-            "Would you like to delete this scheduled transaction?",
-            undefined,
-            [
-              {
-                text: "Cancel",
-                style: "cancel",
+          Alert.alert("Would you like to delete this scheduled transaction?", undefined, [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Delete",
+              style: "destructive",
+              onPress: () => {
+                deleteScheduledTransaction(id)
+                  .then(() => {
+                    Alert.alert("Scheduled Transaction Deleted");
+                    fetchScheduledTransactions();
+                  })
+                  .catch((error: Error) => {
+                    console.error("[BillsScreen] Error deleting scheduled transaction:", error);
+                  });
+                console.debug("[BillsScreen] Delete Scheduled Transaction Button Pressed");
               },
-              {
-                text: "Delete",
-                style: "destructive",
-                onPress: () => {
-                  deleteScheduledTransaction(id)
-                    .then(() => {
-                      Alert.alert("Scheduled Transaction Deleted");
-                      fetchScheduledTransactions();
-                    })
-                    .catch((error) => {
-                      console.error(
-                        "[BillsScreen] Error deleting scheduled transaction:",
-                        error,
-                      );
-                    });
-                  console.debug(
-                    "[BillsScreen] Delete Scheduled Transaction Button Pressed",
-                  );
-                },
-              },
-            ],
-          );
+            },
+          ]);
         }}
       />
-      <SheetModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
+      <SheetModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </SharedAccountScreen>
   );
 }

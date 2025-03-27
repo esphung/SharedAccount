@@ -1,14 +1,11 @@
+import type { ScheduledTransaction } from "@data/models/types/ScheduledTransaction";
 import { Realm } from "@realm/react";
-import type { ScheduledTransaction } from "types/ScheduledTransaction";
 
 const initialDate = new Date();
 const initialDayOfMonth = initialDate.getDate();
 const initialMonthsOfYear = Array.from({ length: 12 }, (_, i) => i + 1);
 
-export default class RealmScheduledTransaction
-  extends Realm.Object
-  implements ScheduledTransaction
-{
+export default class RealmScheduledTransaction extends Realm.Object implements ScheduledTransaction {
   id: `schd_${string}` = `schd_${Math.random().toString(36).substr(2, 9)}`;
   sharedAccountId: `acct_${string}` = `acct_${Math.random().toString(36).substr(2, 9)}`;
   amount: number = 0.0;

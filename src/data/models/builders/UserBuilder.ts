@@ -1,6 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
+import type { User } from "@data/models/types/User";
 import { faker } from "@faker-js/faker";
-import type { User } from "types/User";
 
 export default class UserBuilder extends BaseBuilder<User> {
   constructor() {
