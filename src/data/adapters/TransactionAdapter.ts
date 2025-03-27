@@ -1,5 +1,5 @@
-import type { DataModelAdapter } from "types/DataModelAdapter";
-import type { Transaction } from "types/Transaction";
+import type { Transaction } from "@data/models/types/Transaction";
+import type { DataModelAdapter } from "@data/types/DataModelAdapter";
 
 type LocalTransaction = { toJSON(): object };
 

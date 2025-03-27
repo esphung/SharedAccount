@@ -1,17 +1,12 @@
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import SpendingStats from "@components/SpendingStats/SpendingStats";
-import type {
-  AppTabsParamList,
-  AppTabsScreens,
-} from "@navigators/AppTabs/AppTabs";
 import useTransactions from "@presentation/hooks/useTransactions";
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
-type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
+// type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
 
-export default function HomeScreen(_: Props) {
+const HomeScreen = () => {
   const { state: transactions, startListening } = useTransactions();
 
   useEffect(() => {
@@ -30,7 +25,7 @@ export default function HomeScreen(_: Props) {
       </View>
     </SharedAccountScreen>
   );
-}
+};
 
 const styles = StyleSheet.create({
   content: {
@@ -38,3 +33,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 });
+
+export default HomeScreen;

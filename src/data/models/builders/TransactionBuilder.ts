@@ -1,6 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
+import type { Transaction } from "@data/models/types/Transaction";
 import { faker } from "@faker-js/faker";
-import type { Transaction } from "types/Transaction";
 
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
   constructor(type: "expense" | "credit") {

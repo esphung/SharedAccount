@@ -1,8 +1,8 @@
+import type { ScheduledTransaction } from "@data/models/types/ScheduledTransaction";
+import type { Transaction } from "@data/models/types/Transaction";
 import RealmScheduledTransactionRepository from "@data/repositories/realm/RealmScheduledTransactionRepository";
 import RealmTransactionRepository from "@data/repositories/realm/RealmTransactionRepository";
-import type { DataModelRepository } from "types/DataModelRepository";
-import type { ScheduledTransaction } from "types/ScheduledTransaction";
-import type { Transaction } from "types/Transaction";
+import type { DataModelRepository } from "@data/types/DataModelRepository";
 
 export default class RepositoryFactory {
   static createTransactionRepository(): DataModelRepository<Transaction> {

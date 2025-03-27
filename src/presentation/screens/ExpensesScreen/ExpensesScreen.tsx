@@ -1,18 +1,11 @@
 import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import type {
-  AppTabsParamList,
-  AppTabsScreens,
-} from "@navigators/AppTabs/AppTabs";
 import useTransactions from "@presentation/hooks/useTransactions";
-import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import React, { useState } from "react";
 import { Alert, Button } from "react-native";
 
-type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
-
-export default function ExpensesScreen(_: Props) {
+export default function ExpensesScreen() {
   // state
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -75,11 +68,7 @@ export default function ExpensesScreen(_: Props) {
           ]);
         }}
       />
-      <AddExpenseSheet
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onSubmit={onSubmit}
-      />
+      <AddExpenseSheet modalVisible={modalVisible} setModalVisible={setModalVisible} onSubmit={onSubmit} />
     </SharedAccountScreen>
   );
 }
