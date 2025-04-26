@@ -15,13 +15,13 @@ export default function BillsSectionListItem({
   item: ScheduledTransaction;
   isPast: boolean;
   isSameMonth: boolean;
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
 }) {
   const memoizedUpdateColorStyle = React.useMemo(() => {
     return StyleSheet.flatten([isPast && styles.pastAmount, !isPast && isSameMonth && styles.incomingAmount]);
   }, [isPast, isSameMonth]);
   return (
-    <TouchableOpacity style={styles.item} onPress={() => onPress(item.id)}>
+    <TouchableOpacity style={styles.item} onPress={() => onPress?.(item.id)}>
       <View>
         <SharedAccountText style={StyleSheet.flatten([styles.billName, memoizedUpdateColorStyle])}>
           {item.name}

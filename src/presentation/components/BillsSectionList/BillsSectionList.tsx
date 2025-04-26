@@ -77,7 +77,7 @@ const BillsSectionList = ({
   onPress,
 }: {
   scheduledTransactions: ScheduledTransaction[];
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
   onPressAddNew: () => void;
 }) => {
   const upcomingBills = React.useMemo(() => generateUpcomingBills(scheduledTransactions), [scheduledTransactions]);
@@ -85,6 +85,7 @@ const BillsSectionList = ({
 
   return (
     <SectionList
+      testID="bills-section-list"
       stickySectionHeadersEnabled={false}
       sections={sections}
       keyExtractor={(item) => item.id + DateTime.fromJSDate(item.startDate).toMillis().toString()}

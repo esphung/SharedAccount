@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createTabNavigator renders a tab navigator with the provided routes 1`] = `null`;
