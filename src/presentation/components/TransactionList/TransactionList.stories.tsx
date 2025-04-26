@@ -1,5 +1,6 @@
-import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
 import TransactionList from "@components/TransactionList/TransactionList";
+import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -25,12 +26,6 @@ const meta = {
   args: {
     transactions,
     users,
-    onShowAddTxnSheet: () => {
-      console.debug("[TransactionList] onShowAddTxnSheet");
-    },
-    onPress: (id: string) => {
-      console.debug("[TransactionList] onPress", id);
-    },
   },
   decorators: [
     (Story: React.FC) => (
@@ -53,11 +48,6 @@ export const Default: Story = {
   args: {
     transactions,
     users,
-    onShowAddTxnSheet: () => {
-      console.debug("[TransactionList] onShowAddTxnSheet");
-    },
-    onPress: (id: string) => {
-      console.debug("[TransactionList] onPress", id);
-    },
+    onPress: () => {},
   },
 };

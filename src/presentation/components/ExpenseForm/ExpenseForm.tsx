@@ -1,149 +1,119 @@
 import AutoSuggestInput from "@components/AutoSuggestInput/AutoSuggestInput";
 import AwareScrollView from "@components/AwareScrollView/AwareScrollView";
-import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import React, { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+
 import type { TextInput } from "react-native";
 import { StyleSheet, View } from "react-native";
 
-const defaultItems = [
-  { label: "Food", value: "Food" },
-  { label: "Transportation", value: "Transportation" },
-  { label: "Entertainment", value: "Entertainment" },
-  { label: "Bills", value: "Bills" },
-  { label: "Other", value: "Other" },
-];
+enum Category {
+  Food = "Food",
+  Transportation = "Transportation",
+  Entertainment = "Entertainment",
+  Bills = "Bills",
+  Other = "Other",
+}
 
-const removeDuplicates = (items: { label: string; value: string }[]) => {
-  const seen = new Set();
-  return items.filter((item) => {
-    const duplicate = seen.has(item.value);
-    seen.add(item.value);
-    return !duplicate;
-  });
+type ExpenseFormProps = {
+  onSubmit: (data: { amount: number; category: string; date: Date }) => void;
+  items?: { label: string; value: string }[];
 };
 
-const ExpenseForm = ({
-  onSubmit,
-  items = [],
-}: {
-  onSubmit: (data: { amount: number; category: string; date: Date }) => void;
-  items?: {
-    label: string;
-    value: string;
-  }[];
-}) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<{ amount: number; category: string; date: Date }>({
-    defaultValues: {
-      date: new Date(),
-    },
-  });
+const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
+  const [amount, setAmount] = useState(0);
+  const [category, setCategory] = useState("");
 
-  const currencyInputRef = React.useRef<TextInput>(null);
-  const autoSuggestInputRef = React.useRef<TextInput>(null);
-  const datePickerRef = React.useRef(null);
+  const [errors, setErrors] = useState<{ amount?: string; category?: string }>({});
 
-  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const currencyInputRef = useRef<TextInput>(null);
+  const categoryInputRef = useRef<TextInput>(null);
 
-  const submitExpense = React.useCallback(
-    (data: { amount: number; category: string; date: Date }) => {
-      onSubmit(data);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  const suggestions = useMemo(() => {
+    const seen = new Set<string>();
+    return (
+      [...items, ...Object.values(Category)]
+        .map((item) => {
+          if (typeof item === "string") {
+            return { label: item, value: item };
+          }
+          return item;
+        })
+        .map(({ label, value }) => {
+          const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+          return { label: formattedLabel, value };
+        })
+        .sort((a, b) => a.label.localeCompare(b.label))
+        // Remove duplicates
+        .filter(({ value }) => {
+          if (seen.has(value)) {
+            return false;
+          }
+          seen.add(value);
+          return true;
+        })
+        .map(({ value }) => value)
+    );
+  }, [items]);
+
+  const validate = useCallback(() => {
+    const newErrors: { amount?: string; category?: string } = {};
+
+    if (amount <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    }
+
+    if (!category.trim()) {
+      newErrors.category = "Category is required";
+    } else if (!/^[a-zA-Z]+$/.test(category.trim())) {
+      newErrors.category = "Category must be a single word";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  }, [amount, category]);
+
+  const handleSave = useCallback(() => {
+    if (validate()) {
+      onSubmit({ amount, category: category.trim(), date: new Date() });
+    }
+  }, [amount, category, onSubmit, validate]);
+
+  const onChangeText = useCallback((text: string) => {
+    setCategory(text);
+  }, []);
 
   return (
-    <AwareScrollView>
-      <View style={styles.container}>
-        {/* Amount Input */}
-        <SharedAccountText type="expenseFormLabel">Amount:</SharedAccountText>
-        <Controller
-          control={control}
-          name="amount"
-          rules={{
-            required: "Amount is required",
-            min: {
-              value: 0.01,
-              message: "Amount must be greater than 0",
-            },
-          }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <SharedAccountCurrencyInput
-                ref={currencyInputRef}
-                value={value}
-                returnKeyType="done"
-                onChangeValue={(cents) => {
-                  onChange(cents);
-                }}
-              />
-            );
-          }}
-        />
-        {errors.amount && <SharedAccountText type="expenseFormError">{errors.amount.message}</SharedAccountText>}
+    <AwareScrollView contentContainerStyle={styles.fill}>
+      <View style={styles.northPanel}>
+        <View style={styles.container}>
+          <SharedAccountText type="expenseFormLabel">Amount:</SharedAccountText>
+          <SharedAccountCurrencyInput
+            ref={currencyInputRef}
+            value={amount}
+            returnKeyType="done"
+            onChangeValue={setAmount}
+          />
+          {errors.amount && <SharedAccountText type="expenseFormError">{errors.amount}</SharedAccountText>}
 
-        {/* Category Picker */}
-        <SharedAccountText type="expenseFormLabel">Category:</SharedAccountText>
-        <Controller
-          control={control}
-          name="category"
-          rules={{
-            required: "Category is required",
-            // only one word
-            pattern: {
-              value: /^[a-zA-Z]+$/,
-              message: "Category must be a single word",
-            },
-          }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <AutoSuggestInput
-                ref={autoSuggestInputRef}
-                value={value}
-                suggestions={removeDuplicates([...items, ...defaultItems]).map((item) => item.value)}
-                onSelect={(val) => {
-                  onChange(val);
-                }}
-                autoComplete="off"
-                placeholder="Type a category..."
-              />
-            );
-          }}
-        />
-        {errors.category && <SharedAccountText type="expenseFormError">{errors.category.message}</SharedAccountText>}
-
-        {/* Date Picker */}
-        <SharedAccountText type="expenseFormLabel">Date:</SharedAccountText>
-        <Controller
-          control={control}
-          name="date"
-          render={({ field: { onChange, value } }) => (
-            <DateTimePicker
-              ref={datePickerRef}
-              selectedDate={value}
-              onChangeDate={onChange}
-              isDatePickerVisible={isDatePickerVisible}
-              onDatePickerVisibilityChange={setDatePickerVisible}
-              mode="datetime"
-            />
-          )}
-        />
+          <SharedAccountText type="expenseFormLabel">Category:</SharedAccountText>
+          <AutoSuggestInput
+            ref={categoryInputRef}
+            value={category}
+            suggestions={suggestions}
+            onSelect={setCategory}
+            placeholder="Type a category..."
+            onChangeText={onChangeText}
+          />
+          {errors.category && <SharedAccountText type="expenseFormError">{errors.category}</SharedAccountText>}
+        </View>
       </View>
 
-      {/* Submit Button */}
-      <SharedAccountButton
-        style={styles.submitButtonContainer}
-        title="Save Expense"
-        onPress={handleSubmit(submitExpense)}
-      />
+      <View style={styles.southPanel}>
+        <SharedAccountButton style={styles.submitButtonContainer} title="Save Expense" onPress={handleSave} />
+      </View>
     </AwareScrollView>
   );
 };
@@ -151,8 +121,21 @@ const ExpenseForm = ({
 const styles = StyleSheet.create({
   container: {
     gap: 20,
+    height: "100%",
+    padding: 20,
+  },
+  fill: {
+    flex: 1,
+  },
+  northPanel: {
+    flexShrink: 1,
+  },
+  southPanel: {
+    justifyContent: "flex-end",
+    paddingBottom: 50,
   },
   submitButtonContainer: {
+    marginHorizontal: 20,
     marginTop: 20,
   },
 });

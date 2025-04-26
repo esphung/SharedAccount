@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import type { BottomTabNavigatorProps } from "node_modules/@react-navigation/bottom-tabs/lib/typescript/module/src/types";
+import type { BottomTabNavigatorProps } from "@react-navigation/bottom-tabs";
 import React from "react";
 
 type TabRoutesParam = {

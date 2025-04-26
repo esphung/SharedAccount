@@ -22,9 +22,7 @@ const meta = {
   title: "ExpenseForm",
   component: ExpenseForm,
   args: {
-    onSubmit: (data: { amount: number; category: string; date: Date }) => {
-      console.debug({ data });
-    },
+    onSubmit: (_data: { amount: number; category: string; date: Date }) => {},
   },
   decorators: [(Story: React.FC) => <View style={styles.container}>{renderInsideKeyboardProvider(Story)}</View>],
 } satisfies Meta<typeof ExpenseForm>;

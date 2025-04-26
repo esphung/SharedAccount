@@ -24,7 +24,6 @@
     "@realm/react": "^0.11.0",
     "luxon": "^3.5.0",
     "react": "19.0.0",
-    "react-hook-form": "7.54.2",
     "react-native": "0.78.0",
     "react-native-file-access": "3.1.1",
     "react-native-gifted-charts": "^1.4.58",

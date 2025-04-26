@@ -1,5 +1,6 @@
 import BillsSectionList from "@components/BillsSectionList/BillsSectionList";
 import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -25,12 +26,8 @@ const meta = {
   },
   args: {
     scheduledTransactions,
-    onPress: (id: string) => {
-      console.debug("[BillsSectionList] onPress", id);
-    },
-    onPressAddNew: () => {
-      console.debug("[BillsSectionList] onPressAddNew");
-    },
+    onPress: (_: string) => {},
+    onPressAddNew: () => {},
   },
   decorators: [
     (Story: React.FC) => (
@@ -52,11 +49,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     scheduledTransactions,
-    onPress: (id: string) => {
-      console.debug("[BillsSectionList] onPress", id);
-    },
-    onPressAddNew: () => {
-      console.debug("[BillsSectionList] onPressAddNew");
-    },
+    onPress: (_: string) => {},
+    onPressAddNew: () => {},
   },
 };

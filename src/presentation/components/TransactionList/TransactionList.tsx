@@ -1,6 +1,6 @@
-import TransactionListFooter from "@components/TransactionList/TransactionListFooter";
 import TransactionListHeader from "@components/TransactionList/TransactionListHeader";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
+
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
 import { DateTime } from "luxon";
@@ -38,14 +38,13 @@ const groupTransactionsByDate = (expensesArray: Transaction<"expense">[], credit
 // Props
 type Props = {
   transactions: Transaction[];
-  users: User[];
-  onShowAddTxnSheet: () => void;
+  users?: User[];
   onPress: (id: string) => void;
 };
 
 // Main Component
 const TransactionList = (props: Props) => {
-  const { transactions = [], users = [], onShowAddTxnSheet, onPress } = props;
+  const { transactions = [], users = [], onPress } = props;
 
   const sections = React.useMemo(
     () =>
@@ -62,14 +61,9 @@ const TransactionList = (props: Props) => {
     [transactions],
   );
 
-  const renderListFooter = React.useCallback(
-    () => <TransactionListFooter onPress={onShowAddTxnSheet} />,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
   return (
     <SectionList
+      inverted
       sections={sections}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => {
@@ -78,7 +72,6 @@ const TransactionList = (props: Props) => {
       }}
       renderSectionHeader={({ section: { title } }) => <TransactionListHeader title={title} />}
       stickySectionHeadersEnabled={false}
-      ListFooterComponent={renderListFooter}
     />
   );
 };
