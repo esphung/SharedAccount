@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HomeScreen matches snapshot 1`] = `
+<View
+  style={
+    {
+      "flex": 1,
+      "paddingHorizontal": 16,
+    }
+  }
+>
+  <div>
+    SpendingStats
+  </div>
+</View>
+`;

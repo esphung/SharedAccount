@@ -1,16 +1,18 @@
 import CalculatorSvgIcon from "@assets/svg/calculator-svgrepo-com.svg";
 import ClockSvgIcon from "@assets/svg/clock-svgrepo-com.svg";
 import HomeSvgIcon from "@assets/svg/home-1-svgrepo-com.svg";
+import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
 import ScheduledTransactionsScreen from "@screens/ScheduledTransactionsScreen/ScheduledTransactionsScreen";
 import React from "react";
 
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import type { RouteProp } from "@react-navigation/native";
 import type { SvgProps } from "react-native-svg";
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import { StyleSheet, View } from "react-native";
+
+const SIZE_MULTIPLIER = 20;
 
 export enum AppTabsScreens {
   Home = "HomeScreen",
@@ -36,58 +38,56 @@ const AppTabsTabBarIconMap: {
 
 type TabRoute = RouteProp<AppTabsParamList, AppTabsScreens>;
 
-const tabBarIcon = ({ color, size, route }: { focused: boolean; color: string; size: number; route: TabRoute }) => {
+const tabBarIcon = ({
+  color,
+  route,
+}: TabBarIconProps & {
+  route: TabRoute;
+}) => {
   const Icon = AppTabsTabBarIconMap[route.name];
+  return <Icon width={SIZE_MULTIPLIER} height={SIZE_MULTIPLIER} fill={color} />;
+};
+
+const tabBarLabel = ({
+  route,
+}: TabBarIconProps & {
+  route: TabRoute;
+}) => {
   return (
-    <View style={styles.tabBarIconContainer}>
-      <Icon width={size * 0.76} height={size * 0.8} fill={color} />
-    </View>
+    <SharedAccountText type="tabBarLabel" numberOfLines={1}>
+      {TabBarLabelScreenNamesMap[route.name]}
+    </SharedAccountText>
   );
 };
 
-const tabBarLabel = ({ route }: { focused: boolean; color: string; route: TabRoute }) => {
-  return (
-    <View style={styles.tabBarLabelContainer}>
-      <SharedAccountText type="tabBarLabel" numberOfLines={1}>
-        {TabBarLabelScreenNamesMap[route.name]}
-      </SharedAccountText>
-    </View>
-  );
+type TabBarIconProps = {
+  focused: boolean;
+  color: string;
 };
+
+const screenOptions = ({ route }: { route: TabRoute }): BottomTabNavigationOptions => ({
+  tabBarLabelPosition: "below-icon",
+  tabBarActiveTintColor: "#000",
+  tabBarInactiveTintColor: "#000",
+  headerShown: false,
+  tabBarButtonTestID: `${route.name}-tabBarButton`,
+  tabBarStyle: { height: 100, paddingBottom: 10, paddingTop: 10 },
+  tabBarLabelStyle: { fontSize: 12, marginBottom: 0 },
+  tabBarIconStyle: { marginBottom: 4 },
+  tabBarIcon: (tabBarIconProps: TabBarIconProps) => tabBarIcon({ ...tabBarIconProps, route }),
+  tabBarLabel: (tabBarLabelProps: TabBarIconProps) => tabBarLabel({ ...tabBarLabelProps, route }),
+});
 
 const AppTabs = () => {
   const Tab = createBottomTabNavigator<AppTabsParamList>();
 
   return (
-    <Tab.Navigator
-      initialRouteName={AppTabsScreens.Expenses}
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarIcon: (tabBarIconProps) => tabBarIcon({ ...tabBarIconProps, route }),
-        tabBarLabel: (tabBarLabelProps) => tabBarLabel({ ...tabBarLabelProps, route }),
-      })}
-    >
+    <Tab.Navigator initialRouteName={AppTabsScreens.Expenses} screenOptions={screenOptions}>
       <Tab.Screen name={AppTabsScreens.ScheduledTransactions} component={ScheduledTransactionsScreen} />
       <Tab.Screen name={AppTabsScreens.Expenses} component={ExpensesScreen} />
       <Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  tabBarIconContainer: {
-    alignItems: "center",
-    height: "100%",
-    justifyContent: "center",
-    width: "100%",
-  },
-  tabBarLabelContainer: {
-    alignItems: "center",
-    height: "100%",
-    justifyContent: "center",
-    paddingBottom: 12,
-    width: "100%",
-  },
-});
 
 export default AppTabs;
