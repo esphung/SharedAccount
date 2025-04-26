@@ -1,0 +1,578 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppTabs Navigator matches the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      {
+        "flexDirection": "column",
+      },
+    ]
+  }
+>
+  <RNSScreenNavigationContainer
+    style={
+      {
+        "flex": 1,
+        "overflow": "hidden",
+      }
+    }
+  >
+    <RNSScreen
+      activityState={2}
+      collapsable={false}
+      gestureResponseDistance={
+        {
+          "bottom": -1,
+          "end": -1,
+          "start": -1,
+          "top": -1,
+        }
+      }
+      onGestureCancel={[Function]}
+      sheetAllowedDetents={
+        [
+          1,
+        ]
+      }
+      sheetCornerRadius={-1}
+      sheetElevation={24}
+      sheetExpandsWhenScrolledToEdge={true}
+      sheetGrabberVisible={false}
+      sheetInitialDetent={0}
+      sheetLargestUndimmedDetent={-1}
+      style={
+        [
+          [
+            {
+              "bottom": 0,
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            },
+            {
+              "zIndex": 0,
+            },
+          ],
+          {
+            "zIndex": undefined,
+          },
+        ]
+      }
+    >
+      <View
+        accessibilityElementsHidden={false}
+        collapsable={false}
+        importantForAccessibility="auto"
+        style={
+          [
+            {
+              "backgroundColor": "rgb(242, 242, 242)",
+              "flex": 1,
+            },
+            [
+              {
+                "flex": 1,
+              },
+              [
+                undefined,
+                false,
+              ],
+            ],
+          ]
+        }
+      >
+        <View
+          style={
+            {
+              "flex": 1,
+            }
+          }
+        >
+          <div>
+            Expenses
+          </div>
+        </View>
+      </View>
+    </RNSScreen>
+  </RNSScreenNavigationContainer>
+  <View
+    collapsable={false}
+    onLayout={[Function]}
+    pointerEvents="auto"
+    style={
+      {
+        "backgroundColor": "rgb(255, 255, 255)",
+        "borderColor": "rgb(216, 216, 216)",
+        "borderTopWidth": 0.5,
+        "bottom": 0,
+        "elevation": 8,
+        "end": 0,
+        "height": 100,
+        "paddingBottom": 10,
+        "paddingHorizontal": 0,
+        "paddingTop": 10,
+        "position": undefined,
+        "start": 0,
+        "transform": [
+          {
+            "translateY": 0,
+          },
+        ],
+      }
+    }
+  >
+    <View
+      pointerEvents="none"
+      style={
+        {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+        }
+      }
+    />
+    <View
+      accessibilityRole="tablist"
+      style={
+        {
+          "flex": 1,
+          "flexDirection": "row",
+        }
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "borderRadius": 0,
+              "overflow": "visible",
+            },
+            [
+              {
+                "flex": 1,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <View
+          accessibilityLargeContentTitle="ScheduledScreen"
+          accessibilityRole="button"
+          accessibilityShowsLargeContentViewer={true}
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": false,
+            }
+          }
+          accessibilityStates={[]}
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          href="/ScheduledScreen"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "transparent",
+              "borderRadius": 0,
+              "cursor": "pointer",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "flex-start",
+              "opacity": 1,
+              "padding": 5,
+            }
+          }
+          testID="ScheduledScreen-tabBarButton"
+        >
+          <View
+            style={
+              [
+                {
+                  "height": 28,
+                  "width": 31,
+                },
+                {
+                  "marginBottom": 4,
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "minWidth": 25,
+                    "opacity": 0,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "opacity": 1,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+          </View>
+          <Text
+            numberOfLines={1}
+            style={
+              {
+                "fontSize": 12,
+              }
+            }
+            type="tabBarLabel"
+          >
+            Scheduled
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          [
+            {
+              "borderRadius": 0,
+              "overflow": "visible",
+            },
+            [
+              {
+                "flex": 1,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <View
+          accessibilityLargeContentTitle="ExpensesScreen"
+          accessibilityRole="button"
+          accessibilityShowsLargeContentViewer={true}
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": true,
+            }
+          }
+          accessibilityStates={
+            [
+              "selected",
+            ]
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          href="/ExpensesScreen"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "transparent",
+              "borderRadius": 0,
+              "cursor": "pointer",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "flex-start",
+              "opacity": 1,
+              "padding": 5,
+            }
+          }
+          testID="ExpensesScreen-tabBarButton"
+        >
+          <View
+            style={
+              [
+                {
+                  "height": 28,
+                  "width": 31,
+                },
+                {
+                  "marginBottom": 4,
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "minWidth": 25,
+                    "opacity": 1,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "opacity": 0,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+          </View>
+          <Text
+            numberOfLines={1}
+            style={
+              {
+                "fontSize": 12,
+              }
+            }
+            type="tabBarLabel"
+          >
+            Expenses
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          [
+            {
+              "borderRadius": 0,
+              "overflow": "visible",
+            },
+            [
+              {
+                "flex": 1,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        <View
+          accessibilityLargeContentTitle="HomeScreen"
+          accessibilityRole="button"
+          accessibilityShowsLargeContentViewer={true}
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": false,
+            }
+          }
+          accessibilityStates={[]}
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          href="/HomeScreen"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "transparent",
+              "borderRadius": 0,
+              "cursor": "pointer",
+              "flex": 1,
+              "flexDirection": "column",
+              "justifyContent": "flex-start",
+              "opacity": 1,
+              "padding": 5,
+            }
+          }
+          testID="HomeScreen-tabBarButton"
+        >
+          <View
+            style={
+              [
+                {
+                  "height": 28,
+                  "width": 31,
+                },
+                {
+                  "marginBottom": 4,
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "minWidth": 25,
+                    "opacity": 0,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "alignSelf": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  {
+                    "opacity": 1,
+                  },
+                ]
+              }
+            >
+              <SvgMock
+                fill="#000"
+                height={20}
+                width={20}
+              />
+            </View>
+          </View>
+          <Text
+            numberOfLines={1}
+            style={
+              {
+                "fontSize": 12,
+              }
+            }
+            type="tabBarLabel"
+          >
+            Home
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

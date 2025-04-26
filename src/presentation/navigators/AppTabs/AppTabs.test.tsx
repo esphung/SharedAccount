@@ -1,28 +1,36 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import AppTabs, { AppTabsScreens } from "./AppTabs";
+import { render } from "@testing-library/react-native";
+import React from "react";
+import AppTabs from "./AppTabs";
+
+jest.mock("@presentation/screens/HomeScreen/HomeScreen", () => {
+  return {
+    __esModule: true,
+    // eslint-disable-next-line react-native/no-raw-text
+    default: () => <div>Home</div>,
+  };
+});
+jest.mock("@presentation/screens/ExpensesScreen/ExpensesScreen", () => {
+  return {
+    __esModule: true,
+    // eslint-disable-next-line react-native/no-raw-text
+    default: () => <div>Expenses</div>,
+  };
+});
 
 jest.mock("@domain/contexts/useRepository", () => ({
   __esModule: true,
   default: jest.fn(() => ({
     transactionRepo: {
       getLiveData: jest.fn(),
+      stopListening: jest.fn(),
       getAll: jest.fn(),
       getById: jest.fn(),
-      create: jest.fn(),
+      add: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-      stopListening: jest.fn(),
-    },
-    scheduledTransactionRepo: {
-      getLiveData: jest.fn(),
-      getAll: jest.fn(),
-      getById: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-      stopListening: jest.fn(),
+      getUnsynced: jest.fn(),
+      markAsSynced: jest.fn(),
     },
   })),
 }));
@@ -35,25 +43,32 @@ describe("AppTabs Navigator", () => {
       </NavigationContainer>,
     );
 
-  it("renders the AppTabs navigator", () => {
-    const { getByText } = renderWithNavigation();
-
-    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
-    expect(getByText(AppTabsScreens.Expenses)).toBeTruthy();
-    expect(getByText(AppTabsScreens.ScheduledTransactions)).toBeTruthy();
+  it("matches the snapshot", () => {
+    const { toJSON } = renderWithNavigation();
+    expect(toJSON()).toMatchSnapshot();
   });
 
-  it("sets the initial route to HomeScreen", () => {
+  it("renders the HomeScreen tab", () => {
     const { getByText } = renderWithNavigation();
-
-    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
+    const homeScreen = getByText("Home");
+    expect(homeScreen).toBeTruthy();
   });
 
-  it("hides the header for all screens", () => {
+  it("renders the ExpensesScreen tab", () => {
+    const { getByText } = renderWithNavigation();
+    const expensesScreen = getByText("Expenses");
+    expect(expensesScreen).toBeTruthy();
+  });
+
+  it("renders the ScheduledTransactionsScreen tab", () => {
+    const { getByText } = renderWithNavigation();
+    const scheduledTransactionsScreen = getByText("Scheduled");
+    expect(scheduledTransactionsScreen).toBeTruthy();
+  });
+
+  it("sets the initial route to ExpensesScreen", () => {
     const { getByText } = renderWithNavigation();
 
-    expect(getByText(AppTabsScreens.Home).props.style).not.toContain("headerShown");
-    expect(getByText(AppTabsScreens.Expenses).props.style).not.toContain("headerShown");
-    expect(getByText(AppTabsScreens.ScheduledTransactions).props.style).not.toContain("headerShown");
+    expect(getByText("Expenses")).toBeTruthy();
   });
 });

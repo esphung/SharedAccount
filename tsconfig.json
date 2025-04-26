@@ -15,7 +15,8 @@
       "@config/*": ["./src/config/*"],
       "@domain/*": ["./src/domain/*"],
       "@presentation/*": ["./src/presentation/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@assets/*": ["./src/assets/*"]
     },
     "jsx": "react-native",
     "resolveJsonModule": true,

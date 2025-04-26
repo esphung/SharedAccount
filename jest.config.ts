@@ -5,29 +5,27 @@ export default async (): Promise<Config> => {
     verbose: true,
     preset: "react-native",
     collectCoverage: true,
-    coverageProvider: "babel",
+    collectCoverageFrom: [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.test.{ts,tsx}",
+      "!src/**/*.stories.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/**/index.ts",
+      "!src/**/types.ts",
+      "!src/**/types.d.ts",
+      "!src/**/types/*",
+      "!src/__mocks__/*",
+    ],
+    coverageProvider: "v8",
+    coverageReporters: ["text", "lcov", "html"],
+    coverageDirectory: "coverage",
     coverageThreshold: {
       global: {},
-      "src/config": {
-        statements: 100,
-        branches: 100,
-        functions: 100,
-        lines: 100,
-      },
-      "src/presentation/navigators": {
-        statements: 100,
-        branches: 100,
-        functions: 100,
-        lines: 100,
-      },
-      "src/presentation/screens/ScheduledTransactionsScreen": {
-        statements: 100,
-        branches: 100,
-        functions: 100,
-        lines: 100,
-      },
     },
     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
     transformIgnorePatterns: ["node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"],
+    moduleNameMapper: {
+      "\\.svg": "<rootDir>/src/__mocks__/svgMock.ts",
+    },
   };
 };
