@@ -70,6 +70,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
     data={[]}
     getItem={[Function]}
     getItemCount={[Function]}
+    getItemLayout={[Function]}
     invertStickyHeaders={true}
     inverted={true}
     isInvertedVirtualizedList={true}
@@ -99,5 +100,29 @@ exports[`ExpensesScreen matches snapshot 1`] = `
   >
     <View />
   </RCTScrollView>
+  <Modal
+    animationType="fade"
+    hardwareAccelerated={false}
+    statusBarTranslucent={true}
+    transparent={true}
+    visible={true}
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "rgb(0, 0, 0)",
+          "flex": 1,
+          "justifyContent": "center",
+          "opacity": 0.2,
+        }
+      }
+    >
+      <ActivityIndicator
+        color="#ffffff"
+        size="large"
+      />
+    </View>
+  </Modal>
 </RCTSafeAreaView>
 `;

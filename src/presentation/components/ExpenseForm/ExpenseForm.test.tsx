@@ -10,13 +10,15 @@ jest.mock("@presentation/components/AwareScrollView/AwareScrollView", () => {
 
 describe("ExpenseForm", () => {
   const mockOnSubmit = jest.fn();
+  const mockListRef = { current: { scrollToIndex: jest.fn() } };
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders correctly", () => {
-    const { getByText, getByPlaceholderText } = render(<ExpenseForm onSubmit={mockOnSubmit} />);
+    // @ts-expect-error not typing the ref
+    const { getByText, getByPlaceholderText } = render(<ExpenseForm onSubmit={mockOnSubmit} listRef={mockListRef} />);
 
     expect(getByText("Amount:")).toBeTruthy();
     expect(getByText("Category:")).toBeTruthy();
@@ -25,7 +27,8 @@ describe("ExpenseForm", () => {
   });
 
   it("validates amount and category inputs", () => {
-    const { getByText, getByPlaceholderText } = render(<ExpenseForm onSubmit={mockOnSubmit} />);
+    // @ts-expect-error not typing the ref
+    const { getByText, getByPlaceholderText } = render(<ExpenseForm onSubmit={mockOnSubmit} listRef={mockListRef} />);
 
     fireEvent.press(getByText("Save Expense"));
 
@@ -41,7 +44,8 @@ describe("ExpenseForm", () => {
   it("renders default and custom suggestions", () => {
     const customItems = [{ label: "Travel", value: "" }];
     const { getByPlaceholderText, getByDisplayValue } = render(
-      <ExpenseForm onSubmit={mockOnSubmit} items={customItems} />,
+      // @ts-expect-error not typing the ref
+      <ExpenseForm onSubmit={mockOnSubmit} items={customItems} listRef={mockListRef} />,
     );
 
     fireEvent.changeText(getByPlaceholderText("Type a category..."), "Travel");

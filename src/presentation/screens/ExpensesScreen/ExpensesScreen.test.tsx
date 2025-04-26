@@ -21,6 +21,12 @@ describe("ExpensesScreen", () => {
   const mockFetchItems = jest.fn();
   const mockAddItem = jest.fn();
   const mockDeleteItem = jest.fn();
+  const addListenerMock = jest.fn();
+  const removeListenerMock = jest.fn();
+  const mockNavigation = {
+    addListener: addListenerMock,
+    removeListener: removeListenerMock,
+  };
 
   beforeEach(() => {
     (useTransactions as jest.Mock).mockReturnValue({
@@ -37,12 +43,14 @@ describe("ExpensesScreen", () => {
   });
 
   it("matches snapshot", () => {
-    const { toJSON } = render(<ExpensesScreen />);
+    // @ts-expect-error not typing the navigation prop
+    const { toJSON } = render(<ExpensesScreen navigation={mockNavigation} />);
     expect(toJSON()).toMatchSnapshot();
   });
 
   it("renders Add Expense button", () => {
-    const { getByText } = render(<ExpensesScreen />);
+    // @ts-expect-error not typing the navigation prop
+    const { getByText } = render(<ExpensesScreen navigation={mockNavigation} />);
     expect(getByText("Add an expense")).toBeTruthy();
   });
 
@@ -50,7 +58,12 @@ describe("ExpensesScreen", () => {
     const unsubscribeMock = jest.fn();
     mockStartListening.mockReturnValue(unsubscribeMock);
 
-    const { unmount } = render(<ExpensesScreen />);
+    const { unmount } = render(
+      <ExpensesScreen
+        // @ts-expect-error not typing the navigation prop
+        navigation={mockNavigation}
+      />,
+    );
     expect(mockStartListening).toHaveBeenCalled();
 
     unmount();
@@ -58,7 +71,12 @@ describe("ExpensesScreen", () => {
   });
 
   it("shows AddExpenseSheet when Add Expense button is pressed", () => {
-    const { getByText, getByTestId } = render(<ExpensesScreen />);
+    const { getByText, getByTestId } = render(
+      <ExpensesScreen
+        // @ts-expect-error not typing the navigation prop
+        navigation={mockNavigation}
+      />,
+    );
     fireEvent.press(getByText("Add an expense"));
     expect(getByTestId("add-expense-sheet")).toBeTruthy();
   });

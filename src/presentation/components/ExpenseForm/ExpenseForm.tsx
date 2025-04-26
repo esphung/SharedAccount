@@ -3,10 +3,10 @@ import AwareScrollView from "@components/AwareScrollView/AwareScrollView";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import type { RefObject } from "react";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-
-import type { TextInput } from "react-native";
-import { StyleSheet, View } from "react-native";
+import type { SectionList, TextInput } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 enum Category {
   Food = "Food",
@@ -19,6 +19,7 @@ enum Category {
 type ExpenseFormProps = {
   onSubmit: (data: { amount: number; category: string; date: Date }) => void;
   items?: { label: string; value: string }[];
+  listRef: RefObject<SectionList | null>;
 };
 
 const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
@@ -113,6 +114,18 @@ const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
 
       <View style={styles.southPanel}>
         <SharedAccountButton style={styles.submitButtonContainer} title="Save Expense" onPress={handleSave} />
+        {__DEV__ && (
+          <Button
+            title="Debug"
+            onPress={() => {
+              // fake values
+              const randAmount = Math.floor(Math.random() * 1000);
+              const randCategory = suggestions[Math.floor(Math.random() * suggestions.length)];
+              setAmount(randAmount);
+              setCategory(randCategory);
+            }}
+          />
+        )}
       </View>
     </AwareScrollView>
   );

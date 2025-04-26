@@ -20,6 +20,9 @@ const colors = {
   orange: "rgb(255, 165, 0)",
   blue: "rgb(0, 0, 255)",
   yellow: "rgb(255, 255, 0)",
+
+  skeleton: "rgba(255,255,255,0.3)",
+  skeletonBg: "#e0e0e0",
 };
 
 export default colors;

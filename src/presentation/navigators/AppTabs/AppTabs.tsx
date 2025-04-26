@@ -1,7 +1,8 @@
-import createTabNavigator from "@presentation/navigators/generators/createTabNavigator";
+// import createTabNavigator from "@presentation/navigators/generators/createTabNavigator";
 import ScheduledTransactionsScreen from "@screens/ScheduledTransactionsScreen/ScheduledTransactionsScreen";
 import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 export enum AppTabsScreens {
   Home = "HomeScreen",
@@ -11,13 +12,16 @@ export enum AppTabsScreens {
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
 
-const AppTabs = createTabNavigator(
-  [
-    { name: AppTabsScreens.ScheduledTransactions, component: ScheduledTransactionsScreen },
-    { name: AppTabsScreens.Expenses, component: ExpensesScreen },
-    { name: AppTabsScreens.Home, component: HomeScreen },
-  ],
-  { initialRouteName: AppTabsScreens.Home },
-);
+const AppTabs = () => {
+  const Tab = createBottomTabNavigator<AppTabsParamList>();
+
+  return (
+    <Tab.Navigator initialRouteName={AppTabsScreens.Home} screenOptions={{ headerShown: false }}>
+      <Tab.Screen name={AppTabsScreens.ScheduledTransactions} component={ScheduledTransactionsScreen} />
+      <Tab.Screen name={AppTabsScreens.Expenses} component={ExpensesScreen} />
+      <Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
+    </Tab.Navigator>
+  );
+};
 
 export default AppTabs;
