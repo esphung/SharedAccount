@@ -27,5 +27,6 @@ export default async (): Promise<Config> => {
         lines: 100,
       },
     },
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   };
 };

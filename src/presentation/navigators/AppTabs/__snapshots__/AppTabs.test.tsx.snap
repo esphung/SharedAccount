@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppTabsScreens Enum should match snapshot 1`] = `
+{
+  "Expenses": "ExpensesScreen",
+  "Home": "HomeScreen",
+  "ScheduledTransactions": "ScheduledTransactionsScreen",
+}
+`;
