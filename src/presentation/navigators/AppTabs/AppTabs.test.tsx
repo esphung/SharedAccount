@@ -25,13 +25,12 @@ jest.mock("react-native-gifted-charts", () => {
 describe("AppTabsScreens Enum", () => {
   it("should have the correct values for each screen", () => {
     expect(AppTabsScreens.Home).toBe("HomeScreen");
-    expect(AppTabsScreens.Settings).toBe("SettingsScreen");
     expect(AppTabsScreens.Expenses).toBe("ExpensesScreen");
     expect(AppTabsScreens.ScheduledTransactions).toBe("ScheduledTransactionsScreen");
   });
 
   it("should contain all expected values", () => {
     const values = Object.values(AppTabsScreens);
-    expect(values).toEqual(["HomeScreen", "SettingsScreen", "ExpensesScreen", "ScheduledTransactionsScreen"]);
+    expect(values).toEqual(["HomeScreen", "ExpensesScreen", "ScheduledTransactionsScreen"]);
   });
 });
