@@ -1,4 +1,4 @@
-import { realmSchema, realmSchemaVerison } from "@config/realmSchema";
+import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
 import ScheduledTransactionAdapter from "@data/adapters/ScheduledTransactionAdapter";
 import type RealmScheduledTransaction from "@data/models/realm/RealmScheduledTransaction";
 import type { ScheduledTransaction } from "@data/models/types/ScheduledTransaction";
@@ -13,7 +13,7 @@ export default class RealmScheduledTransactionRepository implements DataModelRep
   constructor() {
     this.realm = new Realm({
       schema: realmSchema,
-      schemaVersion: realmSchemaVerison,
+      schemaVersion: realmSchemaVersion,
     });
   }
 

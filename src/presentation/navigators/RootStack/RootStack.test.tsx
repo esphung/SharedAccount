@@ -9,7 +9,7 @@ jest.mock("@presentation/navigators/AppTabs/AppTabs", () => ({ children }: { chi
 jest.mock("@realm/react", () => ({ RealmProvider: jest.fn() }));
 
 jest.mock("@config/realmSchema", () => {
-  return { realmSchemaVerison: 2 };
+  return { realmSchemaVersion: 2 };
 });
 
 jest.mock("@domain/providers/RepositoryProvider", () => ({ children }: { children: React.ReactNode }) => (
