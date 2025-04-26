@@ -1,4 +1,4 @@
-import { realmSchema, realmSchemaVerison } from "@config/realmSchema";
+import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
 import TransactionAdapter from "@data/adapters/TransactionAdapter";
 import type RealmTransaction from "@data/models/realm/RealmTransaction";
 import type { Transaction } from "@data/models/types/Transaction";
@@ -13,7 +13,7 @@ export default class RealmTransactionRepository implements DataModelRepository<T
   constructor() {
     this.realm = new Realm({
       schema: realmSchema,
-      schemaVersion: realmSchemaVerison,
+      schemaVersion: realmSchemaVersion,
     });
   }
 

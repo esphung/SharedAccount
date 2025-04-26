@@ -1,19 +1,19 @@
 import createTabNavigator from "@presentation/navigators/generators/createTabNavigator";
-import BillsScreen from "@screens/BillsScreen/BillsScreen";
+import ScheduledTransactionsScreen from "@screens/ScheduledTransactionsScreen/ScheduledTransactionsScreen";
 import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
 
 export enum AppTabsScreens {
   Home = "HomeScreen",
   Expenses = "ExpensesScreen",
-  Bills = "BillsScreen",
+  ScheduledTransactions = "ScheduledTransactionsScreen",
 }
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
 
 const AppTabs = createTabNavigator(
   [
-    { name: AppTabsScreens.Bills, component: BillsScreen },
+    { name: AppTabsScreens.ScheduledTransactions, component: ScheduledTransactionsScreen },
     { name: AppTabsScreens.Expenses, component: ExpensesScreen },
     { name: AppTabsScreens.Home, component: HomeScreen },
   ],
