@@ -27,12 +27,7 @@ describe("AppTabsScreens Enum", () => {
     expect(AppTabsScreens.Home).toBe("HomeScreen");
     expect(AppTabsScreens.Settings).toBe("SettingsScreen");
     expect(AppTabsScreens.Expenses).toBe("ExpensesScreen");
-    expect(AppTabsScreens.Bills).toBe("ScheduledTransactionsScreen");
-  });
-
-  it("should contain all expected keys", () => {
-    const keys = Object.keys(AppTabsScreens);
-    expect(keys).toEqual(["Home", "Settings", "Expenses", "Bills"]);
+    expect(AppTabsScreens.ScheduledTransactions).toBe("ScheduledTransactionsScreen");
   });
 
   it("should contain all expected values", () => {

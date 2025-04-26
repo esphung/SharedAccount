@@ -8,14 +8,14 @@ export enum AppTabsScreens {
   Home = "HomeScreen",
   Settings = "SettingsScreen",
   Expenses = "ExpensesScreen",
-  Bills = "ScheduledTransactionsScreen",
+  ScheduledTransactions = "ScheduledTransactionsScreen",
 }
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
 
 const AppTabs = createTabNavigator(
   [
-    { name: AppTabsScreens.Bills, component: ScheduledTransactionsScreen },
+    { name: AppTabsScreens.ScheduledTransactions, component: ScheduledTransactionsScreen },
     { name: AppTabsScreens.Expenses, component: ExpensesScreen },
     { name: AppTabsScreens.Home, component: HomeScreen },
     { name: AppTabsScreens.Settings, component: SettingsScreen },
