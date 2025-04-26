@@ -1,7 +1,8 @@
-import React from "react";
-import { render } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import AppTabs, { AppTabsScreens } from "./AppTabs";
+import { render } from "@testing-library/react-native";
+import React from "react";
+
+import AppTabs from "./AppTabs";
 
 jest.mock("@domain/contexts/useRepository", () => ({
   __esModule: true,
@@ -35,25 +36,40 @@ describe("AppTabs Navigator", () => {
       </NavigationContainer>,
     );
 
-  it("renders the AppTabs navigator", () => {
-    const { getByText } = renderWithNavigation();
+  // it("matches the snapshot", () => {
+  //   const { toJSON } = renderWithNavigation();
+  //   expect(toJSON()).toMatchSnapshot();
+  // });
 
-    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
-    expect(getByText(AppTabsScreens.Expenses)).toBeTruthy();
-    expect(getByText(AppTabsScreens.ScheduledTransactions)).toBeTruthy();
+  it("renders the HomeScreen tab", () => {
+    const { getByText } = renderWithNavigation();
+    const homeScreen = getByText("Home");
+    expect(homeScreen).toBeTruthy();
   });
 
-  it("sets the initial route to HomeScreen", () => {
+  it("renders the ExpensesScreen tab", () => {
+    const { getByText } = renderWithNavigation();
+    const expensesScreen = getByText("Expenses");
+    expect(expensesScreen).toBeTruthy();
+  });
+
+  it("renders the ScheduledTransactionsScreen tab", () => {
+    const { getByText } = renderWithNavigation();
+    const scheduledTransactionsScreen = getByText("Scheduled");
+    expect(scheduledTransactionsScreen).toBeTruthy();
+  });
+
+  it("sets the initial route to ExpensesScreen", () => {
     const { getByText } = renderWithNavigation();
 
-    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
+    expect(getByText("Expenses")).toBeTruthy();
   });
 
   it("hides the header for all screens", () => {
     const { getByText } = renderWithNavigation();
 
-    expect(getByText(AppTabsScreens.Home).props.style).not.toContain("headerShown");
-    expect(getByText(AppTabsScreens.Expenses).props.style).not.toContain("headerShown");
-    expect(getByText(AppTabsScreens.ScheduledTransactions).props.style).not.toContain("headerShown");
+    expect(getByText("Home").props.style).not.toContain("headerShown");
+    expect(getByText("Expenses").props.style).not.toContain("headerShown");
+    expect(getByText("Scheduled").props.style).not.toContain("headerShown");
   });
 });

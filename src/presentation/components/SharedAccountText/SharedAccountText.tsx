@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   // eslint-disable-next-line react-native/no-unused-styles
+  tabBarLabel: {
+    fontSize: 12,
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
   transactionType: {
     fontSize: 20,
     fontWeight: "bold",
