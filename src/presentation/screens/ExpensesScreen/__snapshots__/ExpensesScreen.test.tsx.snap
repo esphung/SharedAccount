@@ -71,9 +71,6 @@ exports[`ExpensesScreen matches snapshot 1`] = `
     getItem={[Function]}
     getItemCount={[Function]}
     getItemLayout={[Function]}
-    invertStickyHeaders={true}
-    inverted={true}
-    isInvertedVirtualizedList={true}
     keyExtractor={[Function]}
     onContentSizeChange={[Function]}
     onLayout={[Function]}
@@ -85,18 +82,6 @@ exports[`ExpensesScreen matches snapshot 1`] = `
     renderItem={[Function]}
     scrollEventThrottle={0.0001}
     stickyHeaderIndices={[]}
-    style={
-      [
-        {
-          "transform": [
-            {
-              "scaleY": -1,
-            },
-          ],
-        },
-        undefined,
-      ]
-    }
   >
     <View />
   </RCTScrollView>
@@ -114,7 +99,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
           "backgroundColor": "rgb(0, 0, 0)",
           "flex": 1,
           "justifyContent": "center",
-          "opacity": 0.2,
+          "opacity": 0.1,
         }
       }
     >
