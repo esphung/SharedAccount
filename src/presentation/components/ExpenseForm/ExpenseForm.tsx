@@ -1,20 +1,14 @@
-import AutoSuggestInput from "@components/AutoSuggestInput/AutoSuggestInput";
 import AwareScrollView from "@components/AwareScrollView/AwareScrollView";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import type { RefObject } from "react";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import type { SectionList, TextInput } from "react-native";
-import { Button, StyleSheet, View } from "react-native";
+import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 
-enum Category {
-  Food = "Food",
-  Transportation = "Transportation",
-  Entertainment = "Entertainment",
-  Bills = "Bills",
-  Other = "Other",
-}
+import type { RefObject } from "react";
+import React, { useCallback, useRef, useState } from "react";
+import type { SectionList } from "react-native";
+import type { TextInput } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 type ExpenseFormProps = {
   onSubmit: (data: { amount: number; category: string; date: Date }) => void;
@@ -22,7 +16,7 @@ type ExpenseFormProps = {
   listRef: RefObject<SectionList | null>;
 };
 
-const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
+const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
   const [amount, setAmount] = useState(0);
   const [category, setCategory] = useState("");
 
@@ -30,33 +24,6 @@ const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
 
   const currencyInputRef = useRef<TextInput>(null);
   const categoryInputRef = useRef<TextInput>(null);
-
-  const suggestions = useMemo(() => {
-    const seen = new Set<string>();
-    return (
-      [...items, ...Object.values(Category)]
-        .map((item) => {
-          if (typeof item === "string") {
-            return { label: item, value: item };
-          }
-          return item;
-        })
-        .map(({ label, value }) => {
-          const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
-          return { label: formattedLabel, value };
-        })
-        .sort((a, b) => a.label.localeCompare(b.label))
-        // Remove duplicates
-        .filter(({ value }) => {
-          if (seen.has(value)) {
-            return false;
-          }
-          seen.add(value);
-          return true;
-        })
-        .map(({ value }) => value)
-    );
-  }, [items]);
 
   const validate = useCallback(() => {
     const newErrors: { amount?: string; category?: string } = {};
@@ -80,11 +47,18 @@ const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
     if (validate()) {
       onSubmit({ amount, category: category.trim(), date: new Date() });
     }
-  }, [amount, category, onSubmit, validate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount, category]);
 
   const onChangeText = useCallback((text: string) => {
     setCategory(text);
   }, []);
+
+  const onSubmitOrEndEditing = useCallback(() => {
+    const cleaned = category.trim();
+    setCategory(cleaned);
+    setErrors((prev) => ({ ...prev, category: cleaned ? undefined : "Category is required" }));
+  }, [category]);
 
   return (
     <AwareScrollView contentContainerStyle={styles.fill}>
@@ -100,13 +74,15 @@ const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
           {errors.amount && <SharedAccountText type="expenseFormError">{errors.amount}</SharedAccountText>}
 
           <SharedAccountText type="expenseFormLabel">Category:</SharedAccountText>
-          <AutoSuggestInput
+          <SharedAccountTextInput
+            autoComplete="off"
+            autoCorrect={false}
             ref={categoryInputRef}
             value={category}
-            suggestions={suggestions}
-            onSelect={setCategory}
             placeholder="Type a category..."
             onChangeText={onChangeText}
+            onEndEditing={onSubmitOrEndEditing}
+            onSubmitEditing={onSubmitOrEndEditing}
           />
           {errors.category && <SharedAccountText type="expenseFormError">{errors.category}</SharedAccountText>}
         </View>
@@ -120,7 +96,7 @@ const ExpenseForm = ({ onSubmit, items = [] }: ExpenseFormProps) => {
             onPress={() => {
               // fake values
               const randAmount = Math.floor(Math.random() * 1000);
-              const randCategory = suggestions[Math.floor(Math.random() * suggestions.length)];
+              const randCategory = Math.random() > 0.5 ? "Food" : "Transport";
               setAmount(randAmount);
               setCategory(randCategory);
             }}
