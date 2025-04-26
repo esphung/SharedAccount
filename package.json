@@ -1,6 +1,7 @@
 {
   "name": "SharedAccount",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "versionCode": 3,
   "private": true,
   "scripts": {
     "android": "npx @react-native-community/cli run-android",
@@ -15,7 +16,8 @@
     "clean": "rm -rf node_modules && rm -rf ios/Pods && rm -rf Gemfile.lock && bundle install && rm -rf ios/Podfile.lock && rm -rf yarn.lock && yarn install && cd ios && pod install && cd ..",
     "prepare": "npx husky",
     "storybook-generate": "sb-rn-get-stories",
-    "precommit": "yarn lint && yarn format && yarn typecheck"
+    "precommit": "yarn lint && yarn format && yarn typecheck",
+    "release": "npx release-it"
   },
   "dependencies": {
     "@react-native-picker/picker": "^2.11.0",
@@ -74,6 +76,7 @@
     "react-native-safe-area-context": "^5.3.0",
     "react-native-svg": "^15.11.2",
     "react-test-renderer": "19.0.0",
+    "release-it": "^19.0.1",
     "ts-node": "^10.9.2",
     "typescript": "5.0.4"
   },

@@ -32,7 +32,7 @@ export const groupTransactionsByDate = (expenses: Transaction<"expense">[], cred
       data: data.sort((a, b) => DateTime.fromJSDate(b.date).toMillis() - DateTime.fromJSDate(a.date).toMillis()),
     }))
     .sort(
-      (a, b) => DateTime.fromJSDate(new Date(a.title)).toMillis() - DateTime.fromJSDate(new Date(b.title)).toMillis(),
+      (a, b) => DateTime.fromJSDate(new Date(b.title)).toMillis() - DateTime.fromJSDate(new Date(a.title)).toMillis(),
     );
 };
 
