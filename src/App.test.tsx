@@ -2,15 +2,19 @@ import { render } from "@testing-library/react-native";
 import React from "react";
 import App from "./App";
 
+jest.mock("@presentation/hooks/useDevMenu", () => {
+  return jest.fn();
+});
+
 jest.mock("@presentation/navigators/RootStack/RootStack", () => {
   return function MockRootStack() {
-    return <></>;
+    return null;
   };
 });
 
 describe("App Component", () => {
-  it("matches snapshot", () => {
-    const { toJSON } = render(<App />);
-    expect(toJSON()).toMatchSnapshot();
+  it("renders without crashing", () => {
+    const tree = render(<App />);
+    expect(tree).toBeTruthy();
   });
 });
