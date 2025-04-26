@@ -1,4 +1,5 @@
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -8,7 +9,7 @@ const meta = {
   component: SharedAccountCurrencyInput,
   args: {
     value: 100,
-    onChangeValue: (val: number) => console.debug("[SharedAccountCurrencyInput]", val),
+    onChangeValue: (_: number) => {},
   },
   decorators: [
     (Story: React.FC) => (
@@ -32,6 +33,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     value: 100,
-    onChangeValue: (val: number) => console.debug("[SharedAccountCurrencyInput:Default]", val),
+    onChangeValue: (_: number) => {},
   },
 };

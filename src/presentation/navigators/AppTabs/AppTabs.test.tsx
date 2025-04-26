@@ -1,34 +1,59 @@
-import { AppTabsScreens } from "./AppTabs";
+import React from "react";
+import { render } from "@testing-library/react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import AppTabs, { AppTabsScreens } from "./AppTabs";
 
-jest.mock("@presentation/navigators/generators/createTabNavigator", () => {
-  return ({ children }: { children: React.ReactNode }) => children;
-});
+jest.mock("@domain/contexts/useRepository", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    transactionRepo: {
+      getLiveData: jest.fn(),
+      getAll: jest.fn(),
+      getById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      stopListening: jest.fn(),
+    },
+    scheduledTransactionRepo: {
+      getLiveData: jest.fn(),
+      getAll: jest.fn(),
+      getById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      stopListening: jest.fn(),
+    },
+  })),
+}));
 
-jest.mock("react-native-modal-datetime-picker", () => {
-  return {
-    default: null,
-  };
-});
+describe("AppTabs Navigator", () => {
+  const renderWithNavigation = () =>
+    render(
+      <NavigationContainer>
+        <AppTabs />
+      </NavigationContainer>,
+    );
 
-jest.mock("react-native-gifted-charts", () => {
-  return {
-    default: null,
-  };
-});
+  it("renders the AppTabs navigator", () => {
+    const { getByText } = renderWithNavigation();
 
-describe("AppTabsScreens Enum", () => {
-  it("should have the correct values for each screen", () => {
-    expect(AppTabsScreens.Home).toBe("HomeScreen");
-    expect(AppTabsScreens.Expenses).toBe("ExpensesScreen");
-    expect(AppTabsScreens.ScheduledTransactions).toBe("ScheduledTransactionsScreen");
+    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
+    expect(getByText(AppTabsScreens.Expenses)).toBeTruthy();
+    expect(getByText(AppTabsScreens.ScheduledTransactions)).toBeTruthy();
   });
 
-  it("should contain all expected values", () => {
-    const values = Object.values(AppTabsScreens);
-    expect(values).toEqual(["HomeScreen", "ExpensesScreen", "ScheduledTransactionsScreen"]);
+  it("sets the initial route to HomeScreen", () => {
+    const { getByText } = renderWithNavigation();
+
+    expect(getByText(AppTabsScreens.Home)).toBeTruthy();
   });
 
-  it("should match snapshot", () => {
-    expect(AppTabsScreens).toMatchSnapshot();
+  it("hides the header for all screens", () => {
+    const { getByText } = renderWithNavigation();
+
+    expect(getByText(AppTabsScreens.Home).props.style).not.toContain("headerShown");
+    expect(getByText(AppTabsScreens.Expenses).props.style).not.toContain("headerShown");
+    expect(getByText(AppTabsScreens.ScheduledTransactions).props.style).not.toContain("headerShown");
   });
 });

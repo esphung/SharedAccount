@@ -1,4 +1,5 @@
 import DropdownPicker from "@components/DropdownPicker/DropdownPicker";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
@@ -37,9 +38,7 @@ export const Default: Story = {
       { label: "Other", value: "Other" },
     ],
     selectedValue: "Food",
-    onChange: (value: string) => {
-      console.debug("[DropdownPicker] Selected value:", value);
-    },
+    onChange: (_: string) => {},
   },
   render: RenderComponent,
 };

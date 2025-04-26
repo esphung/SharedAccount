@@ -7,7 +7,8 @@ const useDevMenu = () => {
   React.useEffect(() => {
     if (__DEV__) {
       DevSettings.addMenuItem("Show DB", () => {
-        console.log("DB Path:", Dirs.DocumentDir);
+        // eslint-disable-next-line no-console
+        console.debug("DB Path:", Dirs.DocumentDir);
       });
     }
   }, []);

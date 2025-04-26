@@ -1,52 +1,62 @@
+import React, { useCallback, useEffect, useState } from "react";
+
+import type { TextInput } from "react-native";
+import { FlatList, Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
+
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import colors from "@config/themes/colors";
-import React, { useState } from "react";
-import type { TextInput, TextInputProps } from "react-native";
-import { FlatList, Keyboard, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type AutoSuggestInputProps = {
   suggestions: string[];
   onSelect: (val: string) => void;
   placeholder?: string;
   value?: string;
-} & TextInputProps;
+  onChangeText?: (text: string) => void;
+};
 
 const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
-  ({ value = "", suggestions = [], onSelect, placeholder = "Type something...", ...rest }, ref) => {
+  ({ value = "", suggestions = [], onSelect, placeholder = "Type something...", onChangeText }, ref) => {
     const [query, setQuery] = useState(value);
-    const [filtered, setFiltered] = useState<string[]>([]);
+    const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    const handleChange = React.useCallback(
-      (text: string) => {
-        setQuery(text);
-        if (text.length > 0) {
-          const filteredData = suggestions.filter((item) => item.toLowerCase().includes(text.toLowerCase()));
-          setFiltered(filteredData);
-          setShowSuggestions(true);
-        } else {
-          setFiltered([]);
-          setShowSuggestions(false);
+    useEffect(() => {
+      setQuery(value);
+    }, [value]);
+
+    const filterSuggestions = useCallback(
+      (input: string) => {
+        if (!input.trim()) {
+          return [];
         }
+        const lowerInput = input.toLowerCase();
+        return suggestions.filter((item) => item.toLowerCase().includes(lowerInput));
       },
       [suggestions],
     );
 
-    const handleSelect = React.useCallback(
-      (newVal: string) => {
-        const cleanedValue = newVal?.trimEnd();
-        if (value !== newVal) {
-          onSelect?.(cleanedValue);
-        }
-        setQuery(cleanedValue);
-        setFiltered([]);
-        setShowSuggestions(false);
-        Keyboard.dismiss();
-      },
+    const handleChange = useCallback((text: string) => {
+      setQuery(text);
+      onChangeText?.(text);
+
+      const filtered = filterSuggestions(text);
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      [value],
-    );
+    }, []);
+
+    const handleSelect = useCallback((selected: string) => {
+      const cleaned = selected?.trimEnd();
+      setQuery(cleaned);
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+      onChangeText?.(cleaned);
+      onSelect(cleaned);
+      // Dismiss the keyboard
+      Keyboard.dismiss();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
       <View style={styles.container}>
@@ -54,24 +64,23 @@ const AutoSuggestInput = React.forwardRef<TextInput, AutoSuggestInputProps>(
           ref={ref}
           style={styles.input}
           value={query}
-          onChangeText={handleChange}
           placeholder={placeholder}
+          onChangeText={handleChange}
           onSubmitEditing={() => handleSelect(query)}
           onEndEditing={() => handleSelect(query)}
-          {...rest}
         />
 
-        {showSuggestions && filtered.length > 0 && (
+        {showSuggestions && (
           <FlatList
             scrollEnabled={false}
-            style={styles.suggestionList}
-            data={filtered}
+            data={filteredSuggestions}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => handleSelect(item)} style={styles.suggestionItem}>
                 <SharedAccountText>{item}</SharedAccountText>
               </TouchableOpacity>
             )}
+            style={styles.suggestionList}
             keyboardShouldPersistTaps="handled"
           />
         )}
@@ -101,7 +110,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,
     marginTop: 4,
-    // maxHeight: 150,
   },
 });
 

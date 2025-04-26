@@ -8,11 +8,21 @@ const SheetModal = (
     modalVisible: boolean;
     setModalVisible: (modalVisible: boolean) => void;
     onDismiss?: () => void;
+    testID?: string;
   } & ModalProps,
 ) => {
-  const { children, presentationStyle = "formSheet", modalVisible, setModalVisible, onDismiss, ...rest } = props;
+  const {
+    testID,
+    children,
+    presentationStyle = "formSheet",
+    modalVisible,
+    setModalVisible,
+    onDismiss,
+    ...rest
+  } = props;
   return (
     <Modal
+      testID={testID}
       animationType="slide"
       visible={modalVisible}
       onRequestClose={() => {
@@ -41,8 +51,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingRight: 8,
-    paddingTop: 8,
   },
 });
 

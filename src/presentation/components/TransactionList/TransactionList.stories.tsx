@@ -1,17 +1,28 @@
-import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
 import TransactionList from "@components/TransactionList/TransactionList";
+import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
+import { groupTransactionsByDate } from "@screens/ExpensesScreen/ExpensesScreen";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import type { Transaction } from "types/Transaction";
 
 const mockLocalDatabase = new LocalDatabaseBuilder().build();
 const { transactions, users } = mockLocalDatabase;
+
+const expenses = transactions.filter(
+  (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
+);
+const credits = transactions.filter(
+  (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
+);
+const data = groupTransactionsByDate(expenses, credits);
 
 const meta = {
   title: "TransactionList",
   component: TransactionList,
   argTypes: {
-    transactions: {
+    data: {
       control: {
         type: "object",
       },
@@ -21,16 +32,24 @@ const meta = {
         type: "object",
       },
     },
+    onPress: {
+      action: "pressed",
+    },
+    isListReady: {
+      control: {
+        type: "boolean",
+      },
+    },
+    onContentSizeChange: {
+      action: "contentSizeChanged",
+    },
   },
   args: {
-    transactions,
+    data,
     users,
-    onShowAddTxnSheet: () => {
-      console.debug("[TransactionList] onShowAddTxnSheet");
-    },
-    onPress: (id: string) => {
-      console.debug("[TransactionList] onPress", id);
-    },
+    onPress: () => {},
+    isListReady: true,
+    onContentSizeChange: () => {},
   },
   decorators: [
     (Story: React.FC) => (
@@ -51,13 +70,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    transactions,
+    data,
     users,
-    onShowAddTxnSheet: () => {
-      console.debug("[TransactionList] onShowAddTxnSheet");
-    },
-    onPress: (id: string) => {
-      console.debug("[TransactionList] onPress", id);
-    },
+    onPress: () => {},
+    isListReady: true,
+    onContentSizeChange: () => {},
   },
 };

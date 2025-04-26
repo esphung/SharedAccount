@@ -56,7 +56,7 @@ const SpendingStats = ({ transactions = [] }: { transactions: Transaction[] }) =
   }[] = React.useMemo(() => {
     const temp = Array.from({ length: 30 }, (_, i) => i + 1);
     // zip the two arrays together
-    const zipped = temp.map((item, index) => {
+    const zipped = temp.map((_, index) => {
       const expenseAmount = expenseTransactionsRange[index] || 0;
       const creditAmount = creditTransactionsRange[index] || 0;
       const stacks = [

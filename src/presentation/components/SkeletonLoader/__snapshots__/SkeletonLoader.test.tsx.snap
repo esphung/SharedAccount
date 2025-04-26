@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SkeletonLoader matches snapshot with custom props 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#e0e0e0",
+        "overflow": "hidden",
+      },
+      {
+        "borderRadius": 10,
+        "height": 100,
+        "width": 200,
+      },
+      {
+        "backgroundColor": "rgb(42, 157, 143)",
+      },
+    ]
+  }
+  testID="skeleton-loader"
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "backgroundColor": "rgba(255,255,255,0.3)",
+        "bottom": 0,
+        "left": 0,
+        "opacity": 0.5,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+        "transform": [
+          {
+            "translateX": -100,
+          },
+        ],
+      }
+    }
+  />
+</View>
+`;
+
+exports[`SkeletonLoader matches snapshot with default props 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#e0e0e0",
+        "overflow": "hidden",
+      },
+      {
+        "borderRadius": 8,
+        "height": 20,
+        "width": "100%",
+      },
+      undefined,
+    ]
+  }
+  testID="skeleton-loader"
+>
+  <View
+    collapsable={false}
+    style={
+      {
+        "backgroundColor": "rgba(255,255,255,0.3)",
+        "bottom": 0,
+        "left": 0,
+        "opacity": 0.5,
+        "position": "absolute",
+        "right": 0,
+        "top": 0,
+        "transform": [
+          {
+            "translateX": -100,
+          },
+        ],
+      }
+    }
+  />
+</View>
+`;

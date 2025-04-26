@@ -16,7 +16,19 @@
       "@domain/*": ["./src/domain/*"],
       "@presentation/*": ["./src/presentation/*"],
       "@utils/*": ["./src/utils/*"]
-    }
+    },
+    "jsx": "react-native",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true
   },
   "exclude": ["./node_modules", "./android", "./ios", "./.storybook/storybook.requires.ts"]
 }

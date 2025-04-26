@@ -34,5 +34,13 @@ module.exports = {
       },
     ],
     "react-native/no-raw-text": ["error", { skip: ["SharedAccountText"] }],
+
+    // no console
+    "no-console": [
+      "error",
+      {
+        allow: ["warn", "error"],
+      },
+    ],
   },
 };

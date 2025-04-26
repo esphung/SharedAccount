@@ -42,12 +42,12 @@ const GroupedBarChart = ({
       yAxisTextStyle={styles.yAxisText}
       xAxisLabelsHeight={StyleSheet.hairlineWidth}
       xAxisLabelTexts={data.map((_, index) => `${index + 1}`)}
-      onPress={(item: {
+      onPress={(_: {
         stacks: {
           value: number;
           color: string;
         }[];
-      }) => console.debug({ item: JSON.stringify(item, null, 2) })}
+      }) => {}}
     />
   );
 };
