@@ -4,12 +4,6 @@ jest.mock("@presentation/navigators/generators/createTabNavigator", () => {
   return ({ children }: { children: React.ReactNode }) => children;
 });
 
-jest.mock("react-native-keyboard-controller", () => {
-  return {
-    KeyboardAwareScrollView: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  };
-});
-
 jest.mock("react-native-modal-datetime-picker", () => {
   return {
     default: null,
@@ -32,5 +26,9 @@ describe("AppTabsScreens Enum", () => {
   it("should contain all expected values", () => {
     const values = Object.values(AppTabsScreens);
     expect(values).toEqual(["HomeScreen", "ExpensesScreen", "ScheduledTransactionsScreen"]);
+  });
+
+  it("should match snapshot", () => {
+    expect(AppTabsScreens).toMatchSnapshot();
   });
 });

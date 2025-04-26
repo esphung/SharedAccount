@@ -27,5 +27,7 @@ export default async (): Promise<Config> => {
         lines: 100,
       },
     },
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+    transformIgnorePatterns: ["node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"],
   };
 };
