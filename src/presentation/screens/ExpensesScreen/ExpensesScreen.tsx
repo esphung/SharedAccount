@@ -1,5 +1,4 @@
 import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
-import FullscreenSpinner from "@components/FullScreenSpinner/FullScreenSpinner";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
@@ -15,10 +14,7 @@ import type { Transaction } from "types/Transaction";
 
 type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
 
-export const groupTransactionsByDate = (
-  expenses: Transaction<"expense" | "credit">[],
-  credits: Transaction<"expense" | "credit">[],
-) => {
+export const groupTransactionsByDate = (expenses: Transaction<"expense">[], credits: Transaction<"credit">[]) => {
   const transactions = [...expenses, ...credits];
   const grouped: Record<string, Transaction[]> = {};
 
@@ -137,7 +133,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
           }
         }}
       />
-      <FullscreenSpinner visible={!isListReady} />
+      {/* <FullscreenSpinner visible={!isListReady} /> */}
     </SharedAccountScreen>
   );
 }

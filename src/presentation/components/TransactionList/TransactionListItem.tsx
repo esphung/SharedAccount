@@ -3,6 +3,7 @@ import ArrowUpSvg from "@assets/svg/circle-arrow-up-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
+
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -10,7 +11,7 @@ import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-type Props = {
+type TransactionListItemProps = {
   testID?: string;
   item: Transaction;
   user?: User;
@@ -25,9 +26,17 @@ const AVATAR_SIZE = 40;
 const AVATAR_RADIUS = AVATAR_SIZE / 2;
 const DEFAULT_AVATAR = "https://picsum.photos/200/300";
 
-export default function TransactionListItem({ testID, item, user, onPress, itemHeight, isListReady = true }: Props) {
+export default function TransactionListItem({
+  testID,
+  item,
+  user,
+  onPress,
+  itemHeight,
+  isListReady = true,
+}: TransactionListItemProps) {
   const isCredit = useMemo(() => item.type === "credit", [item.type]);
   const formattedAmount = useMemo(() => MoneyFunctions.formatMoney(item.amount, 2), [item.amount]);
+  const categoryValue = useMemo(() => item.category, [item.category]);
   const avatarUri = useMemo(() => user?.avatar || DEFAULT_AVATAR, [user?.avatar]);
   const transactionDate = useMemo(() => DateTime.fromJSDate(item.date).toFormat("MMM d, t"), [item.date]);
 
@@ -50,31 +59,42 @@ export default function TransactionListItem({ testID, item, user, onPress, itemH
       onPress={() => onPress(item.id)}
       activeOpacity={0.7}
     >
-      <View style={styles.avatarContainer}>
-        <SkeletonLoader
-          testID="avatar-skeleton-placeholder"
-          width={AVATAR_SIZE}
-          height={AVATAR_SIZE}
-          borderRadius={AVATAR_RADIUS}
-          style={styles.skeleton}
-        />
-        <Image testID="avatar-image" source={{ uri: avatarUri }} style={styles.avatar} />
-      </View>
+      <View style={styles.leftContainer}>
+        <View style={styles.avatarContainer}>
+          <SkeletonLoader
+            testID="avatar-skeleton-placeholder"
+            width={AVATAR_SIZE}
+            height={AVATAR_SIZE}
+            borderRadius={AVATAR_RADIUS}
+            style={styles.skeleton}
+          />
+          <Image testID="avatar-image" source={{ uri: avatarUri }} style={styles.avatar} />
+        </View>
 
-      <View style={styles.detailsContainer}>
-        {formattedAmount ? (
-          <SharedAccountText>{formattedAmount}</SharedAccountText>
-        ) : (
-          <SkeletonLoader testID="transaction-name-skeleton-placeholder" width="60%" style={styles.subtitleSkeleton} />
-        )}
+        <View>
+          {formattedAmount ? (
+            <SharedAccountText type="listItemTitle">{formattedAmount}</SharedAccountText>
+          ) : (
+            <SkeletonLoader
+              testID="transaction-name-skeleton-placeholder"
+              width="100%"
+              style={styles.subtitleSkeleton}
+            />
+          )}
+          {categoryValue ? (
+            <SharedAccountText numberOfLines={1}>{categoryValue}</SharedAccountText>
+          ) : (
+            <SkeletonLoader testID="transaction-category-skeleton-placeholder" width="100%" />
+          )}
+        </View>
       </View>
 
       <View style={styles.rightContainer}>
-        <SharedAccountText>{transactionDate}</SharedAccountText>
+        {transactionDate ? <SharedAccountText>{transactionDate}</SharedAccountText> : <SkeletonLoader width="80%" />}
         {isCredit ? (
-          <ArrowUpSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-up-svg" />
+          <ArrowUpSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-up-svg" fill={colors.green} />
         ) : (
-          <ArrowDownSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-down-svg" />
+          <ArrowDownSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-down-svg" fill={colors.red} />
         )}
       </View>
     </TouchableOpacity>
@@ -91,19 +111,21 @@ const styles = StyleSheet.create({
   avatarContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
-    position: "relative",
+    marginHorizontal: 12,
   },
   container: {
-    alignItems: "center",
     borderBottomColor: colors.light,
     borderBottomWidth: 1,
     flexDirection: "row",
     paddingHorizontal: 12,
   },
-  detailsContainer: {
+  leftContainer: {
+    alignItems: "center",
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
+    height: 100,
+    justifyContent: "flex-start",
+    paddingVertical: 8,
   },
   placeholderContainer: {
     justifyContent: "center",
@@ -111,10 +133,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   rightContainer: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 12,
-    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    gap: 4,
+    height: 100,
+    justifyContent: "center",
+    paddingRight: 16,
+    width: "50%",
   },
   skeleton: {
     left: 0,

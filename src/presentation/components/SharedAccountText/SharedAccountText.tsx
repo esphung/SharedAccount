@@ -1,5 +1,6 @@
 import colors from "@config/themes/colors";
 import React from "react";
+
 import type { TextProps } from "react-native";
 // eslint-disable-next-line no-restricted-imports
 import { StyleSheet, Text } from "react-native";
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   },
   // eslint-disable-next-line react-native/no-unused-styles
   listItemTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "600",
   },
   // eslint-disable-next-line react-native/no-unused-styles

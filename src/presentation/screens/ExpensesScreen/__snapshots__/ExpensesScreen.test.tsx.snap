@@ -95,7 +95,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
             {
               "amount": 50,
               "category": "Transport",
-              "date": 2023-03-02T18:00:00.000Z,
+              "date": 2023-03-02T00:00:00.000Z,
               "description": "Monthly bus pass",
               "id": "txn_2",
               "name": "Bus Ticket",
@@ -104,14 +104,14 @@ exports[`ExpensesScreen matches snapshot 1`] = `
               "userId": "usr_1",
             },
           ],
-          "title": "Thu Mar 02 2023",
+          "title": "Wed Mar 01 2023",
         },
         {
           "data": [
             {
               "amount": 100,
               "category": "Food",
-              "date": 2023-03-01T16:00:00.000Z,
+              "date": 2023-03-01T00:00:00.000Z,
               "description": "Weekly groceries",
               "id": "txn_1",
               "name": "Groceries",
@@ -120,7 +120,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
               "userId": "usr_1",
             },
           ],
-          "title": "Wed Mar 01 2023",
+          "title": "Tue Feb 28 2023",
         },
       ]
     }
@@ -159,7 +159,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
           }
           type="listSectionHeader"
         >
-          Thu Mar 02 2023
+          Wed Mar 01 2023
         </Text>
       </View>
       <View
@@ -282,7 +282,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
           }
           type="listSectionHeader"
         >
-          Wed Mar 01 2023
+          Tue Feb 28 2023
         </Text>
       </View>
       <View

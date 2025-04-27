@@ -1,6 +1,7 @@
 import CalculatorSvgIcon from "@assets/svg/calculator-svgrepo-com.svg";
-import HomeSvgIcon from "@assets/svg/home-1-svgrepo-com.svg";
+import ChartSvgIcon from "@assets/svg/chart-line-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { RouteProp } from "@react-navigation/native";
@@ -26,7 +27,7 @@ const TabBarLabelScreenNamesMap: { [key in AppTabsScreens]: string } = {
 const AppTabsTabBarIconMap: {
   [key in AppTabsScreens]: (props: SvgProps) => React.JSX.Element;
 } = {
-  [AppTabsScreens.Home]: (props: SvgProps) => <HomeSvgIcon {...props} />,
+  [AppTabsScreens.Home]: (props: SvgProps) => <ChartSvgIcon {...props} />,
   [AppTabsScreens.Expenses]: (props: SvgProps) => <CalculatorSvgIcon {...props} />,
 };
 

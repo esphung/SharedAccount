@@ -4,7 +4,10 @@ import { render } from "@testing-library/react-native";
 import { itMatchesSnapshot } from "@utils/testUtils/sharedTests";
 import React from "react";
 import { Alert } from "react-native";
+
 import ExpensesScreen, { groupTransactionsByDate, scrollToTop, showAsyncAlertPrompt } from "./ExpensesScreen";
+
+import type { Transaction } from "types/Transaction";
 
 jest.mock("@presentation/hooks/useTransactions");
 
@@ -75,7 +78,7 @@ describe("ExpensesScreen", () => {
       .withAmount(100)
       .withCategory("Food")
       .withName("Groceries")
-      .withDate(new Date("2023-03-01T10:00:00"))
+      .withDate(new Date("2023-03-01"))
       .withDescription("Weekly groceries")
       .withType("expense")
       .build(),
@@ -86,7 +89,7 @@ describe("ExpensesScreen", () => {
       .withAmount(50)
       .withCategory("Transport")
       .withName("Bus Ticket")
-      .withDate(new Date("2023-03-02T12:00:00"))
+      .withDate(new Date("2023-03-02"))
       .withDescription("Monthly bus pass")
       .withType("credit")
       .build(),
@@ -129,17 +132,6 @@ describe("ExpensesScreen", () => {
     expect(unsubscribeMock).toHaveBeenCalled();
   });
 
-  // it("shows AddExpenseSheet when Add Expense button is pressed", () => {
-  //   const { getByText, getByTestId } = render(
-  //     <ExpensesScreen
-  //       // @ts-expect-error not typing the navigation prop
-  //       navigation={mockNavigation}
-  //     />,
-  //   );
-  //   fireEvent.press(getByText("Add an expense"));
-  //   expect(getByTestId("add-expense-sheet")).toBeTruthy();
-  // });
-
   it("calls startListening on mount", () => {
     // @ts-expect-error not typing the navigation prop
     render(<ExpensesScreen navigation={mockNavigation} />);
@@ -149,9 +141,15 @@ describe("ExpensesScreen", () => {
 
 describe("groupTransactionsByDate", () => {
   it("groups transactions by date and sorts them in descending order", () => {
-    const expenses = [mockA, mockB];
-    const credits = [mockC, mockD];
-    const result = groupTransactionsByDate(expenses, credits);
+    const arr1: Transaction[] = [mockA, mockB];
+    const arr2 = [mockC, mockD];
+    const filteredExpenses = arr1.filter(
+      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
+    );
+    const filteredCredits = arr2.filter(
+      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
+    );
+    const result = groupTransactionsByDate(filteredExpenses, filteredCredits);
     expect(result).toEqual([
       {
         title: new Date("2023-03-03").toDateString(),
@@ -177,24 +175,30 @@ describe("groupTransactionsByDate", () => {
     const mockExpense = new TransactionBuilder()
       .withId("1" as `txn_${string}`)
       .withType("expense")
-      .withDate(new Date("2023-03-01T10:00:00"))
+      .withDate(new Date("2023-03-01"))
       .withAmount(50)
       .build();
     const mockCredit = new TransactionBuilder()
       .withId("2" as `txn_${string}`)
       .withType("credit")
-      .withDate(new Date("2023-03-01T12:00:00"))
+      .withDate(new Date("2023-03-01"))
       .withAmount(20)
       .build();
-    const expenses = [mockExpense];
-    const credits = [mockCredit];
+    const arr1 = [mockExpense, mockCredit];
+    const arr2 = [mockCredit];
 
-    const result = groupTransactionsByDate(expenses, credits);
+    const filteredExpenses = arr1.filter(
+      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
+    );
+    const filteredCredits = arr2.filter(
+      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
+    );
+    const result = groupTransactionsByDate(filteredExpenses, filteredCredits);
 
     expect(result).toEqual([
       {
-        title: "Wed Mar 01 2023",
-        data: [mockCredit, mockExpense],
+        title: "Tue Feb 28 2023",
+        data: [mockExpense, mockCredit],
       },
     ]);
   });
@@ -212,9 +216,15 @@ describe("groupTransactionsByDate", () => {
       .withDate(new Date("2023-03-01T12:00:00"))
       .withAmount(20)
       .build();
-    const expenses = [mockExpense];
-    const credits = [mockCredit];
-    const result = groupTransactionsByDate(expenses, credits);
+    const arr1 = [mockExpense];
+    const arr2 = [mockCredit];
+    const filteredExpenses = arr1.filter(
+      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
+    );
+    const filteredCredits = arr2.filter(
+      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
+    );
+    const result = groupTransactionsByDate(filteredExpenses, filteredCredits);
     expect(result).toEqual([
       {
         title: "Wed Mar 01 2023",

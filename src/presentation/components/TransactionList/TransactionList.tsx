@@ -1,6 +1,7 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
 import colors from "@config/themes/colors";
+
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
 import { getUserById } from "@utils/UserFunctions";
@@ -9,8 +10,7 @@ import { SectionList, StyleSheet } from "react-native";
 
 const ITEM_HEIGHT = 100; // List item height
 
-// Props
-type Props = {
+type TransactionListProps = {
   users?: User[];
   onPress: (id: string) => void;
   data: {
@@ -22,7 +22,7 @@ type Props = {
 };
 
 // Main Component
-const TransactionList = forwardRef<SectionList, Props>((props, ref) => {
+const TransactionList = forwardRef<SectionList, TransactionListProps>((props, ref) => {
   const { onContentSizeChange, data = [], users = [], onPress, isListReady } = props;
 
   const renderItemCallback = useCallback(
