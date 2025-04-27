@@ -7,9 +7,16 @@ type SkeletonLoaderProps = {
   height?: number | string;
   borderRadius?: number;
   style?: object;
+  testID?: string;
 };
 
-export default function SkeletonLoader({ width = "100%", height = 20, borderRadius = 8, style }: SkeletonLoaderProps) {
+export default function SkeletonLoader({
+  width = "100%",
+  height = 20,
+  borderRadius = 8,
+  style,
+  testID,
+}: SkeletonLoaderProps) {
   const shimmerAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -29,7 +36,10 @@ export default function SkeletonLoader({ width = "100%", height = 20, borderRadi
   });
 
   return (
-    <View testID="skeleton-loader" style={[styles.container, { width, height, borderRadius }, style]}>
+    <View
+      testID={testID ? testID : "skeleton-loader"}
+      style={[styles.container, { width, height, borderRadius }, style]}
+    >
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,

@@ -1,15 +1,18 @@
+import React, { useMemo } from "react";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { DateTime } from "luxon";
+
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
+import ArrowDownSvg from "@assets/svg/circle-arrow-down-svgrepo-com.svg";
+import ArrowUpSvg from "@assets/svg/circle-arrow-up-svgrepo-com.svg";
 import colors from "@config/themes/colors";
+import MoneyFunctions from "@utils/MoneyFunctions";
 
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
-import MoneyFunctions from "@utils/MoneyFunctions";
-import { DateTime } from "luxon";
-import React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-type TransactionListItemProps = {
+type Props = {
   item: Transaction;
   user?: User;
   onPress: (id: string) => void;
@@ -17,85 +20,104 @@ type TransactionListItemProps = {
   isListReady?: boolean;
 };
 
-export default function TransactionListItem({
-  item,
-  user,
-  onPress,
-  itemHeight,
-  isListReady = false,
-}: TransactionListItemProps) {
-  if (!isListReady) {
-    return <ExpensesLoadingPlaceholder itemHeight={itemHeight} />;
-  }
+// Constants
+const ICON_SIZE = 20;
+const AVATAR_SIZE = 40;
+const AVATAR_RADIUS = AVATAR_SIZE / 2;
+const DEFAULT_AVATAR = "https://picsum.photos/200/300";
 
-  const isCredit = item.type === "credit";
-  const formattedAmount = MoneyFunctions.formatMoney(item.amount, 2);
-  const avatarUri = user?.avatar || "https://picsum.photos/200/300";
+export default function TransactionListItem({ item, user, onPress, itemHeight, isListReady = true }: Props) {
+  const isCredit = useMemo(() => item.type === "credit", [item.type]);
+  const formattedAmount = useMemo(() => MoneyFunctions.formatMoney(item.amount, 2), [item.amount]);
+  const avatarUri = useMemo(() => user?.avatar || DEFAULT_AVATAR, [user?.avatar]);
+  const transactionDate = useMemo(() => DateTime.fromJSDate(item.date).toFormat("MMM d, t"), [item.date]);
+
+  if (!isListReady) {
+    return (
+      <View style={[styles.placeholderContainer, { height: itemHeight }]}>
+        <SkeletonLoader width="60%" height={18} style={styles.skeletonTitle} />
+        <SkeletonLoader width="100%" height={36} style={styles.skeletonSubtitle} />
+      </View>
+    );
+  }
 
   return (
     <TouchableOpacity
       testID="transaction-list-item"
-      style={[styles.item, { height: itemHeight }]}
+      style={[styles.container, { height: itemHeight }]}
       onPress={() => onPress(item.id)}
       activeOpacity={0.7}
     >
-      <Image testID="avatar-image" style={styles.avatar} source={{ uri: avatarUri }} />
-      <View style={styles.transactionDetails}>
-        <SharedAccountText type="listItemTitle">{user?.name || "Unknown User"}</SharedAccountText>
-        <SharedAccountText type="listItemSubtitle">
-          {isCredit ? `+ ${formattedAmount} (from ${item.name})` : `- ${formattedAmount} (${item.category})`}
-        </SharedAccountText>
+      <View style={styles.avatarContainer}>
+        <SkeletonLoader
+          testID="avatar-skeleton-placeholder"
+          width={AVATAR_SIZE}
+          height={AVATAR_SIZE}
+          borderRadius={AVATAR_RADIUS}
+          style={styles.skeleton}
+        />
+        <Image testID="avatar-image" source={{ uri: avatarUri }} style={styles.avatar} />
       </View>
-      <View style={styles.rightPanel}>
-        <SharedAccountText type="transactionType" style={isCredit ? styles.credit : styles.expense}>
-          {isCredit ? "↑" : "↓"}
-        </SharedAccountText>
-        <SharedAccountText type="listItemSubtitle">
-          {DateTime.fromJSDate(item.date).toFormat("MMM d, t")}
-        </SharedAccountText>
+
+      <View style={styles.detailsContainer}>
+        {formattedAmount ? (
+          <SharedAccountText type="transactionType">{formattedAmount}</SharedAccountText>
+        ) : (
+          <SkeletonLoader testID="transaction-name-skeleton-placeholder" width="60%" style={styles.subtitleSkeleton} />
+        )}
+      </View>
+
+      <View style={styles.rightContainer}>
+        <SharedAccountText type="transactionType">{transactionDate}</SharedAccountText>
+        {isCredit ? (
+          <ArrowUpSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-up-svg" />
+        ) : (
+          <ArrowDownSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-down-svg" />
+        )}
       </View>
     </TouchableOpacity>
   );
 }
 
-function ExpensesLoadingPlaceholder({ itemHeight }: { itemHeight: number }) {
-  return (
-    <View style={[styles.loadingPlaceholderContainer, { height: itemHeight }]}>
-      <SkeletonLoader width="60%" height={18} style={styles.skeletonTitle} />
-      <SkeletonLoader width="100%" height={36} style={styles.skeletonSubtitle} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   avatar: {
-    borderRadius: 20,
-    height: 40,
+    borderColor: colors.dark,
+    borderRadius: AVATAR_RADIUS,
+    height: AVATAR_SIZE,
+    width: AVATAR_SIZE,
+  },
+  avatarContainer: {
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
-    width: 40,
+    position: "relative",
   },
-  credit: {
-    color: colors.green,
-  },
-  expense: {
-    color: colors.red,
-  },
-  item: {
+  container: {
     alignItems: "center",
     borderBottomColor: colors.light,
     borderBottomWidth: 1,
     flexDirection: "row",
-    padding: 12,
+    paddingHorizontal: 12,
   },
-  loadingPlaceholderContainer: {
+  detailsContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  placeholderContainer: {
     justifyContent: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  rightPanel: {
-    alignItems: "flex-end",
-    justifyContent: "center",
-    marginLeft: 8,
+  rightContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 12,
+    justifyContent: "flex-end",
+  },
+  skeleton: {
+    left: 0,
+    position: "absolute",
+    top: 0,
   },
   skeletonSubtitle: {
     marginTop: 4,
@@ -103,8 +125,7 @@ const styles = StyleSheet.create({
   skeletonTitle: {
     marginBottom: 8,
   },
-  transactionDetails: {
-    flex: 1,
-    justifyContent: "center",
+  subtitleSkeleton: {
+    marginBottom: 4,
   },
 });

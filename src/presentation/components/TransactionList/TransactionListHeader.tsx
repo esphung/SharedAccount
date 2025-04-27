@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 
 export default function TransactionListHeader({ title }: { title: string }) {
   return (
-    <SharedAccountText type="listHeader" style={styles.header}>
+    <SharedAccountText type="transactionType" style={styles.header}>
       {title}
     </SharedAccountText>
   );
@@ -13,7 +13,10 @@ export default function TransactionListHeader({ title }: { title: string }) {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: colors.light,
-    padding: 8,
+    backgroundColor: colors.white,
+    borderBottomColor: colors.light,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
 });
