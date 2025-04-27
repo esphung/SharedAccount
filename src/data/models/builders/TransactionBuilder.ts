@@ -1,55 +1,79 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
+
 import type { Transaction } from "@data/models/types/Transaction";
-import { faker } from "@faker-js/faker";
 
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
-  constructor(type: "expense" | "credit") {
-    const initial: Transaction = {
-      id: `txn_${faker.database.mongodbObjectId()}`,
-      sharedAccountId: `acct_${faker.database.mongodbObjectId()}`,
-      userId: `usr_${faker.database.mongodbObjectId()}`,
-      amount: faker.number.int({ min: 100, max: 10000 }),
-      category: faker.commerce.department(),
-      name: faker.company.name(),
-      date: faker.date.recent(),
-      type,
-    };
-    super(initial);
+  constructor(initialInstance?: Partial<Transaction>, fakerSeed?: number) {
+    if (!initialInstance) {
+      initialInstance = {
+        id: "txn_1234567890" as `txn_${string}`,
+        sharedAccountId: "acct_1234567890" as `acct_${string}`,
+        userId: "usr_1234567890" as `usr_${string}`,
+        amount: 100,
+        category: "Food",
+        name: "Groceries",
+        date: new Date(),
+        description: "Weekly groceries",
+        type: "expense" as const,
+      };
+    }
+    super(initialInstance as Transaction, fakerSeed);
   }
 
-  setId(id: `txn_${string}`): this {
-    return this.set("id", id);
+  withId(id: `txn_${string}`): TransactionBuilder {
+    // Ensure the ID starts with "txn_"
+    this.instance.id = id;
+    return this;
   }
 
-  setSharedAccountId(sharedAccountId: `acct_${string}`): this {
-    return this.set("sharedAccountId", sharedAccountId);
+  withSharedAccountId(sharedAccountId: `acct_${string}`): TransactionBuilder {
+    // Ensure the shared account ID starts with "acct_"
+    this.instance.sharedAccountId = sharedAccountId;
+    return this;
   }
 
-  setUserId(userId: `usr_${string}`): this {
-    return this.set("userId", userId);
+  withUserId(userId: `usr_${string}`): TransactionBuilder {
+    // Ensure the user ID starts with "usr_"
+    this.instance.userId = userId;
+    return this;
   }
 
-  setAmount(amount: number): this {
-    return this.set("amount", amount);
+  withAmount(amount: number): TransactionBuilder {
+    this.instance.amount = amount;
+    return this;
   }
 
-  setCategory(category: string): this {
-    return this.set("category", category);
+  withCategory(category: string): TransactionBuilder {
+    this.instance.category = category;
+    return this;
   }
 
-  setDescription(description: string): this {
-    return this.set("description", description);
+  withName(name: string): TransactionBuilder {
+    this.instance.name = name;
+    return this;
   }
 
-  setDate(date: Date): this {
-    return this.set("date", date);
+  withDate(date: Date): TransactionBuilder {
+    this.instance.date = date;
+    return this;
   }
 
-  setType(type: "expense"): this {
-    return this.set("type", type);
+  withDescription(description: string): TransactionBuilder {
+    this.instance.description = description;
+    return this;
   }
 
-  setName(name: string): this {
-    return this.set("name", name);
+  withType(type: "expense" | "credit"): TransactionBuilder {
+    this.instance.type = type;
+    return this;
+  }
+
+  withTransaction(transaction: Transaction): TransactionBuilder {
+    this.instance = transaction;
+    return this;
+  }
+
+  build(): Transaction {
+    return this.instance;
   }
 }

@@ -1,11 +1,11 @@
-import TransactionListHeader from "@components/TransactionList/TransactionListHeader";
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
-
+import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
 import { getUserById } from "@utils/UserFunctions";
 import React, { forwardRef, useCallback } from "react";
-import { SectionList } from "react-native";
+import { SectionList, StyleSheet } from "react-native";
 
 const ITEM_HEIGHT = 100; // List item height
 
@@ -30,6 +30,7 @@ const TransactionList = forwardRef<SectionList, Props>((props, ref) => {
       const user = getUserById(item.userId, users);
       return (
         <TransactionListItem
+          testID={`transaction-list-item-${item.id}`}
           isListReady={isListReady}
           itemHeight={ITEM_HEIGHT}
           item={item}
@@ -44,12 +45,16 @@ const TransactionList = forwardRef<SectionList, Props>((props, ref) => {
 
   return (
     <SectionList
+      testID="transaction-list"
       ref={ref}
-      // inverted
       sections={data}
       keyExtractor={(item) => item.id}
       renderItem={renderItemCallback}
-      renderSectionHeader={({ section: { title } }) => <TransactionListHeader title={title} />}
+      renderSectionHeader={({ section: { title } }) => (
+        <SharedAccountText type="listSectionHeader" style={styles.header}>
+          {title}
+        </SharedAccountText>
+      )}
       stickySectionHeadersEnabled={false}
       getItemLayout={(_, index) => ({
         length: ITEM_HEIGHT,
@@ -59,6 +64,16 @@ const TransactionList = forwardRef<SectionList, Props>((props, ref) => {
       onContentSizeChange={onContentSizeChange} // <-- This triggers after rendering
     />
   );
+});
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: colors.white,
+    borderBottomColor: colors.light,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
 });
 
 export default TransactionList;

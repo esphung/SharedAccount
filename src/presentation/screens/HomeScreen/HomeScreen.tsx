@@ -1,10 +1,9 @@
+import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import SpendingStats from "@components/SpendingStats/SpendingStats";
 import useTransactions from "@presentation/hooks/useTransactions";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-
-// type Props = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Home>;
 
 const HomeScreen = () => {
   const { state: transactions, startListening } = useTransactions();
@@ -20,6 +19,7 @@ const HomeScreen = () => {
 
   return (
     <SharedAccountScreen>
+      <ScreenTitle title="Home" />
       <View style={styles.content}>
         <SpendingStats transactions={transactions} />
       </View>

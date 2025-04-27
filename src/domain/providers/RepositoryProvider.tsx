@@ -9,12 +9,7 @@ type Props = PropsWithChildren<{
 
 const RepositoryProvider: React.FC<Props> = ({ children }) => {
   const transactionRepo = RepositoryFactory.createTransactionRepository();
-  const scheduledTransactionRepo = RepositoryFactory.createScheduledTransactionRepository();
-  return (
-    <RepositoryContext.Provider value={{ transactionRepo, scheduledTransactionRepo }}>
-      {children}
-    </RepositoryContext.Provider>
-  );
+  return <RepositoryContext.Provider value={{ transactionRepo }}>{children}</RepositoryContext.Provider>;
 };
 
 export default RepositoryProvider;

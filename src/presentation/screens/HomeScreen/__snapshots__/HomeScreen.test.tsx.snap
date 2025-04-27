@@ -1,16 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`HomeScreen matches snapshot 1`] = `
-<View
-  style={
-    {
-      "flex": 1,
-      "paddingHorizontal": 16,
+[
+  <View
+    style={
+      {
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
+      }
     }
-  }
->
-  <div>
-    SpendingStats
-  </div>
-</View>
+    testID="screen-title-container"
+  >
+    <Text
+      style={
+        {
+          "fontSize": 28,
+          "fontWeight": "900",
+        }
+      }
+      type="screenHeader"
+    >
+      Home
+    </Text>
+  </View>,
+  <View
+    style={
+      {
+        "flex": 1,
+        "paddingHorizontal": 16,
+      }
+    }
+  >
+    <div>
+      SpendingStats
+    </div>
+  </View>,
+]
 `;

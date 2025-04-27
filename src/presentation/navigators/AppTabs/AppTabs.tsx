@@ -1,15 +1,12 @@
 import CalculatorSvgIcon from "@assets/svg/calculator-svgrepo-com.svg";
-import ClockSvgIcon from "@assets/svg/clock-svgrepo-com.svg";
 import HomeSvgIcon from "@assets/svg/home-1-svgrepo-com.svg";
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import type { RouteProp } from "@react-navigation/native";
 import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
-import ScheduledTransactionsScreen from "@screens/ScheduledTransactionsScreen/ScheduledTransactionsScreen";
 import React from "react";
-
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import type { RouteProp } from "@react-navigation/native";
 import type { SvgProps } from "react-native-svg";
 
 const SIZE_MULTIPLIER = 20;
@@ -17,7 +14,6 @@ const SIZE_MULTIPLIER = 20;
 export enum AppTabsScreens {
   Home = "HomeScreen",
   Expenses = "ExpensesScreen",
-  ScheduledTransactions = "ScheduledScreen",
 }
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
@@ -25,7 +21,6 @@ export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
 const TabBarLabelScreenNamesMap: { [key in AppTabsScreens]: string } = {
   [AppTabsScreens.Home]: "Home",
   [AppTabsScreens.Expenses]: "Expenses",
-  [AppTabsScreens.ScheduledTransactions]: "Scheduled",
 };
 
 const AppTabsTabBarIconMap: {
@@ -33,7 +28,6 @@ const AppTabsTabBarIconMap: {
 } = {
   [AppTabsScreens.Home]: (props: SvgProps) => <HomeSvgIcon {...props} />,
   [AppTabsScreens.Expenses]: (props: SvgProps) => <CalculatorSvgIcon {...props} />,
-  [AppTabsScreens.ScheduledTransactions]: (props: SvgProps) => <ClockSvgIcon {...props} />,
 };
 
 type TabRoute = RouteProp<AppTabsParamList, AppTabsScreens>;
@@ -83,7 +77,6 @@ const AppTabs = () => {
 
   return (
     <Tab.Navigator initialRouteName={AppTabsScreens.Expenses} screenOptions={screenOptions}>
-      <Tab.Screen name={AppTabsScreens.ScheduledTransactions} component={ScheduledTransactionsScreen} />
       <Tab.Screen name={AppTabsScreens.Expenses} component={ExpensesScreen} />
       <Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
     </Tab.Navigator>

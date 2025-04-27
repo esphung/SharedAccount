@@ -1,18 +1,17 @@
+import { faker } from "@faker-js/faker";
+
 export default class BaseBuilder<T> {
-  protected instance: Partial<T> = {};
+  protected instance: T;
 
-  constructor(base?: Partial<T>) {
-    if (base) {
-      this.instance = { ...base };
-    }
+  constructor(initialInstance: T, fakerSeed?: number) {
+    this.instance = initialInstance;
+    faker.seed(fakerSeed);
   }
 
-  set<K extends keyof T>(key: K, value: T[K]): this {
-    this.instance[key] = value;
-    return this;
-  }
-
+  /**
+   * Returns the built object.
+   */
   build(): T {
-    return this.instance as T;
+    return this.instance;
   }
 }

@@ -36,10 +36,7 @@ export default function SkeletonLoader({
   });
 
   return (
-    <View
-      testID={testID ? testID : "skeleton-loader"}
-      style={[styles.container, { width, height, borderRadius }, style]}
-    >
+    <View testID={testID || "skeleton-loader"} style={[styles.container, { width, height, borderRadius }, style]}>
       <Animated.View
         style={[
           StyleSheet.absoluteFillObject,

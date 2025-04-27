@@ -1,6 +1,5 @@
-import RealmScheduledTransaction from "@data/models/realm/RealmScheduledTransaction";
 import RealmTransaction from "@data/models/realm/RealmTransaction";
 
 export const realmSchemaVersion = 1;
 
-export const realmSchema = [RealmTransaction, RealmScheduledTransaction];
+export const realmSchema = [RealmTransaction];

@@ -1,18 +1,17 @@
-import React, { useMemo } from "react";
-import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { DateTime } from "luxon";
-
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import ArrowDownSvg from "@assets/svg/circle-arrow-down-svgrepo-com.svg";
 import ArrowUpSvg from "@assets/svg/circle-arrow-up-svgrepo-com.svg";
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
-import MoneyFunctions from "@utils/MoneyFunctions";
-
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
+import MoneyFunctions from "@utils/MoneyFunctions";
+import { DateTime } from "luxon";
+import React, { useMemo } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Props = {
+  testID?: string;
   item: Transaction;
   user?: User;
   onPress: (id: string) => void;
@@ -26,7 +25,7 @@ const AVATAR_SIZE = 40;
 const AVATAR_RADIUS = AVATAR_SIZE / 2;
 const DEFAULT_AVATAR = "https://picsum.photos/200/300";
 
-export default function TransactionListItem({ item, user, onPress, itemHeight, isListReady = true }: Props) {
+export default function TransactionListItem({ testID, item, user, onPress, itemHeight, isListReady = true }: Props) {
   const isCredit = useMemo(() => item.type === "credit", [item.type]);
   const formattedAmount = useMemo(() => MoneyFunctions.formatMoney(item.amount, 2), [item.amount]);
   const avatarUri = useMemo(() => user?.avatar || DEFAULT_AVATAR, [user?.avatar]);
@@ -43,7 +42,10 @@ export default function TransactionListItem({ item, user, onPress, itemHeight, i
 
   return (
     <TouchableOpacity
-      testID="transaction-list-item"
+      testID={testID || "transaction-list-item"}
+      accessibilityLabel={testID || "transaction-list-item"}
+      accessibilityRole="button"
+      accessibilityState={{ selected: false }}
       style={[styles.container, { height: itemHeight }]}
       onPress={() => onPress(item.id)}
       activeOpacity={0.7}
@@ -61,14 +63,14 @@ export default function TransactionListItem({ item, user, onPress, itemHeight, i
 
       <View style={styles.detailsContainer}>
         {formattedAmount ? (
-          <SharedAccountText type="transactionType">{formattedAmount}</SharedAccountText>
+          <SharedAccountText>{formattedAmount}</SharedAccountText>
         ) : (
           <SkeletonLoader testID="transaction-name-skeleton-placeholder" width="60%" style={styles.subtitleSkeleton} />
         )}
       </View>
 
       <View style={styles.rightContainer}>
-        <SharedAccountText type="transactionType">{transactionDate}</SharedAccountText>
+        <SharedAccountText>{transactionDate}</SharedAccountText>
         {isCredit ? (
           <ArrowUpSvg width={ICON_SIZE} height={ICON_SIZE} testID="arrow-up-svg" />
         ) : (

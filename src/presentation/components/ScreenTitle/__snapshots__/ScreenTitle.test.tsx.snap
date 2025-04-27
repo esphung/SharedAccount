@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScreenTitle matches snapshot 1`] = `
+<View
+  style={
+    {
+      "paddingHorizontal": 16,
+      "paddingVertical": 8,
+    }
+  }
+  testID="screen-title-container"
+>
+  <Text
+    style={
+      {
+        "fontSize": 28,
+        "fontWeight": "900",
+      }
+    }
+    type="screenHeader"
+  >
+    Test Title
+  </Text>
+</View>
+`;
