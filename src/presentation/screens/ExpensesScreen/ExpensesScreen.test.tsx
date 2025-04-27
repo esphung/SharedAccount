@@ -29,27 +29,27 @@ jest.mock("@presentation/components/AddExpenseSheet/AddExpenseSheet", () => {
 });
 
 const mockA = new TransactionBuilder()
-  .withId("1" as `txn_${string}`)
+  .withId("txn_1")
   .withAmount(50)
   .withDate(new Date("2023-03-01"))
   .withType("expense")
   .build();
 const mockB = new TransactionBuilder()
-  .withId("2" as `txn_${string}`)
+  .withId("txn_2")
   .withAmount(30)
   .withDate(new Date("2023-03-02"))
   .withType("expense")
   .build();
 const mockC = new TransactionBuilder()
-  .withId("3" as `txn_${string}`)
+  .withId("txn_3")
   .withAmount(20)
   .withDate(new Date("2023-03-01"))
   .withType("credit")
   .build();
 const mockD = new TransactionBuilder()
-  .withId("4" as `txn_${string}`)
+  .withId("txn_4")
   .withAmount(40)
-  .withDate(new Date("2023-03-03"))
+  .withDate(new Date("2023-03-01"))
   .withType("credit")
   .build();
 
@@ -71,19 +71,19 @@ describe("ExpensesScreen", () => {
 
   const mockTransactions = [
     new TransactionBuilder()
-      .withId("txn_1" as `txn_${string}`)
-      .withSharedAccountId("acct_1" as `acct_${string}`)
-      .withUserId("usr_1" as `usr_${string}`)
+      .withId("txn_1")
+      .withSharedAccountId("acct_1")
+      .withUserId("usr_1")
       .withAmount(100)
       .withCategory("Food")
       .withName("Groceries")
       .withDate(new Date("2023-03-01"))
       .withDescription("Weekly groceries")
-      .withType("expense")
+      .withType("credit")
       .build(),
     new TransactionBuilder()
-      .withId("txn_2" as `txn_${string}`)
-      .withSharedAccountId("acct_1" as `acct_${string}`)
+      .withId("txn_2")
+      .withSharedAccountId("acct_1")
       .withUserId("usr_1" as `usr_${string}`)
       .withAmount(50)
       .withCategory("Transport")
@@ -153,16 +153,12 @@ describe("groupTransactionsByDate", () => {
     const result = groupTransactionsByDate(filteredExpenses, filteredCredits);
     expect(result).toEqual([
       {
-        title: new Date("2023-03-03").toDateString(),
-        data: [mockD],
-      },
-      {
         title: new Date("2023-03-02").toDateString(),
         data: [mockB],
       },
       {
         title: new Date("2023-03-01").toDateString(),
-        data: [mockA, mockC],
+        data: [mockA, mockC, mockD],
       },
     ]);
   });

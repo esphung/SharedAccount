@@ -10,7 +10,7 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
       userId: "usr_1234567890",
       amount: 100,
       category: "Food",
-      name: "Groceries",
+      name: "Hello World",
       date: new Date("2023-10-01"),
       description: "Weekly groceries",
       type: "expense" as const,

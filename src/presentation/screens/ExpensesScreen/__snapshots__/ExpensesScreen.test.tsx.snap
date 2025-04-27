@@ -116,7 +116,7 @@ exports[`ExpensesScreen matches snapshot 1`] = `
               "id": "txn_1",
               "name": "Groceries",
               "sharedAccountId": "acct_1",
-              "type": "expense",
+              "type": "credit",
               "userId": "usr_1",
             },
           ],
