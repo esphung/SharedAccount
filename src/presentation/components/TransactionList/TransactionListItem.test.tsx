@@ -69,7 +69,7 @@ describe("TransactionListItem", () => {
     expect(getByTestId("avatar-image").props.source.uri).toBe("https://picsum.photos/200/300");
   });
 
-  it("renders ArrowUpSvg for debit transactions", () => {
+  it("renders ArrowUpSvg for credit transactions", () => {
     const debitTransaction = { ...mockTransaction, type: "credit" as const };
 
     const { getByTestId } = render(
