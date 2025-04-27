@@ -32,7 +32,6 @@ export default function BillsSectionListItem({
       </View>
       <View>
         <SharedAccountText style={StyleSheet.flatten([styles.amount, memoizedUpdateColorStyle])}>
-          {item.type === "credit" ? "+" : "-"}
           {MoneyFunctions.formatMoney(item.amount)}
         </SharedAccountText>
         <SharedAccountText style={StyleSheet.flatten([styles.dueDate, memoizedUpdateColorStyle])}>
