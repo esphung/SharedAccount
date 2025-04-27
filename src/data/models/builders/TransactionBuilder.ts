@@ -11,7 +11,7 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
       amount: 100,
       category: "Food",
       name: "Hello World",
-      date: new Date("2023-10-01"),
+      date: new Date("2023-10-01T00:00:00Z"),
       description: "Weekly groceries",
       type: "expense" as const,
       ...initialInstance,
