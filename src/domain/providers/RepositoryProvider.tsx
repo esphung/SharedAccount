@@ -9,7 +9,8 @@ type Props = PropsWithChildren<{
 
 const RepositoryProvider: React.FC<Props> = ({ children }) => {
   const transactionRepo = RepositoryFactory.createTransactionRepository();
-  return <RepositoryContext.Provider value={{ transactionRepo }}>{children}</RepositoryContext.Provider>;
+  const accountRepo = RepositoryFactory.createAccountRepository();
+  return <RepositoryContext.Provider value={{ transactionRepo, accountRepo }}>{children}</RepositoryContext.Provider>;
 };
 
 export default RepositoryProvider;

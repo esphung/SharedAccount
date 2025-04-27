@@ -12,8 +12,9 @@ const useTransactions: UseDataSource<Transaction> = () => {
 
   // Fetch transactions from the repository
   const fetchItems = useCallback(async () => {
-    const InputModeOptions = await transactionRepo.getAll();
-    setState(InputModeOptions);
+    const fetchedItems = await transactionRepo.getAll();
+    setState(fetchedItems);
+    return fetchedItems;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
