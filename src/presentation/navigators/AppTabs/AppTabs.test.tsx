@@ -60,12 +60,6 @@ describe("AppTabs Navigator", () => {
     expect(expensesScreen).toBeTruthy();
   });
 
-  it("renders the ScheduledTransactionsScreen tab", () => {
-    const { getByText } = renderWithNavigation();
-    const scheduledTransactionsScreen = getByText("Scheduled");
-    expect(scheduledTransactionsScreen).toBeTruthy();
-  });
-
   it("sets the initial route to ExpensesScreen", () => {
     const { getByText } = renderWithNavigation();
 

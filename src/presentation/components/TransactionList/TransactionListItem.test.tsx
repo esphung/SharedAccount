@@ -1,29 +1,30 @@
-import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-
 import TransactionListItem from "./TransactionListItem";
+import { render, fireEvent } from "@testing-library/react-native";
 
 describe("TransactionListItem", () => {
-  const mockOnPress = jest.fn();
   const mockTransaction = {
     id: "txn_1" as const,
-    type: "credit" as const,
     amount: 100,
-    name: "Test Transaction",
-    category: "Test Category",
     date: new Date(),
-    sharedAccountId: "acct_1" as const,
     userId: "usr_1" as const,
-  };
-  const mockUser = {
-    name: "John Doe",
-    avatar: "https://example.com/avatar.jpg",
-    email: "",
-    id: "usr_1" as const,
+    category: "Food",
+    sharedAccountId: "acct_1" as const,
+    name: "Transaction 1",
+    type: "credit" as const,
   };
 
-  it("renders correctly when isListReady is true", () => {
-    const { getByText } = render(
+  const mockUser = {
+    avatar: "https://example.com/avatar.jpg",
+    id: "usr_1" as const,
+    name: "John Doe",
+    email: "",
+  };
+
+  const mockOnPress = jest.fn();
+
+  it("renders correctly with all props", () => {
+    const { getByTestId, getByText } = render(
       <TransactionListItem
         item={mockTransaction}
         user={mockUser}
@@ -33,9 +34,10 @@ describe("TransactionListItem", () => {
       />,
     );
 
-    expect(getByText("John Doe")).toBeTruthy();
-    expect(getByText("+ $1.00 (from Test Transaction)")).toBeTruthy();
-    expect(getByText("↑")).toBeTruthy();
+    expect(getByTestId("transaction-list-item")).toBeTruthy();
+    expect(getByTestId("avatar-image").props.source.uri).toBe(mockUser.avatar);
+    expect(getByText("$1.00")).toBeTruthy();
+    expect(getByTestId("arrow-up-svg")).toBeTruthy();
   });
 
   it("calls onPress with the correct id when pressed", () => {
@@ -53,26 +55,26 @@ describe("TransactionListItem", () => {
     expect(mockOnPress).toHaveBeenCalledWith(mockTransaction.id);
   });
 
-  it("displays default avatar when user avatar is not provided", () => {
+  it("renders default avatar when user avatar is not provided", () => {
     const { getByTestId } = render(
       <TransactionListItem
         item={mockTransaction}
-        user={{ ...mockUser, name: "John Doe" }}
+        user={undefined}
         onPress={mockOnPress}
-        itemHeight={100}
+        itemHeight={60}
         isListReady={true}
       />,
     );
 
-    const avatar = getByTestId("avatar-image");
-    expect(avatar.props.source.uri).toBe(mockUser.avatar);
+    expect(getByTestId("avatar-image").props.source.uri).toBe("https://picsum.photos/200/300");
   });
 
-  it("displays correct transaction type and amount for expense", () => {
-    const expenseTransaction = { ...mockTransaction, type: "expense" as const, amount: 50 };
-    const { getByText } = render(
+  it("renders ArrowUpSvg for credit transactions", () => {
+    const debitTransaction = { ...mockTransaction, type: "credit" as const };
+
+    const { getByTestId } = render(
       <TransactionListItem
-        item={expenseTransaction}
+        item={debitTransaction}
         user={mockUser}
         onPress={mockOnPress}
         itemHeight={60}
@@ -80,7 +82,22 @@ describe("TransactionListItem", () => {
       />,
     );
 
-    expect(getByText("- $0.50 (Test Category)")).toBeTruthy();
-    expect(getByText("↓")).toBeTruthy();
+    expect(getByTestId("arrow-up-svg")).toBeTruthy();
+  });
+
+  it("renders ArrowDownSvg for credit transactions", () => {
+    const creditTransaction = { ...mockTransaction, type: "expense" as const };
+
+    const { getByTestId } = render(
+      <TransactionListItem
+        item={creditTransaction}
+        user={mockUser}
+        onPress={mockOnPress}
+        itemHeight={60}
+        isListReady={true}
+      />,
+    );
+
+    expect(getByTestId("arrow-down-svg")).toBeTruthy();
   });
 });

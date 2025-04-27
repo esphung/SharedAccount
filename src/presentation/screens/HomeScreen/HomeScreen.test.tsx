@@ -2,6 +2,7 @@ import useTransactions from "@presentation/hooks/useTransactions";
 import { render } from "@testing-library/react-native";
 import React from "react";
 import HomeScreen from "./HomeScreen";
+import { itMatchesSnapshot } from "@utils/testUtils/sharedTests";
 
 jest.mock("@presentation/hooks/useTransactions", () => ({
   __esModule: true,
@@ -47,10 +48,7 @@ describe("HomeScreen", () => {
     jest.clearAllMocks();
   });
 
-  it("matches snapshot", () => {
-    const { toJSON } = render(<HomeScreen />);
-    expect(toJSON()).toMatchSnapshot();
-  });
+  itMatchesSnapshot(HomeScreen);
 
   it("calls startListening on mount", () => {
     (useTransactions as jest.Mock).mockReturnValue({

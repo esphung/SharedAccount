@@ -1,25 +1,31 @@
+# Add 'Documentation' label to any changes within 'docs' folder or any subfolders
+Documentation:
+  - changed-files:
+      - any-glob-to-any-file: docs/**
+
 # Add 'source' label to any change to src files within the source dir EXCEPT for the docs sub-folder
 source:
-  - all:
-      - changed-files:
-          - any-glob-to-any-file: "src/**/*"
+  - changed-files:
+      - any-glob-to-any-file: "src/**/*"
 
 # Add 'feature' label to any PR where the head branch name starts with `feature` or has a `feature` section in the name
 feature:
-  - head-branch: ["^.*/feat/.*"]
+  - head-branch: ["^feature", "feature"]
 
-# Add 'release' label to any PR that is opened against the `main` branch
-release:
-  - head-branch: ["^.*/release/v.*"]
-
-# Add 'ci' label to any PR that is opened against the `ci` branch
-ci:
-  - head-branch: ["^.*/ci/.*"]
-
-# chore: Add 'chore' label to any PR that has a chore in the title
 chore:
-  - head-branch: ["^.*/chore/.*"]
+  - head-branch: ["^chore", "chore"]
 
-# Add 'bug' label to any PR that has a fix in the title
-bug:
-  - head-branch: ["^.*/fix/.*"]
+fix:
+  - head-branch: ["^fix", "fix"]
+
+test:
+  - head-branch: ["^test", "test"]
+
+clean:
+  - head-branch: ["^clean", "clean"]
+
+refactor:
+  - head-branch: ["^refactor", "refactor"]
+
+release:
+  - head-branch: ["^release", "release"]

@@ -1,55 +1,76 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
+
 import type { Transaction } from "@data/models/types/Transaction";
-import { faker } from "@faker-js/faker";
 
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
-  constructor(type: "expense" | "credit") {
-    const initial: Transaction = {
-      id: `txn_${faker.database.mongodbObjectId()}`,
-      sharedAccountId: `acct_${faker.database.mongodbObjectId()}`,
-      userId: `usr_${faker.database.mongodbObjectId()}`,
-      amount: faker.number.int({ min: 100, max: 10000 }),
-      category: faker.commerce.department(),
-      name: faker.company.name(),
-      date: faker.date.recent(),
-      type,
+  constructor(initialInstance?: Partial<Transaction>, fakerSeed?: number) {
+    const result: Transaction = {
+      id: "txn_1234567890",
+      sharedAccountId: "acct_1234567890",
+      userId: "usr_1234567890",
+      amount: 100,
+      category: "Food",
+      name: "Hello World",
+      date: new Date("2023-10-01T00:00:00Z"),
+      description: "Weekly groceries",
+      type: "expense" as const,
+      ...initialInstance,
     };
-    super(initial);
+    super(result, fakerSeed);
   }
 
-  setId(id: `txn_${string}`): this {
-    return this.set("id", id);
+  withId(id: `txn_${string}`): TransactionBuilder {
+    // Ensure the ID starts with "txn_"
+    this.instance.id = id;
+    return this;
   }
 
-  setSharedAccountId(sharedAccountId: `acct_${string}`): this {
-    return this.set("sharedAccountId", sharedAccountId);
+  withSharedAccountId(sharedAccountId: `acct_${string}`): TransactionBuilder {
+    this.instance.sharedAccountId = sharedAccountId;
+    return this;
   }
 
-  setUserId(userId: `usr_${string}`): this {
-    return this.set("userId", userId);
+  withUserId(userId: `usr_${string}`): TransactionBuilder {
+    this.instance.userId = userId;
+    return this;
   }
 
-  setAmount(amount: number): this {
-    return this.set("amount", amount);
+  withAmount(amount: number): TransactionBuilder {
+    this.instance.amount = amount;
+    return this;
   }
 
-  setCategory(category: string): this {
-    return this.set("category", category);
+  withCategory(category: string): TransactionBuilder {
+    this.instance.category = category;
+    return this;
   }
 
-  setDescription(description: string): this {
-    return this.set("description", description);
+  withName(name: string): TransactionBuilder {
+    this.instance.name = name;
+    return this;
   }
 
-  setDate(date: Date): this {
-    return this.set("date", date);
+  withDate(date: Date): TransactionBuilder {
+    this.instance.date = date;
+    return this;
   }
 
-  setType(type: "expense"): this {
-    return this.set("type", type);
+  withDescription(description: string): TransactionBuilder {
+    this.instance.description = description;
+    return this;
   }
 
-  setName(name: string): this {
-    return this.set("name", name);
+  withType(type: "expense" | "credit"): TransactionBuilder {
+    this.instance.type = type;
+    return this;
+  }
+
+  withTransaction(transaction: Transaction): TransactionBuilder {
+    this.instance = transaction;
+    return this;
+  }
+
+  build(): Transaction {
+    return this.instance;
   }
 }

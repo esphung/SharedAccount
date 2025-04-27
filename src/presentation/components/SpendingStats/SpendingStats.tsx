@@ -1,14 +1,13 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import { DateTime } from "luxon";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import StatsRow from "./StatsRow";
-
-import colors from "@config/themes/colors";
-import MoneyFunctions from "@utils/MoneyFunctions";
 import CustomLineChart from "./CustomLineChart";
 import GroupedBarChart from "./GroupedBarChart";
+import StatsRow from "./StatsRow";
 
 const calculateMonthlyTotoal = (type: "credit" | "expense", arr: Transaction[]) => {
   const lastEndOfMonth = DateTime.now().endOf("month");
@@ -105,7 +104,6 @@ const SpendingStats = ({ transactions = [] }: { transactions: Transaction[] }) =
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <SharedAccountText type="screenHeader">{DateTime.now().toFormat("MMMM yyyy")}</SharedAccountText>
       <StatsRow amount={calculateMonthlyTotoal("credit", transactions)} type="credit" />
       <StatsRow amount={calculateMonthlyTotoal("expense", transactions)} type="expense" />
       <View style={styles.graphsContainer}>
