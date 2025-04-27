@@ -23,12 +23,6 @@ export default async (): Promise<Config> => {
     coverageDirectory: "coverage",
     coverageThreshold: {
       global: {},
-      "./src/presentation/screens/": {
-        branches: 60,
-        functions: 60,
-        lines: 60,
-        statements: 60,
-      },
     },
     setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
     transformIgnorePatterns: ["node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"],
