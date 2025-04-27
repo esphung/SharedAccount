@@ -1,7 +1,6 @@
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import useTransactions from "@presentation/hooks/useTransactions";
 import { render } from "@testing-library/react-native";
-import { itMatchesSnapshot } from "@utils/testUtils/sharedTests";
 import React from "react";
 import { Alert } from "react-native";
 
@@ -109,8 +108,10 @@ describe("ExpensesScreen", () => {
     jest.clearAllMocks();
   });
 
-  itMatchesSnapshot(ExpensesScreen, {
-    navigation: mockNavigation,
+  it("matches snapshot", () => {
+    // @ts-expect-error not typing the navigation prop
+    const { toJSON } = render(<ExpensesScreen navigation={mockNavigation} />);
+    expect(toJSON()).toMatchSnapshot();
   });
 
   it("renders Add Expense button", () => {
@@ -175,13 +176,13 @@ describe("groupTransactionsByDate", () => {
     const mockExpense = new TransactionBuilder()
       .withId("1" as `txn_${string}`)
       .withType("expense")
-      .withDate(new Date("2023-03-01"))
+      .withDate(new Date("2023-03-01T10:00:00"))
       .withAmount(50)
       .build();
     const mockCredit = new TransactionBuilder()
       .withId("2" as `txn_${string}`)
       .withType("credit")
-      .withDate(new Date("2023-03-01"))
+      .withDate(new Date("2023-03-01T12:00:00"))
       .withAmount(20)
       .build();
     const arr1 = [mockExpense, mockCredit];
@@ -198,7 +199,7 @@ describe("groupTransactionsByDate", () => {
     expect(result).toEqual([
       {
         title: "Wed Mar 01 2023",
-        data: [mockExpense, mockCredit],
+        data: [mockCredit, mockExpense],
       },
     ]);
   });
