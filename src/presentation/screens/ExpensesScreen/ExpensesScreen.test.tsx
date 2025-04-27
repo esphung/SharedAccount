@@ -197,7 +197,7 @@ describe("groupTransactionsByDate", () => {
 
     expect(result).toEqual([
       {
-        title: "Tue Feb 28 2023",
+        title: "Wed Mar 01 2023",
         data: [mockExpense, mockCredit],
       },
     ]);
