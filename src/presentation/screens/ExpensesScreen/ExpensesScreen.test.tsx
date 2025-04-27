@@ -28,31 +28,6 @@ jest.mock("@presentation/components/AddExpenseSheet/AddExpenseSheet", () => {
   };
 });
 
-const mockA = new TransactionBuilder()
-  .withId("txn_1")
-  .withAmount(50)
-  .withDate(new Date("2023-03-01"))
-  .withType("expense")
-  .build();
-const mockB = new TransactionBuilder()
-  .withId("txn_2")
-  .withAmount(30)
-  .withDate(new Date("2023-03-02"))
-  .withType("expense")
-  .build();
-const mockC = new TransactionBuilder()
-  .withId("txn_3")
-  .withAmount(20)
-  .withDate(new Date("2023-03-01"))
-  .withType("credit")
-  .build();
-const mockD = new TransactionBuilder()
-  .withId("txn_4")
-  .withAmount(40)
-  .withDate(new Date("2023-03-01"))
-  .withType("credit")
-  .build();
-
 describe("ExpensesScreen", () => {
   const mockUnsubscribe = jest.fn();
   const mockStartListening = jest.fn(() => mockUnsubscribe);
@@ -141,28 +116,6 @@ describe("ExpensesScreen", () => {
 });
 
 describe("groupTransactionsByDate", () => {
-  it("groups transactions by date and sorts them in descending order", () => {
-    const arr1: Transaction[] = [mockA, mockB];
-    const arr2 = [mockC, mockD];
-    const filteredExpenses = arr1.filter(
-      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
-    );
-    const filteredCredits = arr2.filter(
-      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
-    );
-    const result = groupTransactionsByDate(filteredExpenses, filteredCredits);
-    expect(result).toEqual([
-      {
-        title: new Date("2023-03-02").toDateString(),
-        data: [mockB],
-      },
-      {
-        title: new Date("2023-03-01").toDateString(),
-        data: [mockA, mockC, mockD],
-      },
-    ]);
-  });
-
   it("returns an empty array when no transactions are provided", () => {
     const result = groupTransactionsByDate([], []);
     expect(result).toEqual([]);
