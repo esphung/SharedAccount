@@ -1,24 +1,22 @@
 import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
-import useAccounts from "@presentation/hooks/useAccounts";
+import useAccounts from "@hooks/useAccounts";
 import { render } from "@testing-library/react-native";
 import { DateTime } from "luxon";
 import React from "react";
 import { Alert } from "react-native";
 
-import ExpensesScreen, { calculateTotal, groupTransactionsByDate, showAsyncAlertPrompt } from "./ExpensesScreen";
-
-// jest.mock("react", () => ({
-//   ...jest.requireActual("react"),
-//   useState: jest.fn(),
-// }));
+import TransactionsScreen, {
+  calculateTotal,
+  groupTransactionsByDate,
+  showAsyncAlertPrompt,
+} from "@screens/TransactionsScreen/TransactionsScreen";
 
 jest.mock("@presentation/hooks/useAccounts", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
 
-// jest.mock("@components/TransactionList/TransactionList", () => "TransactionList");
 jest.mock("@components/AddExpenseSheet/AddExpenseSheet", () => "AddExpenseSheet");
 jest.mock(
   "@components/SharedAccountScreen/SharedAccountScreen",
@@ -26,7 +24,7 @@ jest.mock(
     ({ children }: { children: React.ReactNode }) => <>{children}</>,
 );
 
-describe("ExpensesScreen", () => {
+describe("TransactionsScreen", () => {
   const mockUseAccounts = useAccounts as jest.Mock;
 
   beforeEach(() => {
@@ -43,13 +41,13 @@ describe("ExpensesScreen", () => {
 
   it("renders correctly", () => {
     // @ts-expect-error not a real navigation prop
-    const { getByText } = render(<ExpensesScreen navigation={{ addListener: jest.fn() }} />);
-    expect(getByText("Expenses")).toBeTruthy();
+    const { getByText } = render(<TransactionsScreen navigation={{ addListener: jest.fn() }} />);
+    expect(getByText("Transactions")).toBeTruthy();
   });
 
   it("displays loading state when list is not ready", () => {
     // @ts-expect-error not a real navigation prop
-    const { getByText } = render(<ExpensesScreen navigation={{ addListener: jest.fn() }} />);
+    const { getByText } = render(<TransactionsScreen navigation={{ addListener: jest.fn() }} />);
     expect(getByText("Loading...")).toBeTruthy();
   });
 });

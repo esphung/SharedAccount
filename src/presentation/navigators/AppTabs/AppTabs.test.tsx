@@ -10,11 +10,11 @@ jest.mock("@presentation/screens/HomeScreen/HomeScreen", () => {
     default: () => <div>Home</div>,
   };
 });
-jest.mock("@presentation/screens/ExpensesScreen/ExpensesScreen", () => {
+jest.mock("@presentation/screens/TransactionsScreen/TransactionsScreen", () => {
   return {
     __esModule: true,
     // eslint-disable-next-line react-native/no-raw-text
-    default: () => <div>Expenses</div>,
+    default: () => <div>Transactions</div>,
   };
 });
 
@@ -65,15 +65,15 @@ describe("AppTabs Navigator", () => {
     expect(homeScreen).toBeTruthy();
   });
 
-  it("renders the ExpensesScreen tab", () => {
+  it("renders the TransactionsScreen tab", () => {
     const { getByText } = renderWithNavigation();
-    const expensesScreen = getByText("Expenses");
+    const expensesScreen = getByText("Transactions");
     expect(expensesScreen).toBeTruthy();
   });
 
-  it("sets the initial route to ExpensesScreen", () => {
+  it("sets the initial route to TransactionsScreen", () => {
     const { getByText } = renderWithNavigation();
 
-    expect(getByText("Expenses")).toBeTruthy();
+    expect(getByText("Transactions")).toBeTruthy();
   });
 });

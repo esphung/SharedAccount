@@ -16,7 +16,7 @@ import { Alert, Button } from "react-native";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
-type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
+type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>;
 
 export const calculateTotal = (account: Account) => {
   // current starting balance
@@ -108,7 +108,7 @@ export const scrollToTop = (
   }
 };
 
-export default function ExpensesScreen({ navigation }: ScreenProps) {
+export default function TransactionsScreen({ navigation }: ScreenProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isListReady, setIsListReady] = useState(false);
   const listRef = useRef<SectionList<Transaction>>(null);
@@ -147,7 +147,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
           promptToCreateAccount();
         }
       } catch (error) {
-        console.warn("[ExpensesScreen] Error fetching data:", error);
+        console.warn("[TransactionsScreen] Error fetching data:", error);
       }
       setIsListReady(true);
       scrollToTop(sectionsData, listRef);
@@ -167,7 +167,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
       if (shouldCreate) {
         addAccount({ startingBalance: 0 })
           .then(() => Alert.alert("Account created successfully"))
-          .catch((error) => console.error("[ExpensesScreen] Error creating account:", error));
+          .catch((error) => console.error("[TransactionsScreen] Error creating account:", error));
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -183,7 +183,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
         if (shouldDelete) {
           deleteTransaction(txnId, currentAccount?.id as `acct_${string}`)
             .then(() => Alert.alert("Transaction deleted successfully"))
-            .catch((error) => console.error("[ExpensesScreen] Error deleting transaction:", error));
+            .catch((error) => console.error("[TransactionsScreen] Error deleting transaction:", error));
         }
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -195,19 +195,16 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
   }, []);
 
   const screenTitleBalance = useMemo(() => {
-    if (!isListReady) {
-      return "Loading...";
-    }
     if (!currentAccount) {
       return "No account";
     }
     return `Balance: ${calculateTotal(currentAccount)}`;
-  }, [currentAccount, isListReady]);
+  }, [currentAccount]);
 
   const handleCreateAccountTransaction = useCallback(
     async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
       if (!currentAccount?.id) {
-        console.warn("[ExpensesScreen] No current account");
+        console.warn("[TransactionsScreen] No current account");
         return;
       }
       try {
@@ -218,11 +215,11 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
           })
           .then(() => Alert.alert("Transaction added successfully"))
           .catch((error) => {
-            console.error("[ExpensesScreen] Error adding transaction:", error);
+            console.error("[TransactionsScreen] Error adding transaction:", error);
             throw error;
           });
       } catch (error) {
-        console.error("[ExpensesScreen] Error adding transaction:", error);
+        console.error("[TransactionsScreen] Error adding transaction:", error);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,7 +228,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
 
   return (
     <SharedAccountScreen>
-      <ScreenTitle title="Expenses" subtitle={screenTitleBalance} />
+      <ScreenTitle title="Transactions" subtitle={screenTitleBalance} />
       <Button title="Add an expense" onPress={openExpenseSheet} disabled={!isListReady} />
       <TransactionList
         ref={listRef}
