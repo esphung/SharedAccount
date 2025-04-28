@@ -2,19 +2,49 @@ import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import useTransactions from "@presentation/hooks/useTransactions";
+import { isCreditTransaction, isExpenseTransaction } from "@data/models/validate";
+import useAccounts from "@hooks/useAccounts";
+
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import { DateTime } from "luxon";
 import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { SectionList } from "react-native";
+import type { AlertButton, SectionList } from "react-native";
 import { Alert, Button } from "react-native";
+import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
 type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
 
-export const groupTransactionsByDate = (expenses: Transaction<"expense">[], credits: Transaction<"credit">[]) => {
+export const calculateTotal = (account: Account) => {
+  // current starting balance
+  const total = 0;
+
+  // reduce all transactions to get the total balance
+  const transactionsTotal = [...(account?.transactions || [])].reduce((acc, transaction) => {
+    if (isExpenseTransaction(transaction)) {
+      return acc - transaction.amount;
+    }
+    if (isCreditTransaction(transaction)) {
+      return acc + transaction.amount;
+    }
+    // if the transaction type is not expense or credit, return the current accumulator
+    return acc;
+  }, total);
+
+  // get the current account balance
+  const currentAccountBalance = account?.startingBalance || 0;
+
+  // get the total balance in cents
+  const centsTotalBalance = currentAccountBalance + (transactionsTotal || 0);
+
+  // return the total balance in dollars as a formatted string
+  return MoneyFunctions.formatMoney(centsTotalBalance, 2);
+};
+
+export const groupTransactionsByDate = (expenses: Transaction[], credits: Transaction[]) => {
   const transactions = [...expenses, ...credits];
   const grouped: Record<string, Transaction[]> = {};
 
@@ -34,15 +64,33 @@ export const groupTransactionsByDate = (expenses: Transaction<"expense">[], cred
     );
 };
 
-export const showAsyncAlertPrompt = (onDelete: () => void) => {
-  Alert.alert("Delete Transaction", "Are you sure?", [
-    { text: "Cancel", style: "cancel" },
-    {
-      text: "Delete",
-      style: "destructive",
-      onPress: onDelete,
-    },
-  ]);
+export const showAsyncAlertPrompt = ({
+  title = "Delete Transaction",
+  message = "Are you sure?",
+  cancelable = true,
+}: {
+  title?: string;
+  message?: string;
+  cancelable?: boolean;
+}): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const buttons: AlertButton[] = [
+      {
+        text: "Cancel",
+        style: "cancel",
+        onPress: () => resolve(false),
+      },
+      {
+        text: "OK",
+        style: "default",
+        onPress: () => resolve(true),
+      },
+    ];
+    if (!cancelable) {
+      buttons.shift();
+    }
+    return Alert.alert(title, message, buttons);
+  });
 };
 
 export const scrollToTop = (
@@ -66,55 +114,129 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
   const listRef = useRef<SectionList<Transaction>>(null);
 
   const {
-    state: transactions,
-    fetchItems: fetchTransactions,
-    startListening,
-    addItem: addTransaction,
-    deleteItem: deleteTransaction,
-  } = useTransactions();
-
-  const handleAddExpense = useCallback(() => {
-    setModalVisible(true);
-  }, []);
+    fetchItems: fetchAccounts,
+    startListening: startAccountsListening,
+    addItem: addAccount,
+    currentAccount,
+    currentAccount: { transactions = [] } = {},
+    addTransaction,
+    deleteTransaction,
+  } = useAccounts();
 
   const sectionsData = useMemo(() => {
-    const expenses = transactions.filter(
-      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
-    );
-    const credits = transactions.filter(
-      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
-    );
+    const expenses = transactions.filter(isExpenseTransaction);
+    const credits = transactions.filter(isCreditTransaction);
     return groupTransactionsByDate(expenses, credits);
   }, [transactions]);
 
   useEffect(() => {
-    const unsubscribe = startListening();
-    return unsubscribe;
+    const unsubscribeAccounts = startAccountsListening();
+    return () => {
+      unsubscribeAccounts();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const onFocus = async () => {
       setIsListReady(false);
-      await fetchTransactions().catch((error) => {
-        console.warn("[ExpensesScreen] Error fetching transactions:", error);
-      });
+      try {
+        const fetchedAccounts = await fetchAccounts();
+        // ✅ Check fresh data, NOT stale state
+        if (fetchedAccounts.length === 0) {
+          promptToCreateAccount();
+        }
+      } catch (error) {
+        console.warn("[ExpensesScreen] Error fetching data:", error);
+      }
       setIsListReady(true);
       scrollToTop(sectionsData, listRef);
     };
-    const unsubscribe = navigation.addListener("focus", onFocus);
-    return unsubscribe;
+
+    const unsubscribeOnFocus = navigation.addListener("focus", onFocus);
+    return unsubscribeOnFocus;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionsData]);
 
+  const promptToCreateAccount = useCallback(() => {
+    showAsyncAlertPrompt({
+      title: "Create Account",
+      message: "You don't have an account yet. Create one now to start tracking expenses!",
+      cancelable: false,
+    }).then((shouldCreate) => {
+      if (shouldCreate) {
+        addAccount({ startingBalance: 0 })
+          .then(() => Alert.alert("Account created successfully"))
+          .catch((error) => console.error("[ExpensesScreen] Error creating account:", error));
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDeleteTransaction = useCallback(
+    (txnId: Transaction["id"]) =>
+      showAsyncAlertPrompt({
+        title: "Delete Transaction",
+        message: "Are you sure you want to delete this transaction?",
+        cancelable: true,
+      }).then((shouldDelete) => {
+        if (shouldDelete) {
+          deleteTransaction(txnId, currentAccount?.id as `acct_${string}`)
+            .then(() => Alert.alert("Transaction deleted successfully"))
+            .catch((error) => console.error("[ExpensesScreen] Error deleting transaction:", error));
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentAccount?.id],
+  );
+
+  const openExpenseSheet = useCallback(() => {
+    setModalVisible(true);
+  }, []);
+
+  const screenTitleBalance = useMemo(() => {
+    if (!isListReady) {
+      return "Loading...";
+    }
+    if (!currentAccount) {
+      return "No account";
+    }
+    return `Balance: ${calculateTotal(currentAccount)}`;
+  }, [currentAccount, isListReady]);
+
+  const handleCreateAccountTransaction = useCallback(
+    async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
+      if (!currentAccount?.id) {
+        console.warn("[ExpensesScreen] No current account");
+        return;
+      }
+      try {
+        await addTransaction(params, currentAccount?.id)
+          .then(() => {
+            setModalVisible(false);
+            scrollToTop(sectionsData, listRef);
+          })
+          .then(() => Alert.alert("Transaction added successfully"))
+          .catch((error) => {
+            console.error("[ExpensesScreen] Error adding transaction:", error);
+            throw error;
+          });
+      } catch (error) {
+        console.error("[ExpensesScreen] Error adding transaction:", error);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectionsData, currentAccount?.id],
+  );
+
   return (
     <SharedAccountScreen>
-      <ScreenTitle title="Expenses" />
-      <Button title="Add an expense" onPress={handleAddExpense} />
+      <ScreenTitle title="Expenses" subtitle={screenTitleBalance} />
+      <Button title="Add an expense" onPress={openExpenseSheet} disabled={!isListReady} />
       <TransactionList
         ref={listRef}
         data={sectionsData}
-        onPress={(id) => showAsyncAlertPrompt(() => deleteTransaction(id).then(fetchTransactions))}
+        onPress={handleDeleteTransaction}
         onContentSizeChange={() => scrollToTop(sectionsData, listRef)}
         isListReady={isListReady}
       />
@@ -122,18 +244,14 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
         listRef={listRef}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onSubmit={async (data: { amount: number; category: string; date: Date }) => {
-          try {
-            await addTransaction(data);
-            await fetchTransactions();
-            setModalVisible(false);
-            scrollToTop(sectionsData, listRef);
-          } catch (error) {
-            console.error("[ExpensesScreen] Error adding transaction:", error);
-          }
-        }}
+        onSubmit={(data: Pick<Transaction, "amount" | "category" | "date">) =>
+          handleCreateAccountTransaction({
+            ...data,
+            type: "expense",
+            name: "",
+          })
+        }
       />
-      {/* <FullscreenSpinner visible={!isListReady} /> */}
     </SharedAccountScreen>
   );
 }

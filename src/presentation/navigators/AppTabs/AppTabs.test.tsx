@@ -32,6 +32,17 @@ jest.mock("@domain/contexts/useRepository", () => ({
       getUnsynced: jest.fn(),
       markAsSynced: jest.fn(),
     },
+    accountRepo: {
+      getLiveData: jest.fn(),
+      stopListening: jest.fn(),
+      getAll: jest.fn(),
+      getById: jest.fn(),
+      add: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      getUnsynced: jest.fn(),
+      markAsSynced: jest.fn(),
+    },
   })),
 }));
 

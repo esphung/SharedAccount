@@ -4,22 +4,52 @@ exports[`ScreenTitle matches snapshot 1`] = `
 <View
   style={
     {
-      "paddingHorizontal": 16,
+      "alignItems": "center",
+      "flexDirection": "row",
+      "justifyContent": "space-between",
       "paddingVertical": 8,
     }
   }
-  testID="screen-title-container"
 >
-  <Text
+  <View
     style={
       {
-        "fontSize": 28,
-        "fontWeight": "900",
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
       }
     }
-    type="screenHeader"
+    testID="screen-title-container"
   >
-    Test Title
-  </Text>
+    <Text
+      style={
+        {
+          "fontSize": 28,
+          "fontWeight": "900",
+        }
+      }
+      type="screenHeader"
+    >
+      Test Title
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
+      }
+    }
+    testID="screen-subtitle-container"
+  >
+    <Text
+      style={
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+        }
+      }
+      type="listItemSubtitle"
+    />
+  </View>
 </View>
 `;
