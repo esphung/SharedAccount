@@ -5,7 +5,7 @@ import type { Account } from "@data/models/types/Account";
 export default class AccountBuilder extends BaseBuilder<Account> {
   constructor(initialInstance?: Partial<Account>, fakerSeed?: number) {
     const result: Account = {
-      id: "acct_1234567890",
+      id: `acct_${new Date().getTime()}`,
       startingBalance: 99999, // in cents
       name: "Hello World",
       transactions: [],
@@ -30,7 +30,11 @@ export default class AccountBuilder extends BaseBuilder<Account> {
   }
 
   withTransactions(transactions: Account["transactions"]): AccountBuilder {
-    this.instance.transactions = transactions;
+    const updated = transactions.map((transaction) => ({
+      ...transaction,
+      sharedAccountId: this.instance.id,
+    }));
+    this.instance.transactions = updated;
     return this;
   }
 

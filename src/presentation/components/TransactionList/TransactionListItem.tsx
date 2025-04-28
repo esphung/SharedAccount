@@ -15,7 +15,7 @@ type TransactionListItemProps = {
   testID?: string;
   item: Transaction;
   user?: User;
-  onPress: (id: string) => void;
+  onPress: (id: Transaction["id"]) => void;
   itemHeight: number;
   isListReady?: boolean;
 };

@@ -12,7 +12,7 @@ const ITEM_HEIGHT = 100; // List item height
 
 type TransactionListProps = {
   users?: User[];
-  onPress: (id: string) => void;
+  onPress: (id: Transaction["id"]) => void;
   data: {
     title: string;
     data: Transaction[];

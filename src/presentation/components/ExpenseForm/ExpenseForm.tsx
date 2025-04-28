@@ -11,7 +11,7 @@ import type { TextInput } from "react-native";
 import { Button, StyleSheet, View } from "react-native";
 
 type ExpenseFormProps = {
-  onSubmit: (data: { amount: number; category: string; date: Date }) => void;
+  onSubmit: (data: { amount: number; category: string; date: Date; type: "expense" }) => void;
   items?: { label: string; value: string }[];
   listRef: RefObject<SectionList | null>;
 };
@@ -45,7 +45,7 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
 
   const handleSave = useCallback(() => {
     if (validate()) {
-      onSubmit({ amount, category: category.trim(), date: new Date() });
+      onSubmit({ amount, category: category.trim(), date: new Date(), type: "expense" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount, category]);

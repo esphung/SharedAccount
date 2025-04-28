@@ -2,20 +2,49 @@ import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
+import { isCreditTransaction, isExpenseTransaction } from "@data/models/validate";
 import useAccounts from "@hooks/useAccounts";
-import useTransactions from "@presentation/hooks/useTransactions";
+
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import MoneyFunctions from "@utils/MoneyFunctions";
 import { DateTime } from "luxon";
 import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AlertButton, SectionList } from "react-native";
 import { Alert, Button } from "react-native";
+import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
 type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Expenses>;
 
-export const groupTransactionsByDate = (expenses: Transaction<"expense">[], credits: Transaction<"credit">[]) => {
+export const calculateTotal = (account: Account) => {
+  // current starting balance
+  const total = 0;
+
+  // reduce all transactions to get the total balance
+  const transactionsTotal = [...(account?.transactions || [])].reduce((acc, transaction) => {
+    if (isExpenseTransaction(transaction)) {
+      return acc - transaction.amount;
+    }
+    if (isCreditTransaction(transaction)) {
+      return acc + transaction.amount;
+    }
+    // if the transaction type is not expense or credit, return the current accumulator
+    return acc;
+  }, total);
+
+  // get the current account balance
+  const currentAccountBalance = account?.startingBalance || 0;
+
+  // get the total balance in cents
+  const centsTotalBalance = currentAccountBalance + (transactionsTotal || 0);
+
+  // return the total balance in dollars as a formatted string
+  return MoneyFunctions.formatMoney(centsTotalBalance, 2);
+};
+
+export const groupTransactionsByDate = (expenses: Transaction[], credits: Transaction[]) => {
   const transactions = [...expenses, ...credits];
   const grouped: Record<string, Transaction[]> = {};
 
@@ -85,43 +114,25 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
   const listRef = useRef<SectionList<Transaction>>(null);
 
   const {
-    state: transactions,
-    fetchItems: fetchTransactions,
-    startListening: startTransactionListening,
-    addItem: addTransaction,
-    deleteItem: deleteTransaction,
-  } = useTransactions();
-
-  const {
-    state: accounts,
     fetchItems: fetchAccounts,
     startListening: startAccountsListening,
     addItem: addAccount,
-    getTotalBalance,
+    currentAccount,
+    currentAccount: { transactions = [] } = {},
+    addTransaction,
+    deleteTransaction,
   } = useAccounts();
 
-  const totalBalance = useMemo(() => {
-    return getTotalBalance(transactions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions]);
-
   const sectionsData = useMemo(() => {
-    const expenses = transactions.filter(
-      (transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
-    );
-    const credits = transactions.filter(
-      (transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
-    );
+    const expenses = transactions.filter(isExpenseTransaction);
+    const credits = transactions.filter(isCreditTransaction);
     return groupTransactionsByDate(expenses, credits);
   }, [transactions]);
 
   useEffect(() => {
     const unsubscribeAccounts = startAccountsListening();
-    const unsubscribeTransactions = startTransactionListening();
-
     return () => {
       unsubscribeAccounts();
-      unsubscribeTransactions();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -129,13 +140,8 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
   useEffect(() => {
     const onFocus = async () => {
       setIsListReady(false);
-
       try {
-        const [fetchedAccounts, _fetchedTransactions] = await Promise.all([
-          fetchAccounts(), // returns accounts
-          fetchTransactions(),
-        ]);
-
+        const fetchedAccounts = await fetchAccounts();
         // ✅ Check fresh data, NOT stale state
         if (fetchedAccounts.length === 0) {
           promptToCreateAccount();
@@ -143,7 +149,6 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
       } catch (error) {
         console.warn("[ExpensesScreen] Error fetching data:", error);
       }
-
       setIsListReady(true);
       scrollToTop(sectionsData, listRef);
     };
@@ -151,7 +156,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
     const unsubscribeOnFocus = navigation.addListener("focus", onFocus);
     return unsubscribeOnFocus;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionsData, accounts.length]);
+  }, [sectionsData]);
 
   const promptToCreateAccount = useCallback(() => {
     showAsyncAlertPrompt({
@@ -160,8 +165,7 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
       cancelable: false,
     }).then((shouldCreate) => {
       if (shouldCreate) {
-        addAccount({ name: "New Account", startingBalance: 0 })
-          .then(() => fetchAccounts())
+        addAccount({ startingBalance: 0 })
           .then(() => Alert.alert("Account created successfully"))
           .catch((error) => console.error("[ExpensesScreen] Error creating account:", error));
       }
@@ -170,24 +174,23 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
   }, []);
 
   const handleDeleteTransaction = useCallback(
-    (id: string) =>
+    (txnId: Transaction["id"]) =>
       showAsyncAlertPrompt({
         title: "Delete Transaction",
         message: "Are you sure you want to delete this transaction?",
         cancelable: true,
       }).then((shouldDelete) => {
         if (shouldDelete) {
-          deleteTransaction(id)
-            .then(() => fetchTransactions())
+          deleteTransaction(txnId, currentAccount?.id as `acct_${string}`)
             .then(() => Alert.alert("Transaction deleted successfully"))
             .catch((error) => console.error("[ExpensesScreen] Error deleting transaction:", error));
         }
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [currentAccount?.id],
   );
 
-  const handleAddExpense = useCallback(() => {
+  const openExpenseSheet = useCallback(() => {
     setModalVisible(true);
   }, []);
 
@@ -195,16 +198,41 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
     if (!isListReady) {
       return "Loading...";
     }
-    if (!accounts?.length) {
+    if (!currentAccount) {
       return "No account";
     }
-    return `Balance: ${totalBalance}`;
-  }, [accounts?.length, isListReady, totalBalance]);
+    return `Balance: ${calculateTotal(currentAccount)}`;
+  }, [currentAccount, isListReady]);
+
+  const handleCreateAccountTransaction = useCallback(
+    async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
+      if (!currentAccount?.id) {
+        console.warn("[ExpensesScreen] No current account");
+        return;
+      }
+      try {
+        await addTransaction(params, currentAccount?.id)
+          .then(() => {
+            setModalVisible(false);
+            scrollToTop(sectionsData, listRef);
+          })
+          .then(() => Alert.alert("Transaction added successfully"))
+          .catch((error) => {
+            console.error("[ExpensesScreen] Error adding transaction:", error);
+            throw error;
+          });
+      } catch (error) {
+        console.error("[ExpensesScreen] Error adding transaction:", error);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectionsData, currentAccount?.id],
+  );
 
   return (
     <SharedAccountScreen>
       <ScreenTitle title="Expenses" subtitle={screenTitleBalance} />
-      <Button title="Add an expense" onPress={handleAddExpense} disabled={!isListReady} />
+      <Button title="Add an expense" onPress={openExpenseSheet} disabled={!isListReady} />
       <TransactionList
         ref={listRef}
         data={sectionsData}
@@ -216,16 +244,13 @@ export default function ExpensesScreen({ navigation }: ScreenProps) {
         listRef={listRef}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onSubmit={async (data: { amount: number; category: string; date: Date }) => {
-          try {
-            await addTransaction(data);
-            await fetchTransactions();
-            setModalVisible(false);
-            scrollToTop(sectionsData, listRef);
-          } catch (error) {
-            console.error("[ExpensesScreen] Error adding transaction:", error);
-          }
-        }}
+        onSubmit={(data: Pick<Transaction, "amount" | "category" | "date">) =>
+          handleCreateAccountTransaction({
+            ...data,
+            type: "expense",
+            name: "",
+          })
+        }
       />
     </SharedAccountScreen>
   );

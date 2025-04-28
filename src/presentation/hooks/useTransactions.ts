@@ -38,16 +38,29 @@ const useTransactions: UseDataSource<Transaction> = () => {
   // Add a transaction
   const addItem = useCallback(
     (params: Partial<Transaction>) => {
-      const { amount = 0, category = "", date = new Date(), type = "expense" } = params;
+      const {
+        amount = 0,
+        category = "",
+        date = new Date(),
+        type = "expense",
+        sharedAccountId,
+        name = "",
+        description,
+        // TODO: replace with actual user ID and validate it
+        userId = "usr_TEST_USER_ID",
+      } = params;
+      if (!sharedAccountId || !userId) {
+        throw new Error("[useTransactions] sharedAccountId is required");
+      }
       return transactionRepo.add({
         id: `txn_${new Date().getTime()}`,
-        userId: `usr_${new Date().getTime()}`,
+        userId,
         amount,
-        description: "Test",
-        name: "Test",
+        name,
+        description,
         category,
         date,
-        sharedAccountId: `acct_${new Date().getTime()}`,
+        sharedAccountId,
         type,
       });
     },

@@ -5,7 +5,7 @@ import type { Transaction } from "@data/models/types/Transaction";
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
   constructor(initialInstance?: Partial<Transaction>, fakerSeed?: number) {
     const result: Transaction = {
-      id: "txn_1234567890",
+      id: `txn_${Math.random().toString(36).substring(2, 15)}`,
       sharedAccountId: "acct_1234567890",
       userId: "usr_1234567890",
       amount: 100,
@@ -20,7 +20,6 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
   }
 
   withId(id: `txn_${string}`): TransactionBuilder {
-    // Ensure the ID starts with "txn_"
     this.instance.id = id;
     return this;
   }

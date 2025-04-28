@@ -5,7 +5,7 @@ type LocalTransaction = { toJSON(): object };
 
 const TransactionAdapter: DataModelAdapter<Transaction, LocalTransaction> = {
   localToState(local): Transaction {
-    const json = JSON.parse(JSON.stringify(local));
+    const json = local.toJSON ? local.toJSON() : local;
     const parsed = JSON.parse(JSON.stringify(json));
     const transaction: Transaction = {
       ...parsed,
