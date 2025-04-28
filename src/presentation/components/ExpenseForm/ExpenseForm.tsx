@@ -1,31 +1,57 @@
 import AwareScrollView from "@components/AwareScrollView/AwareScrollView";
 import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
+import FadeInView from "@components/FadeInView/FadeInView";
+import SegmentedControl from "@components/SegmentedControl/SegmentedControl";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
-import useForm from "@presentation/hooks/useForm";
 import React, { useCallback, useMemo, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+
 import type { TextInput } from "react-native";
-import type RNDateTimePicker from "react-native-modal-datetime-picker";
+import { Button, StyleSheet, View } from "react-native";
+
+import useForm from "@presentation/hooks/useForm";
 import type { Transaction } from "types/Transaction";
 
 type FormState = Pick<Transaction, "amount" | "category" | "date" | "type" | "name">;
+type FieldKey = keyof FormState;
 
 type ExpenseFormProps = {
   onSubmit: (data: FormState) => void;
 };
 
-type FieldKey = keyof FormState;
-
 type FormInputField<T extends FieldKey = FieldKey> = {
-  ref: (ref: T extends "date" ? RNDateTimePicker | null : TextInput | null) => void;
+  ref: (ref: TextInput) => void;
   key: T;
-  label: string;
+  label?: string;
   error?: string;
   placeholder?: string;
   value: FormState[T];
+  animate?: boolean;
+};
+
+const filterInputList = (item: FormInputField, data: FormState) => {
+  if (data[item.key] !== undefined && data[item.key] !== null && data[item.key] !== "") {
+    return true;
+  }
+
+  if (item.key === "type") {
+    return true;
+  }
+  if (item.key === "amount") {
+    return !!data.type;
+  }
+  if (item.key === "category") {
+    return !!data.amount && !!data.type;
+  }
+  if (item.key === "name") {
+    return !!data.category && !!data.amount && !!data.type;
+  }
+  if (item.key === "date") {
+    return !!data.category && !!data.amount;
+  }
+  return false;
 };
 
 const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
@@ -47,7 +73,6 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       if (input.amount <= 0) {
         formErrors.amount = "Amount must be greater than 0";
       }
-
       if (!input.category.trim()) {
         formErrors.category = "Category is required";
       } else if (!/^[a-zA-Z]+$/.test(input.category.trim())) {
@@ -69,21 +94,21 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     const randomCategory = Math.random() > 0.5 ? "Food" : "Transport";
     const names = ["Groceries", "Bus Ticket", "Rent", "Utilities"];
     const randomName = names[Math.floor(Math.random() * names.length)];
+    const randomType = Math.random() > 0.5 ? "expense" : "credit";
 
     handleChange("amount", randomAmount);
     handleChange("category", randomCategory);
     handleChange("name", randomName);
+    handleChange("type", randomType);
+    handleChange("date", new Date());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOnSubmitEditing = useCallback(
     (key: FieldKey) => {
-      const nextFields: Record<FieldKey, FieldKey | undefined> = {
+      const nextFields: Partial<Record<FieldKey, FieldKey>> = {
         amount: !category ? "category" : undefined,
         category: !name ? "name" : undefined,
-        name: undefined,
-        date: undefined,
-        type: undefined,
       };
       const nextKey = nextFields[key];
       if (nextKey) {
@@ -94,19 +119,37 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     [category, name],
   );
 
+  const shouldAnimDict = useMemo(
+    () => ({
+      amount: { initial: 1, animate: false },
+      category: { initial: 0, animate: !!values.amount },
+      name: { initial: 0, animate: !!values.amount },
+      date: { initial: 0, animate: !!values.amount },
+      type: { initial: 1, animate: false },
+    }),
+    [values.amount],
+  );
+
   const inputListData: FormInputField[] = useMemo(
     () => [
       {
-        // @ts-expect-error ref is not assignable to type TextInput
+        ref: (ref) => registerInput("type", ref),
+        // label: "Type",
+        key: "type",
+        error: errors.type,
+        value: type,
+        placeholder: "Select a type...",
+      },
+      {
         ref: (ref) => registerInput("amount", ref),
-        label: "Amount",
+        // label: "Amount",
         key: "amount",
         error: errors.amount,
         value: amount,
         placeholder: "Type an amount...",
+        animate: true,
       },
       {
-        // @ts-expect-error ref is not assignable to type TextInput
         ref: (ref) => registerInput("category", ref),
         label: "Category",
         key: "category",
@@ -115,7 +158,6 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         placeholder: "Type a category...",
       },
       {
-        // @ts-expect-error ref is not assignable to type TextInput
         ref: (ref) => registerInput("name", ref),
         label: "Name",
         key: "name",
@@ -124,9 +166,8 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         placeholder: "Type a name...",
       },
       {
-        // @ts-expect-error ref is not assignable to type TextInput
         ref: (ref) => registerInput("date", ref),
-        label: "Date",
+        // label: "Date",
         key: "date",
         error: errors.date,
         value: date,
@@ -134,28 +175,37 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [amount, category, date, errors, name],
+    [amount, category, date, errors.amount, errors.category, errors.date, errors.name, errors.type, name, type],
   );
 
   const renderInput = useCallback(
     ({ item }: { item: FormInputField }) => {
-      const { error, label, value, placeholder, key, ref } = item;
+      const { error, label, key, value, placeholder, ref } = item;
 
-      const renderField = () => {
-        if (key === "date") {
-          return (
+      let view: React.ReactNode = null;
+
+      switch (key) {
+        case "type":
+          view = (
+            <SegmentedControl
+              options={["Expense", "Income"]}
+              selectedIndex={value === "expense" ? 0 : 1}
+              onSelect={(index) => handleChange("type", index === 0 ? "expense" : "credit")}
+            />
+          );
+          break;
+        case "date":
+          view = (
             <DateTimePicker
-              ref={ref}
-              containerStyle={styles.inputContainer}
               selectedDate={value as Date}
               onChangeDate={(d) => handleChange("date", d)}
               isDatePickerVisible={isDatePickerVisible}
               onDatePickerVisibilityChange={setDatePickerVisible}
             />
           );
-        }
-        if (key === "amount") {
-          return (
+          break;
+        case "amount":
+          view = (
             <SharedAccountCurrencyInput
               ref={ref}
               value={Number(value)}
@@ -164,45 +214,58 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
               onSubmitEditing={() => handleOnSubmitEditing(key)}
             />
           );
-        }
-        return (
-          <SharedAccountTextInput
-            ref={ref}
-            autoComplete="off"
-            autoCorrect={false}
-            value={String(value)}
-            placeholder={placeholder}
-            onChangeText={(text) => handleChange(key, text)}
-            onSubmitEditing={() => handleOnSubmitEditing(key)}
-          />
-        );
-      };
+          break;
+        default:
+          view = (
+            <SharedAccountTextInput
+              ref={ref}
+              autoComplete="off"
+              autoCorrect={false}
+              value={String(value)}
+              placeholder={placeholder}
+              onChangeText={(text) => handleChange(key, text)}
+              onSubmitEditing={() => handleOnSubmitEditing(key)}
+            />
+          );
+          break;
+      }
 
       return (
-        <View key={key} style={styles.itemContainer}>
-          {label && <SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>}
-          {renderField()}
-          {error && <SharedAccountText type="expenseFormError">{error}</SharedAccountText>}
-        </View>
+        <FadeInView
+          key={`${key}-${item.label}`}
+          initialValue={shouldAnimDict[key].initial as 0 | 1}
+          animate={shouldAnimDict[key].animate}
+        >
+          <View key={key}>
+            {label && <SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>}
+            {view}
+            <View style={styles.spacer} />
+            {error && <SharedAccountText type="expenseFormError">{error}</SharedAccountText>}
+          </View>
+        </FadeInView>
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isDatePickerVisible],
+    [shouldAnimDict, isDatePickerVisible],
   );
 
   return (
     <AwareScrollView contentContainerStyle={styles.fill}>
       <View style={styles.northPanel}>
-        <View style={styles.container}>{inputListData.map((item) => renderInput({ item }))}</View>
+        <View style={styles.container}>
+          {inputListData.filter((item) => filterInputList(item, values)).map((item) => renderInput({ item }))}
+        </View>
       </View>
       <View style={styles.southPanel}>
-        <SharedAccountButton style={styles.submitButtonContainer} title="Save Expense" onPress={handleSave} />
-        {__DEV__ && (
-          <>
-            <Button title="Fill Inputs" onPress={handleDebugFill} />
-            <Button title="Clear" onPress={resetForm} />
-          </>
-        )}
+        <View style={styles.submitButtonContainer}>
+          <SharedAccountButton title="Save Transaction" onPress={handleSave} />
+          {__DEV__ && (
+            <>
+              <Button title="Fill Inputs" onPress={handleDebugFill} />
+              <Button title="Clear" onPress={resetForm} />
+            </>
+          )}
+        </View>
       </View>
     </AwareScrollView>
   );
@@ -212,20 +275,25 @@ const styles = StyleSheet.create({
   container: {
     gap: 20,
     height: "100%",
-    paddingVertical: 20,
+    padding: 20,
   },
-  fill: { flex: 1 },
-  inputContainer: {
-    gap: 20,
-    height: "100%",
-    paddingVertical: 20,
+  fill: {
+    flex: 1,
   },
-  itemContainer: {
-    paddingVertical: 10,
+  northPanel: {
+    flexShrink: 1,
   },
-  northPanel: { flexShrink: 1 },
-  southPanel: { justifyContent: "flex-end" },
-  submitButtonContainer: {},
+  southPanel: {
+    justifyContent: "flex-end",
+    paddingBottom: 50,
+  },
+  spacer: {
+    height: 10,
+  },
+  submitButtonContainer: {
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
 });
 
 export default ExpenseForm;

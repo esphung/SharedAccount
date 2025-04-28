@@ -1,24 +1,19 @@
-import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
+import ClockSvgIcon from "@assets/svg/clock-svgrepo-com.svg";
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import colors from "@config/themes/colors";
 import { DateTime } from "luxon";
 import React from "react";
 import type { ViewStyle } from "react-native";
-import { View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import type { DateTimePickerProps } from "react-native-modal-datetime-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const getHumanDateStr = (date: Date): string => {
-  const currentDate = DateTime.now();
-  if (DateTime.fromJSDate(date).hasSame(currentDate, "day")) {
-    // return "Today" if the date is today
-    return "(Today)";
-  }
-  if (
-    // return "Tomorrow" if the date is tomorrow
-    DateTime.fromJSDate(date).hasSame(currentDate.plus({ days: 1 }), "day")
-  ) {
-    return "(Tomorrow)";
-  }
-  return "";
+const getHumanDateTimeStr = (date: Date): string => {
+  // format the date to a human-readable string
+  const dateTime = DateTime.fromJSDate(date);
+  const dateStr = dateTime.toFormat("cccc, LLL dd, yyyy");
+  const timeStr = dateTime.toFormat("hh:mm a");
+  return `${dateStr} ${timeStr}`;
 };
 
 const DateTimePicker = React.forwardRef<
@@ -38,12 +33,9 @@ const DateTimePicker = React.forwardRef<
       containerStyle,
       isDatePickerVisible: isDatePickerVisibleProp,
       onDatePickerVisibilityChange: onDatePickerVisibilityChangeProp,
-      ...rest
     },
     ref,
   ) => {
-    // const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-
     const onConfirmCallback = React.useCallback((date: Date) => {
       // setDatePickerVisible(false);
       onDatePickerVisibilityChangeProp(false);
@@ -53,29 +45,41 @@ const DateTimePicker = React.forwardRef<
 
     return (
       <View style={containerStyle}>
-        <SharedAccountButton
-          type="secondary"
+        <TouchableOpacity
+          style={styles.button}
+          // type="secondary"
           onPress={() => onDatePickerVisibilityChangeProp(true)}
-          title={
-            selectedDate
-              ? `${DateTime.fromJSDate(selectedDate).toFormat("cccc, LLL dd, yyyy")} ${getHumanDateStr(selectedDate)}`.trim()
-              : "Select Date"
-          }
-        />
+          // title={selectedDate ? `${getHumanDateTimeStr(selectedDate)}`.trim() : "Select Date"}
+        >
+          <ClockSvgIcon width={20} height={20} />
+          <SharedAccountText>
+            {selectedDate ? `${getHumanDateTimeStr(selectedDate)}`.trim() : "Select Date"}
+          </SharedAccountText>
+        </TouchableOpacity>
+
         <DateTimePickerModal
           ref={ref}
           date={selectedDate}
           isVisible={isDatePickerVisibleProp}
-          mode="date"
           onConfirm={onConfirmCallback}
           onCancel={() => onDatePickerVisibilityChangeProp(false)}
-          {...rest}
+          mode="datetime"
         />
-
-        {/* {listMemoized} */}
       </View>
     );
   },
 );
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: "center",
+    backgroundColor: colors.softGray,
+    borderRadius: 5,
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
+    padding: 10,
+  },
+});
 
 export default DateTimePicker;

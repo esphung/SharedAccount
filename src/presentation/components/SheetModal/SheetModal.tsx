@@ -1,4 +1,5 @@
 import React from "react";
+
 import type { ModalProps } from "react-native";
 import { Button, Modal, StyleSheet, View } from "react-native";
 
@@ -50,7 +51,9 @@ const SheetModal = (
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
+    paddingHorizontal: 4,
+    paddingTop: 4,
   },
 });
 

@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: 14,
     fontWeight: "400",
+    textAlign: "center",
   },
   // eslint-disable-next-line react-native/no-unused-styles
   expenseFormLabel: {

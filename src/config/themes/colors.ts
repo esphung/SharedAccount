@@ -23,6 +23,7 @@ const colors = {
 
   skeleton: "rgba(255,255,255,0.3)",
   skeletonBg: "#e0e0e0",
+  softGray: "#f0f0f0",
 };
 
 export default colors;
