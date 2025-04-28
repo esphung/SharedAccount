@@ -1,17 +1,9 @@
 import ExpenseForm from "@components/ExpenseForm/ExpenseForm";
-import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
+
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import type { SectionList } from "react-native";
 import { StyleSheet, View } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-
-const mockLocalDatabase = new LocalDatabaseBuilder().build();
-
-const mockItems = mockLocalDatabase.transactions.map((transaction) => ({
-  label: transaction.category,
-  value: transaction.category,
-}));
 
 const renderInsideKeyboardProvider = (Story: React.FC) => (
   <KeyboardProvider>
@@ -24,8 +16,6 @@ const meta = {
   component: ExpenseForm,
   args: {
     onSubmit: (_data: { amount: number; category: string; date: Date }) => {},
-    items: mockItems,
-    listRef: { current: null } as React.RefObject<SectionList | null>,
   },
   decorators: [(Story: React.FC) => <View style={styles.container}>{renderInsideKeyboardProvider(Story)}</View>],
 } satisfies Meta<typeof ExpenseForm>;
@@ -44,8 +34,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    items: mockItems,
     onSubmit: (_data: { amount: number; category: string; date: Date }) => {},
-    listRef: { current: null } as React.RefObject<SectionList | null>,
   },
 };

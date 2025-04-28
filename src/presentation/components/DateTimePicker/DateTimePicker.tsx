@@ -29,7 +29,7 @@ const DateTimePicker = React.forwardRef<
     containerStyle?: ViewStyle;
     isDatePickerVisible: boolean;
     onDatePickerVisibilityChange: (isVisible: boolean) => void;
-  } & Omit<DateTimePickerProps, "date" | "onConfirm" | "onCancel">
+  } & Omit<DateTimePickerProps, "date" | "onConfirm" | "onCancel" | "isVisible">
 >(
   (
     {

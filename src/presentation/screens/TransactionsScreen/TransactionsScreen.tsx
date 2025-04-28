@@ -2,9 +2,8 @@ import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import { isCreditTransaction, isExpenseTransaction } from "@data/models/validate";
+import { isCreditTransaction, isExpenseTransaction } from "@data/validation/Transaction";
 import useAccounts from "@hooks/useAccounts";
-
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -202,7 +201,8 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
   }, [currentAccount]);
 
   const handleCreateAccountTransaction = useCallback(
-    async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
+    // async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
+    async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
       if (!currentAccount?.id) {
         console.warn("[TransactionsScreen] No current account");
         return;
@@ -241,13 +241,7 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
         listRef={listRef}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        onSubmit={(data: Pick<Transaction, "amount" | "category" | "date">) =>
-          handleCreateAccountTransaction({
-            ...data,
-            type: "expense",
-            name: "",
-          })
-        }
+        onSubmit={handleCreateAccountTransaction}
       />
     </SharedAccountScreen>
   );

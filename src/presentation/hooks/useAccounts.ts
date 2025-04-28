@@ -130,7 +130,7 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
       // Update the account in the repository
       const account = await accountRepo.getById(accountId);
       if (!account) {
-        throw new Error("[useAccounts:addTransaction] Account not found");
+        throw new Error("[useAccounts:deleteTransaction] Account not found");
       }
       account.transactions = account.transactions.filter((transaction) => transaction.id !== txnId);
 
