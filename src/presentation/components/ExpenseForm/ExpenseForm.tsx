@@ -86,7 +86,8 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       onSubmit({ amount, category, date, type, name });
       resetForm();
     }
-  }, [amount, category, date, type, name, onSubmit, resetForm, validate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount, category, date, type, name]);
 
   const handleDebugFill = useCallback(() => {
     const randomAmount = Math.floor(Math.random() * 1000);
@@ -100,7 +101,8 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     handleChange("name", randomName);
     handleChange("type", randomType);
     handleChange("date", new Date());
-  }, [handleChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOnSubmitEditing = useCallback(
     (key: FieldKey) => {
@@ -114,7 +116,7 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [category],
+    [category, name],
   );
 
   const shouldAnimDict = useMemo(
@@ -173,7 +175,7 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [amount, category, date, errors, name, type],
+    [amount, category, date, errors.amount, errors.category, errors.date, errors.name, errors.type, name, type],
   );
 
   const renderInput = useCallback(
@@ -237,6 +239,7 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
           <View key={key}>
             {label && <SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>}
             {view}
+            <View style={styles.spacer} />
             {error && <SharedAccountText type="expenseFormError">{error}</SharedAccountText>}
           </View>
         </FadeInView>
@@ -283,6 +286,9 @@ const styles = StyleSheet.create({
   southPanel: {
     justifyContent: "flex-end",
     paddingBottom: 50,
+  },
+  spacer: {
+    height: 10,
   },
   submitButtonContainer: {
     marginHorizontal: 20,
