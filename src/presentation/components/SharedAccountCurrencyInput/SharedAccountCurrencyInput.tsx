@@ -91,11 +91,10 @@ const formatCurrency = (cents: number, locale: string, currency: string): string
 
 const styles = StyleSheet.create({
   input: {
-    fontSize: 32,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    textAlign: "right",
-    width: "100%",
+    alignItems: "center",
+    borderBottomWidth: 0,
+    fontSize: 40,
+    textAlign: "center",
   },
 });
 

@@ -1,5 +1,6 @@
 import ExpenseForm from "@components/ExpenseForm/ExpenseForm";
 import SheetModal from "@components/SheetModal/SheetModal";
+
 import type { RefObject } from "react";
 import React from "react";
 import { StyleSheet, View, type SectionList } from "react-native";
@@ -37,7 +38,5 @@ export default function AddExpenseSheet({
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    justifyContent: "center",
-    padding: 16,
   },
 });

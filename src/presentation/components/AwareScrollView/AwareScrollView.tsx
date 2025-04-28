@@ -1,6 +1,7 @@
 import { DEFAULT_EXTRA_KEYBOARD_SPACE, DEFAULT_KEYBOARD_BOTTOM_OFFSET } from "@constants/layout";
 import styles from "@presentation/components/AwareScrollView/AwareScrollView.style";
 import React from "react";
+
 import type { KeyboardAvoidingViewProps } from "react-native-keyboard-controller";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
@@ -13,7 +14,6 @@ export default function AwareScrollView({
   return (
     <KeyboardAwareScrollView
       bottomOffset={DEFAULT_KEYBOARD_BOTTOM_OFFSET} // Adjust this value as needed
-      keyboardShouldPersistTaps="always"
       {...rest}
       style={styles.fill} // Ensure the scroll view takes up the full height
       contentContainerStyle={styles.contentContainerStyle} // Allow content to grow
