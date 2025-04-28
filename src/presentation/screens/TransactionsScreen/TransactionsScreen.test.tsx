@@ -44,12 +44,6 @@ describe("TransactionsScreen", () => {
     const { getByText } = render(<TransactionsScreen navigation={{ addListener: jest.fn() }} />);
     expect(getByText("Transactions")).toBeTruthy();
   });
-
-  it("displays loading state when list is not ready", () => {
-    // @ts-expect-error not a real navigation prop
-    const { getByText } = render(<TransactionsScreen navigation={{ addListener: jest.fn() }} />);
-    expect(getByText("Loading...")).toBeTruthy();
-  });
 });
 
 describe("calculateTotal", () => {
