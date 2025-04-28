@@ -2,6 +2,7 @@ import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import useAccounts from "@presentation/hooks/useAccounts";
 import { render } from "@testing-library/react-native";
+import { DateTime } from "luxon";
 import React from "react";
 import { Alert } from "react-native";
 
@@ -71,13 +72,21 @@ describe("calculateTotal", () => {
 
 describe("groupTransactionsByDate", () => {
   it("groups transactions by date", () => {
-    const mockTxn1 = new TransactionBuilder()
+    const mockTxn1 = new TransactionBuilder({}, 123)
       .withDate(new Date("2023-01-01"))
+      .withCategory("Food")
+      .withName("Hello World")
+      .withDescription("Weekly groceries")
+      .withSharedAccountId("acct_1234567890")
       .withAmount(100)
       .withType("expense")
       .withId("txn_1")
       .build();
-    const mockTxn2 = new TransactionBuilder()
+    const mockTxn2 = new TransactionBuilder({}, 123)
+      .withCategory("Food")
+      .withName("Hello World")
+      .withDescription("Weekly groceries")
+      .withSharedAccountId("acct_1234567890")
       .withDate(new Date("2023-01-05"))
       .withType("credit")
       .withAmount(50)
@@ -88,36 +97,12 @@ describe("groupTransactionsByDate", () => {
     const result = groupTransactionsByDate(expenses, credits);
     expect(result).toEqual([
       {
-        title: "Wed Jan 04 2023",
-        data: [
-          {
-            id: "txn_2",
-            sharedAccountId: "acct_1234567890",
-            userId: "usr_1234567890",
-            amount: 50,
-            category: "Food",
-            name: "Hello World",
-            date: new Date("2023-01-05"),
-            description: "Weekly groceries",
-            type: "credit",
-          },
-        ],
+        title: DateTime.fromJSDate(mockTxn2.date).toFormat("ccc LLL dd yyyy"),
+        data: [mockTxn2],
       },
       {
-        title: "Sat Dec 31 2022",
-        data: [
-          {
-            id: "txn_1",
-            sharedAccountId: "acct_1234567890",
-            userId: "usr_1234567890",
-            amount: 100,
-            category: "Food",
-            name: "Hello World",
-            date: new Date("2023-01-01"),
-            description: "Weekly groceries",
-            type: "expense",
-          },
-        ],
+        title: DateTime.fromJSDate(mockTxn1.date).toFormat("ccc LLL dd yyyy"),
+        data: [mockTxn1],
       },
     ]);
   });
