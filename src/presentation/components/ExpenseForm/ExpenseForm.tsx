@@ -1,17 +1,17 @@
 import AwareScrollView from "@components/AwareScrollView/AwareScrollView";
 import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
 import FadeInView from "@components/FadeInView/FadeInView";
+import MultiSelectPills from "@components/MultiSelectPills/MultiSelectPills";
 import SegmentedControl from "@components/SegmentedControl/SegmentedControl";
 import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
+import useForm from "@presentation/hooks/useForm";
 import React, { useCallback, useMemo, useState } from "react";
 
 import type { TextInput } from "react-native";
 import { Button, StyleSheet, View } from "react-native";
-
-import useForm from "@presentation/hooks/useForm";
 import type { Transaction } from "types/Transaction";
 
 type FormState = Pick<Transaction, "amount" | "category" | "date" | "type" | "name">;
@@ -134,7 +134,6 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     () => [
       {
         ref: (ref) => registerInput("type", ref),
-        // label: "Type",
         key: "type",
         error: errors.type,
         value: type,
@@ -142,12 +141,10 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       },
       {
         ref: (ref) => registerInput("amount", ref),
-        // label: "Amount",
         key: "amount",
         error: errors.amount,
         value: amount,
         placeholder: "Type an amount...",
-        animate: true,
       },
       {
         ref: (ref) => registerInput("category", ref),
@@ -167,7 +164,6 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
       },
       {
         ref: (ref) => registerInput("date", ref),
-        // label: "Date",
         key: "date",
         error: errors.date,
         value: date,
@@ -176,6 +172,17 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [amount, category, date, errors.amount, errors.category, errors.date, errors.name, errors.type, name, type],
+  );
+
+  const categoryPillsList = useMemo(
+    () => [
+      { id: 1, label: "Food" },
+      { id: 2, label: "Transport" },
+      { id: 3, label: "Entertainment" },
+      { id: 4, label: "Utilities" },
+      { id: 5, label: "Rent" },
+    ],
+    [],
   );
 
   const renderInput = useCallback(
@@ -211,6 +218,19 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
               value={Number(value)}
               returnKeyType="done"
               onChangeValue={(val) => handleChange(key, val)}
+              onSubmitEditing={() => handleOnSubmitEditing(key)}
+            />
+          );
+          break;
+        case "category":
+          view = (
+            <SharedAccountTextInput
+              ref={ref}
+              autoComplete="off"
+              autoCorrect={false}
+              value={String(value)}
+              placeholder={placeholder}
+              onChangeText={(text) => handleChange(key, text)}
               onSubmitEditing={() => handleOnSubmitEditing(key)}
             />
           );
@@ -257,6 +277,13 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
         </View>
       </View>
       <View style={styles.southPanel}>
+        <MultiSelectPills
+          options={categoryPillsList}
+          selected={category}
+          onChange={(selected) =>
+            selected !== category ? handleChange("category", selected) : handleChange("category", "")
+          }
+        />
         <View style={styles.submitButtonContainer}>
           <SharedAccountButton title="Save Transaction" onPress={handleSave} />
           {__DEV__ && (
