@@ -1,6 +1,6 @@
 import TransactionList from "@components/TransactionList/TransactionList";
 import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
-import { groupTransactionsByDate } from "@screens/ExpensesScreen/ExpensesScreen";
+import { groupTransactionsByDate } from "@screens/TransactionsScreen/TransactionsScreen";
 
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";

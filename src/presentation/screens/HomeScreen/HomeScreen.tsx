@@ -1,37 +1,37 @@
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
-import SpendingStats from "@components/SpendingStats/SpendingStats";
-import useTransactions from "@presentation/hooks/useTransactions";
-import React, { useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import useAccounts from "@hooks/useAccounts";
+import { calculateTotal } from "@screens/TransactionsScreen/TransactionsScreen";
+import React, { useEffect, useMemo } from "react";
 
 const HomeScreen = () => {
-  const { state: transactions, startListening } = useTransactions();
+  const { fetchItems: fetchAccounts, currentAccount, startListening: startAccountsListening } = useAccounts();
 
   useEffect(() => {
-    const sub = startListening();
-
+    const unsubscribeAccounts = startAccountsListening();
     return () => {
-      sub();
+      unsubscribeAccounts();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    fetchAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const screenTitleBalance = useMemo(() => {
+    if (!currentAccount) {
+      return "No account";
+    }
+    return `Balance: ${calculateTotal(currentAccount)}`;
+  }, [currentAccount]);
+
   return (
     <SharedAccountScreen>
-      <ScreenTitle title="Home" />
-      <View style={styles.content}>
-        <SpendingStats transactions={transactions} />
-      </View>
+      <ScreenTitle title="Home" subtitle={screenTitleBalance} />
     </SharedAccountScreen>
   );
 };
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-});
 
 export default HomeScreen;

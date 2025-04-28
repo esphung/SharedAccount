@@ -8,7 +8,7 @@ const formatMoney: FormatMoneyFunc = (
   currency = "USD",
   style: "currency" | "decimal" = "currency",
 ) => {
-  const amountDollars = new Money(amount, "USD").getAmount() / 100;
+  const amountDollars = new Money(amount, currency).getAmount() / 100;
 
   return new Intl.NumberFormat("en-US", {
     style,

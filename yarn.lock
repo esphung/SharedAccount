@@ -4384,7 +4384,6 @@ __metadata:
     react-native: "npm:0.78.0"
     react-native-file-access: "npm:3.1.1"
     react-native-gesture-handler: "npm:^2.24.0"
-    react-native-gifted-charts: "npm:^1.4.58"
     react-native-keyboard-controller: "npm:1.16.8"
     react-native-linear-gradient: "npm:^2.8.3"
     react-native-modal-datetime-picker: "npm:18.0.0"
@@ -7445,16 +7444,6 @@ __metadata:
     data-uri-to-buffer: "npm:^6.0.2"
     debug: "npm:^4.3.4"
   checksum: 10/ea000a18610198d69a3d2dcc727b1cc53b7002e3b09170fcf3fb36602f4ab7609f95fca24471993b504e589cf213f40188fff42931bd7a68061aeccb36d4f368
-  languageName: node
-  linkType: hard
-
-"gifted-charts-core@npm:0.1.62":
-  version: 0.1.62
-  resolution: "gifted-charts-core@npm:0.1.62"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10/feb3e999bdb9435331210498e6e9d2a77cedc37371911d4f80809b405c96b8f418e910b7b1353423d9d5c8f7b5bc12a82f53924c76271cf2226853f815bf65c7
   languageName: node
   linkType: hard
 
@@ -11538,26 +11527,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/780c53e90b41c8bc151c5b4dc908386d5709e7b8e5eaf44e8bbadc02b39d7b07ec15c3865e08f30463bd1fbfcac14a79ff8238752712e6f15a0f98b7a658afd3
-  languageName: node
-  linkType: hard
-
-"react-native-gifted-charts@npm:^1.4.58":
-  version: 1.4.60
-  resolution: "react-native-gifted-charts@npm:1.4.60"
-  dependencies:
-    gifted-charts-core: "npm:0.1.62"
-  peerDependencies:
-    expo-linear-gradient: "*"
-    react: "*"
-    react-native: "*"
-    react-native-linear-gradient: "*"
-    react-native-svg: "*"
-  peerDependenciesMeta:
-    expo-linear-gradient:
-      optional: true
-    react-native-linear-gradient:
-      optional: true
-  checksum: 10/55f70bfa508847e9fe6b5d6701afe8cff30407d280d3918df4a44ec2066731971cbf102cfebb2518bc864f76de3d360cd7bf4ee5238cc035cb06c0614a91c1ec
   languageName: node
   linkType: hard
 

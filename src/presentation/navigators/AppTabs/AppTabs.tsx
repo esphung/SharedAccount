@@ -5,7 +5,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { RouteProp } from "@react-navigation/native";
-import ExpensesScreen from "@screens/ExpensesScreen/ExpensesScreen";
+import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
 import React from "react";
 import type { SvgProps } from "react-native-svg";
@@ -14,21 +14,21 @@ const SIZE_MULTIPLIER = 20;
 
 export enum AppTabsScreens {
   Home = "HomeScreen",
-  Expenses = "ExpensesScreen",
+  Transactions = "TransactionsScreen",
 }
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
 
 const TabBarLabelScreenNamesMap: { [key in AppTabsScreens]: string } = {
   [AppTabsScreens.Home]: "Home",
-  [AppTabsScreens.Expenses]: "Expenses",
+  [AppTabsScreens.Transactions]: "Transactions",
 };
 
 const AppTabsTabBarIconMap: {
   [key in AppTabsScreens]: (props: SvgProps) => React.JSX.Element;
 } = {
   [AppTabsScreens.Home]: (props: SvgProps) => <ChartSvgIcon {...props} />,
-  [AppTabsScreens.Expenses]: (props: SvgProps) => <CalculatorSvgIcon {...props} />,
+  [AppTabsScreens.Transactions]: (props: SvgProps) => <CalculatorSvgIcon {...props} />,
 };
 
 type TabRoute = RouteProp<AppTabsParamList, AppTabsScreens>;
@@ -77,8 +77,8 @@ const AppTabs = () => {
   const Tab = createBottomTabNavigator<AppTabsParamList>();
 
   return (
-    <Tab.Navigator initialRouteName={AppTabsScreens.Expenses} screenOptions={screenOptions}>
-      <Tab.Screen name={AppTabsScreens.Expenses} component={ExpensesScreen} />
+    <Tab.Navigator initialRouteName={AppTabsScreens.Transactions} screenOptions={screenOptions}>
+      <Tab.Screen name={AppTabsScreens.Transactions} component={TransactionsScreen} />
       <Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
     </Tab.Navigator>
   );

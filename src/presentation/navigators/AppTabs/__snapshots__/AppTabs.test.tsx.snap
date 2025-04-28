@@ -95,7 +95,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
           }
         >
           <div>
-            Expenses
+            Transactions
           </div>
         </View>
       </View>
@@ -165,7 +165,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
         }
       >
         <View
-          accessibilityLargeContentTitle="ExpensesScreen"
+          accessibilityLargeContentTitle="TransactionsScreen"
           accessibilityRole="button"
           accessibilityShowsLargeContentViewer={true}
           accessibilityState={
@@ -193,7 +193,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
           accessible={true}
           collapsable={false}
           focusable={true}
-          href="/ExpensesScreen"
+          href="/TransactionsScreen"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -216,7 +216,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
               "padding": 5,
             }
           }
-          testID="ExpensesScreen-tabBarButton"
+          testID="TransactionsScreen-tabBarButton"
         >
           <View
             style={
@@ -288,7 +288,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
             }
             type="tabBarLabel"
           >
-            Expenses
+            Transactions
           </Text>
         </View>
       </View>
