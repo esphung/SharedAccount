@@ -3,7 +3,6 @@ import ArrowUpSvg from "@assets/svg/circle-arrow-up-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
-
 import type { Transaction } from "@data/models/types/Transaction";
 import type { User } from "@data/models/types/User";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -39,6 +38,7 @@ export default function TransactionListItem({
   const categoryValue = useMemo(() => item.category, [item.category]);
   const avatarUri = useMemo(() => user?.avatar || DEFAULT_AVATAR, [user?.avatar]);
   const transactionDate = useMemo(() => DateTime.fromJSDate(item.date).toFormat("MMM d, t"), [item.date]);
+  const itemName = useMemo(() => item.name, [item.name]);
 
   if (!isListReady) {
     return (
@@ -81,11 +81,25 @@ export default function TransactionListItem({
               style={styles.subtitleSkeleton}
             />
           )}
-          {categoryValue ? (
-            <SharedAccountText numberOfLines={1}>{categoryValue}</SharedAccountText>
-          ) : (
-            <SkeletonLoader testID="transaction-category-skeleton-placeholder" width="100%" />
-          )}
+          <SharedAccountText>
+            {categoryValue ? (
+              <>
+                <SharedAccountText numberOfLines={1}>{categoryValue}</SharedAccountText>
+                {itemName && (
+                  <SharedAccountText>
+                    <SharedAccountText numberOfLines={1} type="listItemSubtitle">
+                      {" | "}
+                    </SharedAccountText>
+                    <SharedAccountText numberOfLines={1} type="listItemSubtitle">
+                      {itemName}
+                    </SharedAccountText>
+                  </SharedAccountText>
+                )}
+              </>
+            ) : (
+              <SkeletonLoader testID="transaction-category-skeleton-placeholder" width="90%" />
+            )}
+          </SharedAccountText>
         </View>
       </View>
 

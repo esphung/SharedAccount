@@ -29,7 +29,7 @@ export default function SharedAccountButton(props: SharedAccountButtonProps) {
   return (
     <TouchableOpacity disabled={disabled} style={memoizedStyle} activeOpacity={0.7} {...rest}>
       <SharedAccountText
-        type="buttonTitle"
+        type={type === "secondary" ? "secondaryButtonTitle" : "buttonTitle"}
         style={StyleSheet.flatten([
           disabled && styles.disabledText,
           // @ts-expect-error - type is a string
@@ -54,13 +54,18 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: colors.primary,
     borderRadius: 8,
+    height: 48,
+    justifyContent: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   // eslint-disable-next-line react-native/no-unused-styles
   secondary: {
-    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
     borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 48,
+    justifyContent: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },

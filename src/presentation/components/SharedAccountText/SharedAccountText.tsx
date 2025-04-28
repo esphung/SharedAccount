@@ -69,6 +69,13 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   // eslint-disable-next-line react-native/no-unused-styles
+  secondaryButtonTitle: {
+    color: colors.dark,
+    fontSize: 16,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  // eslint-disable-next-line react-native/no-unused-styles
   tabBarLabel: {
     fontSize: 12,
   },
