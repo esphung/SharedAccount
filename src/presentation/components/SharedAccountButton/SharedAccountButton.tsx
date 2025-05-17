@@ -27,7 +27,13 @@ export default function SharedAccountButton(props: SharedAccountButtonProps) {
   }, [type, disabled, style]);
 
   return (
-    <TouchableOpacity disabled={disabled} style={memoizedStyle} activeOpacity={0.7} {...rest}>
+    <TouchableOpacity
+      testID="sharedAccountButton"
+      disabled={disabled}
+      style={memoizedStyle}
+      activeOpacity={0.7}
+      {...rest}
+    >
       <SharedAccountText
         type={type === "secondary" ? "secondaryButtonTitle" : "buttonTitle"}
         style={StyleSheet.flatten([
