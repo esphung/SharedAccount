@@ -15,6 +15,7 @@ export default async (): Promise<Config> => {
       "!src/**/types.d.ts",
       "!src/**/types/*",
       "!src/__mocks__/*",
+      "!src/config/*",
       "!src/utils/testUtils/*",
       "!src/data/models/builders/*",
     ],
