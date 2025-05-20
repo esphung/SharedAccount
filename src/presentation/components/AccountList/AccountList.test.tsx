@@ -1,0 +1,67 @@
+import AccountList from "@components/AccountList/AccountList";
+import colors from "@config/themes/colors";
+import AccountBuilder from "@data/models/builders/AccountBuilder";
+import { fireEvent, render } from "@testing-library/react-native";
+import React from "react";
+
+import type { TextInputProps } from "react-native";
+import { StyleSheet } from "react-native";
+
+const accounts = [
+  new AccountBuilder().withId("acct_1").withName("Account 1").withStartingBalance(100).withTransactions([]).build(),
+  new AccountBuilder().withId("acct_2").withName("Account 2").withStartingBalance(200).withTransactions([]).build(),
+];
+
+jest.mock("@components/SharedAccountText/SharedAccountText", () => {
+  const MockText = jest.requireActual("react-native").Text;
+  return ({ children, ...props }: TextInputProps) => <MockText {...props}>{children}</MockText>;
+});
+
+describe("AccountList", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("renders all accounts", () => {
+    const { getByText } = render(<AccountList accounts={accounts} />);
+    expect(getByText("Account 1")).toBeTruthy();
+    expect(getByText("Account 2")).toBeTruthy();
+  });
+
+  it("renders account balances using calculateTotal", () => {
+    const { getByText } = render(<AccountList accounts={accounts} />);
+    expect(getByText("$1.00")).toBeTruthy();
+    expect(getByText("$2.00")).toBeTruthy();
+  });
+
+  it("calls onPress with correct account when item is pressed", () => {
+    const onPress = jest.fn();
+    const { getByText } = render(<AccountList accounts={accounts} onPress={onPress} />);
+    fireEvent.press(getByText("Account 2"));
+    expect(onPress).toHaveBeenCalledWith(accounts[1]);
+  });
+
+  it("applies selected style to selectedAccount", () => {
+    const { getAllByTestId } = render(<AccountList accounts={accounts} selectedAccount={accounts[1]} />);
+
+    // Add testID to TouchableOpacity for selection
+    const selected = getAllByTestId("account-item-acct_2")[0];
+
+    // We'll check by style instead
+    render(<AccountList accounts={accounts} selectedAccount={accounts[1]} />);
+
+    // const selected = getByText("Account 2").parent;
+    expect(selected.props.style).toEqual(
+      expect.objectContaining({
+        borderRadius: 12,
+        borderWidth: StyleSheet.hairlineWidth,
+      }),
+    );
+  });
+
+  it("applies correct styles to balance text", () => {
+    const { getByText } = render(<AccountList accounts={accounts} />);
+    const balance = getByText("$1.00");
+    expect(balance.props.style).toEqual(expect.objectContaining({ color: colors.green }));
+  });
+});
