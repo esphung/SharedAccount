@@ -9,10 +9,12 @@ export default function AddAccountSheet({
   modalVisible,
   setModalVisible,
   onSubmit,
+  nonDismissable = true,
 }: {
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
   onSubmit: (data: Partial<Account>) => void;
+  nonDismissable?: boolean;
 }) {
   return (
     <SheetModal
@@ -20,7 +22,7 @@ export default function AddAccountSheet({
       modalVisible={modalVisible}
       setModalVisible={setModalVisible}
       presentationStyle="formSheet"
-      nonDismissable
+      nonDismissable={nonDismissable}
     >
       <View style={styles.content}>
         <AccountForm

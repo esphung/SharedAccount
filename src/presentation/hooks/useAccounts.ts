@@ -37,6 +37,7 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
     accountId: Account["id"],
   ) => Promise<void>;
   deleteTransaction: (txnId: Transaction["id"], accountId: Account["id"]) => Promise<void>;
+  setCurrentAccount: (account: Account) => void;
 } => {
   // Get the item repository
   const { accountRepo, transactionRepo } = useRepository();
@@ -226,6 +227,7 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
     currentAccount,
     addTransaction,
     deleteTransaction,
+    setCurrentAccount,
   };
 };
 
