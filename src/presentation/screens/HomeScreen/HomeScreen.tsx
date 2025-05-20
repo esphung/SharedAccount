@@ -16,7 +16,7 @@ const HomeScreen = () => {
     fetchItems: fetchAccounts,
     currentAccount,
     startListening: startAccountsListening,
-    setCurrentAccount,
+    selectCurrentAccount,
   } = useAccounts();
 
   // state
@@ -56,7 +56,7 @@ const HomeScreen = () => {
     <SharedAccountScreen>
       <ScreenTitle title="Home" subtitle={screenTitleBalance} />
       <Button title="Add an account" onPress={() => setAccountModalVisible(true)} />
-      <AccountList accounts={accounts} onPress={setCurrentAccount} selectedAccount={currentAccount} />
+      <AccountList accounts={accounts} onPress={selectCurrentAccount} selectedAccount={currentAccount} />
       <AddAccountSheet
         modalVisible={accountModalVisible}
         setModalVisible={setAccountModalVisible}

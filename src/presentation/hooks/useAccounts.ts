@@ -1,7 +1,8 @@
 import type { Account } from "@data/models/types/Account";
 import useRepository from "@domain/contexts/useRepository";
+import userDefaultsStorage from "@domain/storage/userDefaultsStorage";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Transaction } from "types/Transaction";
 
 // TODO: remove this fake user ID for testing
@@ -37,7 +38,7 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
     accountId: Account["id"],
   ) => Promise<void>;
   deleteTransaction: (txnId: Transaction["id"], accountId: Account["id"]) => Promise<void>;
-  setCurrentAccount: (account: Account) => void;
+  selectCurrentAccount: (account: Account) => void;
 } => {
   // Get the item repository
   const { accountRepo, transactionRepo } = useRepository();
@@ -217,6 +218,29 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
     [],
   );
 
+  // Set the current account when the component mounts
+  useEffect(() => {
+    if (!state.length) {
+      return;
+    }
+    // Fetch current account ID in storage
+    userDefaultsStorage.getItem("account").then((accountId) => {
+      if (accountId) {
+        const account = state.find((acct: Account | undefined) => acct?.id === accountId);
+        if (account) {
+          setCurrentAccount(account);
+        }
+      }
+    });
+  }, [state]);
+
+  const selectCurrentAccount = useCallback((account: Account) => {
+    setCurrentAccount(account);
+    userDefaultsStorage
+      .saveItem("account", account.id)
+      .catch((error) => console.warn("[useAccounts] Error saving current account to storage:", error));
+  }, []);
+
   // Return the accounts and functions to interact with them
   return {
     state,
@@ -227,7 +251,7 @@ const useAccounts = (): ReturnType<UseDataSource<Account>> & {
     currentAccount,
     addTransaction,
     deleteTransaction,
-    setCurrentAccount,
+    selectCurrentAccount,
   };
 };
 

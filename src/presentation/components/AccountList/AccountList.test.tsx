@@ -12,6 +12,16 @@ const accounts = [
   new AccountBuilder().withId("acct_2").withName("Account 2").withStartingBalance(200).withTransactions([]).build(),
 ];
 
+// mock the userDefaultsStorage
+jest.mock("@domain/storage/userDefaultsStorage", () => ({
+  __esModule: true,
+  default: {
+    getItem: () => Promise.resolve(null),
+    saveItem: () => Promise.resolve(),
+    removeItem: () => Promise.resolve(),
+  },
+}));
+
 jest.mock("@components/SharedAccountText/SharedAccountText", () => {
   const MockText = jest.requireActual("react-native").Text;
   return ({ children, ...props }: TextInputProps) => <MockText {...props}>{children}</MockText>;
