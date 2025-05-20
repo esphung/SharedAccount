@@ -1,9 +1,11 @@
+import AddAccountSheet from "@components/AddAccountSheet/AddAccountSheet";
 import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
 import { isCreditTransaction, isExpenseTransaction } from "@data/validation/Transaction";
 import useAccounts from "@hooks/useAccounts";
+
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -108,8 +110,9 @@ export const scrollToTop = (
 };
 
 export default function TransactionsScreen({ navigation }: ScreenProps) {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [transactionModalVisible, setTransactionModalVisible] = useState(false);
   const [isListReady, setIsListReady] = useState(false);
+  const [accountModalVisible, setAccountModalVisible] = useState(false);
   const listRef = useRef<SectionList<Transaction>>(null);
 
   const {
@@ -142,7 +145,7 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
       try {
         const fetchedAccounts = await fetchAccounts();
         // ✅ Check fresh data, NOT stale state
-        if (fetchedAccounts.length === 0) {
+        if (fetchedAccounts.length === 0 && !currentAccount) {
           promptToCreateAccount();
         }
       } catch (error) {
@@ -162,14 +165,10 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
       title: "Create Account",
       message: "You don't have an account yet. Create one now to start tracking expenses!",
       cancelable: false,
-    }).then((shouldCreate) => {
-      if (shouldCreate) {
-        addAccount({ startingBalance: 0 })
-          .then(() => Alert.alert("Account created successfully"))
-          .catch((error) => console.error("[TransactionsScreen] Error creating account:", error));
-      }
+    }).then(() => {
+      // show create account modal
+      setAccountModalVisible(true);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDeleteTransaction = useCallback(
@@ -190,7 +189,7 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
   );
 
   const openExpenseSheet = useCallback(() => {
-    setModalVisible(true);
+    setTransactionModalVisible(true);
   }, []);
 
   const screenTitleBalance = useMemo(() => {
@@ -200,8 +199,7 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
     return `Balance: ${calculateTotal(currentAccount)}`;
   }, [currentAccount]);
 
-  const handleCreateAccountTransaction = useCallback(
-    // async (params: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">) => {
+  const handleCreateTransaction = useCallback(
     async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
       if (!currentAccount?.id) {
         console.warn("[TransactionsScreen] No current account");
@@ -210,7 +208,7 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
       try {
         await addTransaction(params, currentAccount?.id)
           .then(() => {
-            setModalVisible(false);
+            setTransactionModalVisible(false);
             scrollToTop(sectionsData, listRef);
           })
           .then(() => Alert.alert("Transaction added successfully"))
@@ -226,10 +224,20 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
     [sectionsData, currentAccount?.id],
   );
 
+  const handleCreateAccount = useCallback(
+    (data: Partial<Account>) => {
+      addAccount({ ...data, transactions: [] })
+        .then(() => Alert.alert("Account created successfully"))
+        .catch((error) => console.error("[TransactionsScreen] Error creating account:", error));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
   return (
     <SharedAccountScreen>
       <ScreenTitle title="Transactions" subtitle={screenTitleBalance} />
-      <Button title="Add an expense" onPress={openExpenseSheet} disabled={!isListReady} />
+      <Button title="Add an expense" onPress={openExpenseSheet} disabled={!isListReady || !currentAccount?.id} />
       <TransactionList
         ref={listRef}
         data={sectionsData}
@@ -239,9 +247,14 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
       />
       <AddExpenseSheet
         listRef={listRef}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        onSubmit={handleCreateAccountTransaction}
+        modalVisible={transactionModalVisible}
+        setModalVisible={setTransactionModalVisible}
+        onSubmit={handleCreateTransaction}
+      />
+      <AddAccountSheet
+        modalVisible={accountModalVisible}
+        setModalVisible={setAccountModalVisible}
+        onSubmit={handleCreateAccount}
       />
     </SharedAccountScreen>
   );

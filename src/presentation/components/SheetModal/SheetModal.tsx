@@ -10,6 +10,7 @@ const SheetModal = (
     setModalVisible: (modalVisible: boolean) => void;
     onDismiss?: () => void;
     testID?: string;
+    nonDismissable?: boolean;
   } & ModalProps,
 ) => {
   const {
@@ -19,6 +20,7 @@ const SheetModal = (
     modalVisible,
     setModalVisible,
     onDismiss,
+    nonDismissable,
     ...rest
   } = props;
   return (
@@ -35,12 +37,17 @@ const SheetModal = (
         onDismiss?.();
       }}
       presentationStyle={presentationStyle}
+      // Prevent dismiss if nonDismissable is true
+      {...(nonDismissable && {
+        onRequestClose: () => {},
+        hardwareAccelerated: true,
+      })}
       {...rest}
     >
       {/* Sheet Header */}
       <View>
         <View style={styles.headerContainer}>
-          <Button title="Close" onPress={() => setModalVisible(false)} />
+          {!nonDismissable && <Button title="Close" onPress={() => setModalVisible(false)} />}
         </View>
       </View>
       {children}

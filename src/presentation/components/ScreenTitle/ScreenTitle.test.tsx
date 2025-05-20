@@ -1,11 +1,13 @@
 import { render } from "@testing-library/react-native";
-import { itMatchesSnapshot } from "@utils/testUtils/sharedTests";
 import React from "react";
 
 import ScreenTitle from "./ScreenTitle";
 
 describe("ScreenTitle", () => {
-  itMatchesSnapshot(ScreenTitle, { title: "Test Title" });
+  it("matches snapshot", () => {
+    const { toJSON } = render(<ScreenTitle title="Test Title" />);
+    expect(toJSON()).toMatchSnapshot();
+  });
 
   it("renders correctly with the given title", () => {
     const { getByText } = render(<ScreenTitle title="Test Title" />);

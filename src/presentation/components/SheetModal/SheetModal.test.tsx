@@ -99,4 +99,14 @@ describe("SheetModal", () => {
     const modal = getByTestId("sheet-modal");
     expect(modal.props.hardwareAccelerated).toBe(true);
   });
+
+  it("does not call onRequestClose when nonDismissable is true", () => {
+    const { getByTestId } = render(
+      <SheetModal testID="sheet-modal" modalVisible={true} setModalVisible={setModalVisibleMock} nonDismissable={true}>
+        <SharedAccountText>Content</SharedAccountText>
+      </SheetModal>,
+    );
+    fireEvent(getByTestId("sheet-modal"), "requestClose");
+    expect(setModalVisibleMock).not.toHaveBeenCalled();
+  });
 });
