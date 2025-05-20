@@ -17,6 +17,7 @@ const HomeScreen = () => {
     currentAccount,
     startListening: startAccountsListening,
     selectCurrentAccount,
+    deleteItem: deleteAccount,
   } = useAccounts();
 
   // state
@@ -56,7 +57,24 @@ const HomeScreen = () => {
     <SharedAccountScreen>
       <ScreenTitle title="Home" subtitle={screenTitleBalance} />
       <Button title="Add an account" onPress={() => setAccountModalVisible(true)} />
-      <AccountList accounts={accounts} onPress={selectCurrentAccount} selectedAccount={currentAccount} />
+      <AccountList
+        accounts={accounts}
+        onPress={selectCurrentAccount}
+        selectedAccount={currentAccount}
+        onPressRemove={(acct: Account) => {
+          Alert.alert("Remove account", "Are you sure?", [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "OK",
+              onPress: () => {
+                deleteAccount(acct.id)
+                  .then(() => Alert.alert("Account removed successfully"))
+                  .catch((error) => console.error("[HomeScreen] Error removing account:", error));
+              },
+            },
+          ]);
+        }}
+      />
       <AddAccountSheet
         modalVisible={accountModalVisible}
         setModalVisible={setAccountModalVisible}
