@@ -4,9 +4,9 @@ import SharedAccountButton from "@components/SharedAccountButton/SharedAccountBu
 import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/SharedAccountCurrencyInput";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
+import AccountBuilder from "@data/models/builders/AccountBuilder";
 import useForm from "@presentation/hooks/useForm";
 import React, { useCallback, useMemo } from "react";
-
 import type { TextInput } from "react-native";
 import { Button, StyleSheet, View } from "react-native";
 import type { Account } from "types/Account";
@@ -53,8 +53,13 @@ const AccountForm = ({ onSubmit }: AccountFormProps) => {
   const handleDebugFill = useCallback(() => {
     const randomAmount = Math.floor(Math.random() * 1000);
     const randomName = Math.random() > 0.5 ? "Hello World" : "My Test Account";
-    handleChange("startingBalance", randomAmount);
-    handleChange("name", randomName);
+    const newAccount = new AccountBuilder()
+      .withName(randomName)
+      .withStartingBalance(randomAmount)
+      .withTransactions([])
+      .build();
+    handleChange("startingBalance", newAccount.startingBalance);
+    handleChange("name", newAccount.name);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

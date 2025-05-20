@@ -15,6 +15,16 @@ jest.mock("@domain/contexts/useRepository", () => ({
   default: jest.fn(),
 }));
 
+// mock the userDefaultsStorage
+jest.mock("@domain/storage/userDefaultsStorage", () => ({
+  __esModule: true,
+  default: {
+    getItem: () => Promise.resolve(null),
+    saveItem: () => Promise.resolve(),
+    removeItem: () => Promise.resolve(),
+  },
+}));
+
 describe("useAccounts", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -214,5 +224,30 @@ describe("mergeAccounts", () => {
     const result = mergeAccounts(previous, updates);
     // assert
     expect(result).toEqual(expected);
+  });
+});
+
+describe("selectCurrentAccount", () => {
+  it("should set the current account and save to storage", async () => {
+    const mockRepos = createMockRepos({
+      accounts: [mockAccount1, mockAccount2],
+      transactions: [],
+    });
+    (useRepository as jest.Mock).mockImplementation(() => mockRepos);
+
+    const { result } = renderHook(() => useAccounts());
+
+    // Simulate initial fetch to populate state
+    await act(async () => {
+      await result.current.fetchItems();
+    });
+
+    // act
+    act(() => {
+      result.current.selectCurrentAccount(mockAccount2);
+    });
+
+    // assert
+    expect(result.current.currentAccount).toEqual(mockAccount2);
   });
 });

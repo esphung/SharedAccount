@@ -12,6 +12,16 @@ jest.mock("@domain/providers/RepositoryProvider", () => ({ children }: { childre
   <>{children}</>
 ));
 
+// mock the userDefaultsStorage
+jest.mock("@domain/storage/userDefaultsStorage", () => ({
+  __esModule: true,
+  default: {
+    getItem: () => Promise.resolve(null),
+    saveItem: () => Promise.resolve(),
+    removeItem: () => Promise.resolve(),
+  },
+}));
+
 describe("RootStack", () => {
   it("renders", () => {
     const tree = render(<RootStack />);
