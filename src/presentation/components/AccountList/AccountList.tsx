@@ -20,35 +20,46 @@ const ICON_SIZE = 13;
 
 const AccountList = ({ accounts, onPress, selectedAccount, onPressRemove }: AccountListProps) => {
   const renderItem = useCallback(
-    ({ item }: { item: Account }) => (
-      <TouchableOpacity
-        style={[styles.item, selectedAccount?.id === item.id && styles.selected]}
-        testID={`account-item-${item.id}`}
-        onPress={() => onPress?.(item)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.leftItemPanel}>
+    ({ item }: { item: Account }) => {
+      const total = calculateTotal(item);
+      return (
+        <TouchableOpacity
+          style={[styles.item, selectedAccount?.id === item.id && styles.selected]}
+          testID={`account-item-${item.id}`}
+          onPress={() => onPress?.(item)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.leftItemPanel}>
+            {selectedAccount?.id === item.id && (
+              <CheckMarkSvgIcon
+                testID={`checkmark-account-item-icon-${item.id}`}
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+              />
+            )}
+            <MuseumSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
+          </View>
+          <View style={styles.centerItemPanel}>
+            <SharedAccountText>{item.name}</SharedAccountText>
+            <SharedAccountText
+              style={Number(total.replace(/\$/g, "")) <= 0 ? styles.balanceNegative : styles.balancePositive}
+            >
+              {total}
+            </SharedAccountText>
+          </View>
           {selectedAccount?.id === item.id && (
-            <CheckMarkSvgIcon testID={`checkmark-account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
+            <TouchableOpacity
+              style={styles.rightItemPanel}
+              testID={`account-item-remove-${item.id}`}
+              onPress={() => onPressRemove?.(item)}
+              activeOpacity={0.7}
+            >
+              <CircleMinusSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
+            </TouchableOpacity>
           )}
-          <MuseumSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
-        </View>
-        <View style={styles.centerItemPanel}>
-          <SharedAccountText>{item.name}</SharedAccountText>
-          <SharedAccountText style={styles.balance}>{calculateTotal(item)}</SharedAccountText>
-        </View>
-        {selectedAccount?.id === item.id && (
-          <TouchableOpacity
-            style={styles.rightItemPanel}
-            testID={`account-item-remove-${item.id}`}
-            onPress={() => onPressRemove?.(item)}
-            activeOpacity={0.7}
-          >
-            <CircleMinusSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
-          </TouchableOpacity>
-        )}
-      </TouchableOpacity>
-    ),
+        </TouchableOpacity>
+      );
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedAccount, accounts],
   );
@@ -57,7 +68,10 @@ const AccountList = ({ accounts, onPress, selectedAccount, onPressRemove }: Acco
 };
 
 const styles = StyleSheet.create({
-  balance: {
+  balanceNegative: {
+    color: colors.red,
+  },
+  balancePositive: {
     color: colors.green,
   },
   centerItemPanel: {
