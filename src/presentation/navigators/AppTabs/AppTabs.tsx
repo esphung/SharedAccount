@@ -71,6 +71,7 @@ const screenOptions = ({ route }: { route: TabRoute }): BottomTabNavigationOptio
   tabBarIconStyle: { marginBottom: 4 },
   tabBarIcon: (tabBarIconProps: TabBarIconProps) => tabBarIcon({ ...tabBarIconProps, route }),
   tabBarLabel: (tabBarLabelProps: TabBarIconProps) => tabBarLabel({ ...tabBarLabelProps, route }),
+  animation: "fade",
 });
 
 const AppTabs = () => {

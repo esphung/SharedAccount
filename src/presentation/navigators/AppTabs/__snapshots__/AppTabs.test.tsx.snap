@@ -14,7 +14,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
     ]
   }
 >
-  <RNSScreenNavigationContainer
+  <RNSScreenContainer
     style={
       {
         "flex": 1,
@@ -70,21 +70,11 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
         collapsable={false}
         importantForAccessibility="auto"
         style={
-          [
-            {
-              "backgroundColor": "rgb(242, 242, 242)",
-              "flex": 1,
-            },
-            [
-              {
-                "flex": 1,
-              },
-              [
-                undefined,
-                false,
-              ],
-            ],
-          ]
+          {
+            "backgroundColor": "rgb(242, 242, 242)",
+            "flex": 1,
+            "opacity": 1,
+          }
         }
       >
         <View
@@ -100,7 +90,7 @@ exports[`AppTabs Navigator matches the snapshot 1`] = `
         </View>
       </View>
     </RNSScreen>
-  </RNSScreenNavigationContainer>
+  </RNSScreenContainer>
   <View
     collapsable={false}
     onLayout={[Function]}
