@@ -1,88 +1,196 @@
-import CalculatorSvgIcon from "@assets/svg/calculator-svgrepo-com.svg";
-import ChartSvgIcon from "@assets/svg/chart-line-svgrepo-com.svg";
-import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-
-import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import type { RouteProp } from "@react-navigation/native";
-import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
+import PlusSvgIcon from "@assets/svg/plus-svgrepo-com.svg";
+import AddAccountSheet from "@components/AddAccountSheet/AddAccountSheet";
+import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
+import CircleButton from "@components/CircleButton/CircleButton";
+import colors from "@config/themes/colors";
+import {useAccountsContext} from "@domain/providers/AccountsProvider";
+import {useSheetModalContext} from "@domain/providers/SheetModalProvider";
+import styles from "@navigators/AppTabs/AppTabs.style";
+import {handleCatchError} from "@presentation/utilities";
+import type {BottomTabNavigationOptions} from "@react-navigation/bottom-tabs";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import type {RouteProp} from "@react-navigation/native";
 import HomeScreen from "@screens/HomeScreen/HomeScreen";
-import React from "react";
-import type { SvgProps } from "react-native-svg";
+import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
+import {generateTestIDs} from "@utils/testUtils/generateTestIDs";
+import React, {useCallback, useMemo, useRef} from "react";
+import {Alert, View, type SectionList} from "react-native";
+import type {Account} from "types/Account";
+import type {Transaction} from "types/Transaction";
 
-const SIZE_MULTIPLIER = 20;
+const ICON_SIZE = 24;
 
 export enum AppTabsScreens {
-  Home = "HomeScreen",
-  Transactions = "TransactionsScreen",
+	Home = "HomeScreen",
+	Transactions = "TransactionsScreen",
 }
 
-export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
-
-const TabBarLabelScreenNamesMap: { [key in AppTabsScreens]: string } = {
-  [AppTabsScreens.Home]: "Home",
-  [AppTabsScreens.Transactions]: "Transactions",
-};
-
-const AppTabsTabBarIconMap: {
-  [key in AppTabsScreens]: (props: SvgProps) => React.JSX.Element;
-} = {
-  [AppTabsScreens.Home]: (props: SvgProps) => <ChartSvgIcon {...props} />,
-  [AppTabsScreens.Transactions]: (props: SvgProps) => <CalculatorSvgIcon {...props} />,
-};
+export type AppTabsParamList = {[key in AppTabsScreens]: undefined};
 
 type TabRoute = RouteProp<AppTabsParamList, AppTabsScreens>;
 
-const tabBarIcon = ({
-  color,
-  route,
-}: TabBarIconProps & {
-  route: TabRoute;
-}) => {
-  const Icon = AppTabsTabBarIconMap[route.name];
-  return <Icon width={SIZE_MULTIPLIER} height={SIZE_MULTIPLIER} fill={color} />;
-};
-
-const tabBarLabel = ({
-  route,
-}: TabBarIconProps & {
-  route: TabRoute;
-}) => {
-  return (
-    <SharedAccountText type="tabBarLabel" numberOfLines={1}>
-      {TabBarLabelScreenNamesMap[route.name]}
-    </SharedAccountText>
-  );
-};
-
-type TabBarIconProps = {
-  focused: boolean;
-  color: string;
-};
-
-const screenOptions = ({ route }: { route: TabRoute }): BottomTabNavigationOptions => ({
-  tabBarLabelPosition: "below-icon",
-  tabBarActiveTintColor: "#000",
-  tabBarInactiveTintColor: "#000",
-  headerShown: false,
-  tabBarButtonTestID: `${route.name}-tabBarButton`,
-  tabBarStyle: { height: 100, paddingBottom: 10, paddingTop: 10 },
-  tabBarLabelStyle: { fontSize: 12, marginBottom: 0 },
-  tabBarIconStyle: { marginBottom: 4 },
-  tabBarIcon: (tabBarIconProps: TabBarIconProps) => tabBarIcon({ ...tabBarIconProps, route }),
-  tabBarLabel: (tabBarLabelProps: TabBarIconProps) => tabBarLabel({ ...tabBarLabelProps, route }),
-  animation: "fade",
+const screenOptions = (_params: {route: TabRoute}): BottomTabNavigationOptions => ({
+	headerShown: false,
+	tabBarStyle: {display: "none"}, // Hide the default tab bar
 });
 
-const AppTabs = () => {
-  const Tab = createBottomTabNavigator<AppTabsParamList>();
+const mapBtnFromList = (
+	{
+		disabled,
+		icon,
+		onPress,
+	}: {
+		disabled: boolean;
+		icon: React.ReactNode;
+		onPress: () => void;
+	},
+	index: number,
+) => (
+	<CircleButton
+		key={index}
+		{...generateTestIDs(`add-btn-${index}`, "button")}
+		onPress={onPress}
+		style={styles.circularBtnStyle}
+		disabled={disabled}>
+		{icon}
+	</CircleButton>
+);
 
-  return (
-    <Tab.Navigator initialRouteName={AppTabsScreens.Transactions} screenOptions={screenOptions}>
-      <Tab.Screen name={AppTabsScreens.Transactions} component={TransactionsScreen} />
-      <Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
-    </Tab.Navigator>
-  );
+// component
+const AppTabs = () => {
+	// refs
+	const listRef = useRef<SectionList>(null);
+
+	// hooks
+	const {
+		openTransactionModal,
+		closeTransactionModal,
+		transactionModalVisible,
+		accountModalVisible,
+		openAccountModal,
+		closeAccountModal,
+	} = useSheetModalContext();
+
+	const {addItem: addAccount, currentAccount, addTransaction} = useAccountsContext();
+
+	// memoized values
+	const Tab = useMemo(() => createBottomTabNavigator<AppTabsParamList>(), []);
+
+	// callbacks
+	const handleSetTransactionModalVisible = useCallback(
+		(shouldShow: boolean) => {
+			if (!shouldShow) {
+				closeTransactionModal();
+			} else {
+				openTransactionModal();
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+
+	const handleSetAccountModalVisible = useCallback((shouldShow: boolean) => {
+		if (!shouldShow) {
+			closeAccountModal();
+		} else {
+			openAccountModal();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const handleCreateTransaction = useCallback(
+		async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
+			if (!currentAccount?.id) {
+				console.warn("[TransactionsScreen] No current account");
+				return;
+			}
+			try {
+				await addTransaction(params, currentAccount?.id)
+					.then(() => closeTransactionModal())
+					.catch(handleCatchError("addTransaction"));
+			} catch (error) {
+				console.error("[TransactionsScreen] Error adding transaction:", error);
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[currentAccount?.id],
+	);
+
+	const addExpenseSheet = useMemo(
+		() => (
+			<AddExpenseSheet
+				listRef={listRef}
+				modalVisible={transactionModalVisible}
+				setModalVisible={handleSetTransactionModalVisible}
+				onSubmit={handleCreateTransaction}
+			/>
+		),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[transactionModalVisible],
+	);
+
+	const handleCreateAccount = useCallback(
+		(data: Partial<Account>) => {
+			addAccount({...data, transactions: []})
+				.then(() => {
+					Alert.alert("Account created successfully");
+					closeAccountModal();
+				})
+				.catch(handleCatchError("createAccount"));
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+
+	const addAccountSheet = useMemo(
+		() => (
+			<AddAccountSheet
+				modalVisible={accountModalVisible}
+				setModalVisible={handleSetAccountModalVisible}
+				onSubmit={handleCreateAccount}
+				nonDismissable
+			/>
+		),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[accountModalVisible],
+	);
+
+	// Add a fourth button as needed
+	const btnList: {
+		icon: React.ReactNode;
+		onPress: () => void;
+		disabled: boolean;
+	}[] = useMemo(
+		() => [
+			{
+				icon: (
+					<PlusSvgIcon
+						{...generateTestIDs("add-account-button-icon", "image")}
+						width={ICON_SIZE}
+						height={ICON_SIZE}
+						stroke={colors.primary}
+						strokeWidth={2}
+					/>
+				),
+				onPress: openTransactionModal,
+				disabled: false,
+			},
+		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+
+	return (
+		<>
+			<Tab.Navigator initialRouteName={AppTabsScreens.Transactions} screenOptions={screenOptions}>
+				<Tab.Screen name={AppTabsScreens.Transactions} component={TransactionsScreen} />
+				<Tab.Screen name={AppTabsScreens.Home} component={HomeScreen} />
+			</Tab.Navigator>
+			<View style={styles.buttonBar}>{btnList.map(mapBtnFromList)}</View>
+			{addExpenseSheet}
+			{addAccountSheet}
+		</>
+	);
 };
 
 export default AppTabs;

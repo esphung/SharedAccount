@@ -1,24 +1,29 @@
-import { Money } from "ts-money";
+import {Money} from "ts-money";
 
-type FormatMoneyFunc = (amount: number, precision?: number, currency?: "USD", style?: "currency" | "decimal") => string;
+type FormatMoneyFunc = (
+	amount: number,
+	precision?: number,
+	currency?: "USD",
+	style?: "currency" | "decimal",
+) => string;
 
 const formatMoney: FormatMoneyFunc = (
-  amount,
-  precision = 0,
-  currency = "USD",
-  style: "currency" | "decimal" = "currency",
+	amount,
+	precision = 0,
+	currency = "USD",
+	style: "currency" | "decimal" = "currency",
 ) => {
-  const amountDollars = new Money(amount, currency).getAmount() / 100;
+	const amountDollars = new Money(amount, currency).getAmount() / 100;
 
-  return new Intl.NumberFormat("en-US", {
-    style,
-    currency,
-    maximumFractionDigits: precision,
-  }).format(amountDollars);
+	return new Intl.NumberFormat("en-US", {
+		style,
+		currency,
+		maximumFractionDigits: precision,
+	}).format(amountDollars);
 };
 
 const MoneyFunctions = {
-  formatMoney,
+	formatMoney,
 };
 
 export default MoneyFunctions;

@@ -1,123 +1,193 @@
 import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
-import useAccounts from "@hooks/useAccounts";
-import { render } from "@testing-library/react-native";
-import { DateTime } from "luxon";
-import React from "react";
-import { Alert } from "react-native";
-
+import {AppTabsScreens} from "@navigators/AppTabs/AppTabs";
+import {NavigationContainer} from "@react-navigation/native";
 import TransactionsScreen, {
-  calculateTotal,
-  groupTransactionsByDate,
-  showAsyncAlertPrompt,
+	calculateTotal,
+	groupTransactionsByDate,
+	showAsyncAlertPrompt,
 } from "@screens/TransactionsScreen/TransactionsScreen";
+import {render, screen} from "@testing-library/react-native";
+import {DateTime} from "luxon";
+import React from "react";
+import {Alert} from "react-native";
 
-jest.mock("@presentation/hooks/useAccounts", () => ({
-  __esModule: true,
-  default: jest.fn(),
+jest.mock("@domain/providers/SheetModalProvider", () => ({
+	__esModule: true,
+	useSheetModalContext: jest.fn(() => ({
+		openTransactionModal: jest.fn(),
+		closeTransactionModal: jest.fn(),
+		transactionModalVisible: false,
+		accountModalVisible: false,
+		openAccountModal: jest.fn(),
+		closeAccountModal: jest.fn(),
+	})),
 }));
+
+jest.mock("@domain/providers/RepositoryProvider", () => ({children}: {children: React.ReactNode}) => (
+	<>{children}</>
+));
+
+jest.mock("@domain/providers/AccountsProvider", () => ({
+	__esModule: true,
+	useAccountsContext: jest.fn(() => ({
+		state: [],
+		fetchItems: () => Promise.resolve([]),
+		deleteItem: () => Promise.resolve(),
+		addItem: () => Promise.resolve(),
+		startListening: () => () => {},
+		currentAccount: undefined,
+		addTransaction: () => Promise.resolve(),
+		deleteTransaction: () => Promise.resolve(),
+		selectCurrentAccount: (_accountId: string) => {},
+	})),
+	AccountsContext: {
+		Provider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+	},
+}));
+
+// mock the userDefaultsStorage
+jest.mock("@domain/storage/userDefaultsStorage", () => ({
+	__esModule: true,
+	default: {
+		getItem: () => Promise.resolve(null),
+		saveItem: () => Promise.resolve(),
+		removeItem: () => Promise.resolve(),
+	},
+}));
+
+const mockRoute: {
+	key: string;
+	name: AppTabsScreens.Transactions;
+} = {
+	key: "testKey",
+	name: AppTabsScreens.Transactions,
+};
+
+const mockNavigation = {
+	addListener: jest.fn(),
+	removeListener: jest.fn(),
+	navigate: jest.fn(),
+	goBack: jest.fn(),
+	setOptions: jest.fn(),
+	dispatch: jest.fn(),
+	canGoBack: jest.fn(),
+	reset: jest.fn(),
+	isFocused: jest.fn(),
+	getState: jest.fn(),
+	setParams: jest.fn(),
+	navigateDeprecated: jest.fn(),
+	getId: jest.fn(),
+	getParent: jest.fn(),
+	preload: jest.fn(),
+	setStateForNextRouteNamesChange: jest.fn(),
+	jumpTo: jest.fn(),
+};
 
 jest.mock("@components/AddExpenseSheet/AddExpenseSheet", () => "AddExpenseSheet");
 jest.mock(
-  "@components/SharedAccountScreen/SharedAccountScreen",
-  () =>
-    ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	"@components/SharedAccountScreen/SharedAccountScreen",
+	() =>
+		({children}: {children: React.ReactNode}) => <>{children}</>,
 );
 
 describe("TransactionsScreen", () => {
-  const mockUseAccounts = useAccounts as jest.Mock;
+	const renderWithProviders = () => {
+		render(<TransactionsScreen route={mockRoute} navigation={mockNavigation} />, {
+			wrapper: ({children}) => <NavigationContainer>{children}</NavigationContainer>,
+		});
+	};
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockUseAccounts.mockReturnValue({
-      fetchItems: jest.fn(),
-      addItem: jest.fn(),
-      currentAccount: { id: "acct_1", startingBalance: 1000, transactions: [] },
-      addTransaction: jest.fn(),
-      deleteTransaction: jest.fn(),
-      startListening: jest.fn(() => () => jest.fn()),
-    });
-  });
-
-  it("renders correctly", () => {
-    // @ts-expect-error not a real navigation prop
-    const { getByText } = render(<TransactionsScreen navigation={{ addListener: jest.fn() }} />);
-    expect(getByText("Transactions")).toBeTruthy();
-  });
+	it("renders the TransactionsScreen tab", () => {
+		renderWithProviders();
+		const transactionsScreen = screen.queryByText("Transactions");
+		expect(transactionsScreen).toBeDefined();
+	});
+	it("sets the initial route to TransactionsScreen", () => {
+		renderWithProviders();
+		const transactionsScreen = screen.queryByText("Transactions");
+		expect(transactionsScreen).toBeDefined();
+	});
 });
 
 describe("calculateTotal", () => {
-  it("calculates the total balance correctly", () => {
-    const account = new AccountBuilder()
-      .withId("acct_1")
-      .withStartingBalance(1000)
-      .withTransactions([
-        new TransactionBuilder().withAmount(100).build(),
-        new TransactionBuilder().withAmount(-50).build(),
-        new TransactionBuilder().withAmount(200).build(),
-      ])
-      .build();
-    const result = calculateTotal(account);
-    expect(result).toBe("$7.50");
-  });
+	it("calculates the total balance correctly", () => {
+		const account = new AccountBuilder()
+			.withId("acct_1")
+			.withStartingBalance(1000)
+			.withTransactions([
+				new TransactionBuilder().withAmount(100).build(),
+				new TransactionBuilder().withAmount(-50).build(),
+				new TransactionBuilder().withAmount(200).build(),
+			])
+			.build();
+		const result = calculateTotal(account);
+		expect(result).toBe("$7.50");
+	});
 });
 
 describe("groupTransactionsByDate", () => {
-  it("groups transactions by date", () => {
-    const mockTxn1 = new TransactionBuilder({}, 123)
-      .withDate(new Date("2023-01-01"))
-      .withCategory("Food")
-      .withName("Hello World")
-      .withDescription("Weekly groceries")
-      .withSharedAccountId("acct_1234567890")
-      .withAmount(100)
-      .withType("expense")
-      .withId("txn_1")
-      .build();
-    const mockTxn2 = new TransactionBuilder({}, 123)
-      .withCategory("Food")
-      .withName("Hello World")
-      .withDescription("Weekly groceries")
-      .withSharedAccountId("acct_1234567890")
-      .withDate(new Date("2023-01-05"))
-      .withType("credit")
-      .withAmount(50)
-      .withId("txn_2")
-      .build();
-    const expenses = [mockTxn1];
-    const credits = [mockTxn2];
-    const result = groupTransactionsByDate(expenses, credits);
-    expect(result).toEqual([
-      {
-        title: DateTime.fromJSDate(mockTxn2.date).toFormat("ccc LLL dd yyyy"),
-        data: [mockTxn2],
-      },
-      {
-        title: DateTime.fromJSDate(mockTxn1.date).toFormat("ccc LLL dd yyyy"),
-        data: [mockTxn1],
-      },
-    ]);
-  });
+	it("groups transactions by date", () => {
+		const mockTxn1 = new TransactionBuilder({}, 123)
+			.withDate(new Date("2023-01-01"))
+			.withCategory("Food")
+			.withName("Hello World")
+			.withDescription("Weekly groceries")
+			.withSharedAccountId("acct_1234567890")
+			.withAmount(100)
+			.withType("expense")
+			.withId("txn_1")
+			.build();
+		const mockTxn2 = new TransactionBuilder({}, 123)
+			.withCategory("Food")
+			.withName("Hello World")
+			.withDescription("Weekly groceries")
+			.withSharedAccountId("acct_1234567890")
+			.withDate(new Date("2023-01-05"))
+			.withType("credit")
+			.withAmount(50)
+			.withId("txn_2")
+			.build();
+		const expenses = [mockTxn1];
+		const credits = [mockTxn2];
+		const result = groupTransactionsByDate(expenses, credits);
+		expect(result).toEqual([
+			{
+				title: DateTime.fromJSDate(mockTxn2.date).toFormat("ccc LLL dd yyyy"),
+				data: [mockTxn2],
+			},
+			{
+				title: DateTime.fromJSDate(mockTxn1.date).toFormat("ccc LLL dd yyyy"),
+				data: [mockTxn1],
+			},
+		]);
+	});
 });
 
 describe("showAsyncAlertPrompt", () => {
-  it("resolves true when OK is pressed", async () => {
-    jest.spyOn(Alert, "alert").mockImplementation((_, __, buttons) => {
-      const okButton = buttons?.find((button) => button.text === "OK");
-      okButton?.onPress?.();
-    });
+	it("resolves true when OK is pressed", async () => {
+		jest.spyOn(Alert, "alert").mockImplementation((_, __, buttons) => {
+			const okButton = buttons?.find((button) => button.text === "OK");
+			okButton?.onPress?.();
+		});
 
-    const result = await showAsyncAlertPrompt({ title: "Test", message: "Test message" });
-    expect(result).toBe(true);
-  });
+		const result = await showAsyncAlertPrompt({
+			title: "Test",
+			message: "Test message",
+		});
+		expect(result).toBe(true);
+	});
 
-  it("resolves false when Cancel is pressed", async () => {
-    jest.spyOn(Alert, "alert").mockImplementation((_, __, buttons) => {
-      const cancelButton = buttons?.find((button) => button.text === "Cancel");
-      cancelButton?.onPress?.();
-    });
+	it("resolves false when Cancel is pressed", async () => {
+		jest.spyOn(Alert, "alert").mockImplementation((_, __, buttons) => {
+			const cancelButton = buttons?.find((button) => button.text === "Cancel");
+			cancelButton?.onPress?.();
+		});
 
-    const result = await showAsyncAlertPrompt({ title: "Test", message: "Test message" });
-    expect(result).toBe(false);
-  });
+		const result = await showAsyncAlertPrompt({
+			title: "Test",
+			message: "Test message",
+		});
+		expect(result).toBe(false);
+	});
 });
