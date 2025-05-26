@@ -1,13 +1,13 @@
 name: Assign Author to PR
 
 on:
-  pull_request:
-    types: [opened, ready_for_review, reopened]
+    pull_request:
+        types: [opened, ready_for_review, reopened]
 
 jobs:
-  auto-assign-author-pr:
-    name: Assign author to PR
-    runs-on: ubuntu-latest
-    steps:
-      - name: Assign author to PR
-        uses: technote-space/assign-author@v1
+    auto-assign-author-pr:
+        name: Assign author to PR
+        runs-on: ubuntu-latest
+        steps:
+            - name: Assign author to PR
+              uses: technote-space/assign-author@v1

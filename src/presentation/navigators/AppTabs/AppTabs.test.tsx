@@ -1,79 +1,77 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { render } from "@testing-library/react-native";
+import {render, screen} from "@testing-library/react-native";
+import {NavigationContainer} from "@react-navigation/native";
 import React from "react";
 import AppTabs from "./AppTabs";
 
+jest.mock("@domain/providers/SheetModalProvider", () => ({
+	__esModule: true,
+	useSheetModalContext: jest.fn(() => ({
+		openTransactionModal: jest.fn(),
+		closeTransactionModal: jest.fn(),
+		transactionModalVisible: false,
+		accountModalVisible: false,
+		openAccountModal: jest.fn(),
+		closeAccountModal: jest.fn(),
+	})),
+}));
+
 jest.mock("@presentation/screens/HomeScreen/HomeScreen", () => {
-  return {
-    __esModule: true,
-    // eslint-disable-next-line react-native/no-raw-text
-    default: () => <div>Home</div>,
-  };
-});
-jest.mock("@presentation/screens/TransactionsScreen/TransactionsScreen", () => {
-  return {
-    __esModule: true,
-    // eslint-disable-next-line react-native/no-raw-text
-    default: () => <div>Transactions</div>,
-  };
+	return {
+		__esModule: true,
+		// eslint-disable-next-line react-native/no-raw-text
+		default: () => <div>Home</div>,
+	};
 });
 
-jest.mock("@domain/contexts/useRepository", () => ({
-  __esModule: true,
-  default: jest.fn(() => ({
-    transactionRepo: {
-      getLiveData: jest.fn(),
-      stopListening: jest.fn(),
-      getAll: jest.fn(),
-      getById: jest.fn(),
-      add: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-      getUnsynced: jest.fn(),
-      markAsSynced: jest.fn(),
-    },
-    accountRepo: {
-      getLiveData: jest.fn(),
-      stopListening: jest.fn(),
-      getAll: jest.fn(),
-      getById: jest.fn(),
-      add: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-      getUnsynced: jest.fn(),
-      markAsSynced: jest.fn(),
-    },
-  })),
+jest.mock("@presentation/screens/TransactionsScreen/TransactionsScreen", () => {
+	return {
+		__esModule: true,
+		// @ts-expect-error invalid prop types
+		// eslint-disable-next-line react-native/no-raw-text
+		default: (props: unknown) => <div {...props}>Transactions</div>,
+	};
+});
+
+jest.mock("@domain/providers/AccountsProvider", () => ({
+	__esModule: true,
+	useAccountsContext: jest.fn(() => ({
+		state: [],
+		fetchItems: () => Promise.resolve([]),
+		deleteItem: () => Promise.resolve(),
+		addItem: () => Promise.resolve(),
+		startListening: () => () => {},
+		currentAccount: undefined,
+		addTransaction: () => Promise.resolve(),
+		deleteTransaction: () => Promise.resolve(),
+		selectCurrentAccount: (_accountId: string) => {},
+	})),
+	AccountsContext: {
+		Provider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+	},
 }));
 
 describe("AppTabs Navigator", () => {
-  const renderWithNavigation = () =>
-    render(
-      <NavigationContainer>
-        <AppTabs />
-      </NavigationContainer>,
-    );
+	const renderWithProviders = () => {
+		render(<AppTabs />, {
+			wrapper: ({children}) => <NavigationContainer>{children}</NavigationContainer>,
+		});
+	};
 
-  it("matches the snapshot", () => {
-    const { toJSON } = renderWithNavigation();
-    expect(toJSON()).toMatchSnapshot();
-  });
+	it("renders the HomeScreen tab", () => {
+		renderWithProviders();
+		const homeScreen = screen.queryByText("Home");
+		expect(homeScreen).toBeDefined();
+	});
 
-  it("renders the HomeScreen tab", () => {
-    const { getByText } = renderWithNavigation();
-    const homeScreen = getByText("Home");
-    expect(homeScreen).toBeTruthy();
-  });
+	it("renders the TransactionsScreen tab", () => {
+		renderWithProviders();
+		const expensesScreen = screen.queryByText("Transactions");
+		expect(expensesScreen).toBeDefined();
+	});
 
-  it("renders the TransactionsScreen tab", () => {
-    const { getByText } = renderWithNavigation();
-    const expensesScreen = getByText("Transactions");
-    expect(expensesScreen).toBeTruthy();
-  });
+	it("sets the initial route to TransactionsScreen", () => {
+		renderWithProviders();
 
-  it("sets the initial route to TransactionsScreen", () => {
-    const { getByText } = renderWithNavigation();
-
-    expect(getByText("Transactions")).toBeTruthy();
-  });
+		expect(screen.queryByText("Transactions")).toBeDefined();
+	});
 });

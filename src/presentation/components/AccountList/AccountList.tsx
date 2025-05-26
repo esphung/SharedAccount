@@ -1,106 +1,94 @@
-import CheckMarkSvgIcon from "@assets/svg/checkmark-svgrepo-com.svg";
+// import CheckMarkSvgIcon from "@assets/svg/dollar-svgrepo-com.svg";
 import CircleMinusSvgIcon from "@assets/svg/circle-minus-svgrepo-com.svg";
-import MuseumSvgIcon from "@assets/svg/museum-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import colors from "@config/themes/colors";
-import { calculateTotal } from "@screens/TransactionsScreen/TransactionsScreen";
-import React, { useCallback } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-
-import type { Account } from "types/Account";
+import {calculateTotal} from "@screens/TransactionsScreen/TransactionsScreen";
+import {generateTestIDs} from "@utils/testUtils/generateTestIDs";
+import React, {useCallback} from "react";
+import {FlatList, StyleSheet, TouchableOpacity, View} from "react-native";
+import type {Account} from "types/Account";
 
 type AccountListProps = {
-  accounts: Account[];
-  onPress?: (account: Account) => void;
-  selectedAccount?: Account;
-  onPressRemove: (account: Account) => void;
+	accounts: Account[];
+	onPress: (account: Account) => void;
+	selectedAccount?: Account;
+	onPressRemove: (account: Account) => void;
 };
 
-const ICON_SIZE = 13;
+const ICON_SIZE = 20;
 
-const AccountList = ({ accounts, onPress, selectedAccount, onPressRemove }: AccountListProps) => {
-  const renderItem = useCallback(
-    ({ item }: { item: Account }) => {
-      const total = calculateTotal(item);
-      return (
-        <TouchableOpacity
-          style={[styles.item, selectedAccount?.id === item.id && styles.selected]}
-          testID={`account-item-${item.id}`}
-          onPress={() => onPress?.(item)}
-          activeOpacity={0.7}
-        >
-          <View style={styles.leftItemPanel}>
-            {selectedAccount?.id === item.id && (
-              <CheckMarkSvgIcon
-                testID={`checkmark-account-item-icon-${item.id}`}
-                width={ICON_SIZE}
-                height={ICON_SIZE}
-              />
-            )}
-            <MuseumSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
-          </View>
-          <View style={styles.centerItemPanel}>
-            <SharedAccountText>{item.name}</SharedAccountText>
-            <SharedAccountText
-              style={Number(total.replace(/\$/g, "")) <= 0 ? styles.balanceNegative : styles.balancePositive}
-            >
-              {total}
-            </SharedAccountText>
-          </View>
-          {selectedAccount?.id === item.id && (
-            <TouchableOpacity
-              style={styles.rightItemPanel}
-              testID={`account-item-remove-${item.id}`}
-              onPress={() => onPressRemove?.(item)}
-              activeOpacity={0.7}
-            >
-              <CircleMinusSvgIcon testID={`account-item-icon-${item.id}`} width={ICON_SIZE} height={ICON_SIZE} />
-            </TouchableOpacity>
-          )}
-        </TouchableOpacity>
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedAccount, accounts],
-  );
+const AccountList = ({accounts, onPress, selectedAccount, onPressRemove}: AccountListProps) => {
+	const onPressRemoveCallback = useCallback(
+		(item: Account) => onPressRemove(item),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+	const renderItem = useCallback(
+		({item}: {item: Account}) => {
+			const total = calculateTotal(item);
+			const isSelected = selectedAccount?.id === item.id;
+			return (
+				<TouchableOpacity
+					{...generateTestIDs(`account-item-${item.id}`, "button")}
+					disabled={!!isSelected}
+					style={styles.item}
+					onPress={() => onPress?.(item)}
+					activeOpacity={0.7}>
+					<View style={styles.centerItemPanel}>
+						<SharedAccountText {...generateTestIDs(`account-item-name-${item.id}`, "text")}>
+							{item.name}
+						</SharedAccountText>
+						<SharedAccountText {...generateTestIDs(`account-item-total-${item.id}`, "text")}>
+							{total}
+						</SharedAccountText>
+					</View>
+					<View
+						style={{
+							width: ICON_SIZE,
+							height: ICON_SIZE,
+						}}>
+						{selectedAccount?.id === item.id && (
+							<TouchableOpacity
+								{...generateTestIDs(`account-item-remove-${item.id}`, "button")}
+								onPress={() => onPressRemoveCallback(item)}
+								activeOpacity={0.7}>
+								<CircleMinusSvgIcon
+									{...generateTestIDs(`account-item-icon-${item.id}`, "image")}
+									width={ICON_SIZE}
+									height={ICON_SIZE}
+								/>
+							</TouchableOpacity>
+						)}
+					</View>
+				</TouchableOpacity>
+			);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[selectedAccount],
+	);
 
-  return <FlatList data={accounts} keyExtractor={(item) => item.id} renderItem={renderItem} />;
+	const keyExtractorCallback = useCallback((item: Account) => `${item.id}`, []);
+
+	return <FlatList data={accounts} keyExtractor={keyExtractorCallback} renderItem={renderItem} />;
 };
 
 const styles = StyleSheet.create({
-  balanceNegative: {
-    color: colors.red,
-  },
-  balancePositive: {
-    color: colors.green,
-  },
-  centerItemPanel: {
-    flex: 1,
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "space-between",
-    marginLeft: 8,
-    marginRight: 8,
-  },
-  item: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: 12,
-    marginHorizontal: 16,
-    padding: 16,
-  },
-  leftItemPanel: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    marginRight: 8,
-  },
-  rightItemPanel: {},
-  selected: {
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
+	centerItemPanel: {
+		flex: 1,
+		flexDirection: "row",
+		gap: 8,
+		justifyContent: "space-between",
+		marginLeft: 8,
+		marginRight: 8,
+	},
+	item: {
+		alignItems: "center",
+		borderWidth: 1,
+		flexDirection: "row",
+		marginBottom: 12,
+		marginHorizontal: 16,
+		paddingHorizontal: 12,
+		paddingVertical: 16,
+	},
 });
 
 export default AccountList;

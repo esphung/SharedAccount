@@ -1,97 +1,99 @@
-import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
+import {realmSchema, realmSchemaVersion} from "@config/realmSchema";
 import TransactionAdapter from "@data/adapters/TransactionAdapter";
 import type RealmTransaction from "@data/models/realm/RealmTransaction";
-import type { Transaction } from "@data/models/types/Transaction";
-import type { RealmSubscription } from "@data/repositories/realm/types/RealmSubscription";
-import type { DataModelRepository } from "@data/types/DataModelRepository";
-import Realm, { UpdateMode } from "realm";
+import type {Transaction} from "@data/models/types/Transaction";
+import type {RealmSubscription} from "@data/repositories/realm/types/RealmSubscription";
+import type {DataModelRepository} from "@data/types/DataModelRepository";
+import Realm, {UpdateMode} from "realm";
 
 export default class RealmTransactionRepository implements DataModelRepository<Transaction> {
-  private realm: Realm;
-  private subscription: RealmSubscription<RealmTransaction> | null = null;
+	private realm: Realm;
+	private subscription: RealmSubscription<RealmTransaction> | null = null;
 
-  constructor() {
-    this.realm = new Realm({
-      schema: realmSchema,
-      schemaVersion: realmSchemaVersion,
-    });
-  }
+	constructor() {
+		this.realm = new Realm({
+			schema: realmSchema,
+			schemaVersion: realmSchemaVersion,
+		});
+	}
 
-  getLiveData(callback: (expenses: Transaction[]) => void): void {
-    const realmObjects = this.realm.objects<RealmTransaction>("Transaction");
+	getLiveData(callback: (expenses: Transaction[]) => void): void {
+		const realmObjects = this.realm.objects<RealmTransaction>("Transaction");
 
-    this.subscription = realmObjects;
+		this.subscription = realmObjects;
 
-    realmObjects.addListener((collection) => {
-      const transactions: Transaction[] = collection.map(TransactionAdapter.localToState);
-      // Notify UI of changes
-      callback(transactions);
-    });
-  }
+		realmObjects.addListener((collection) => {
+			const transactions: Transaction[] = collection.map(TransactionAdapter.localToState);
+			// Notify UI of changes
+			callback(transactions);
+		});
+	}
 
-  stopListening(): void {
-    if (this.subscription) {
-      this.subscription.removeAllListeners();
-      this.subscription = null;
-    }
-  }
+	stopListening(): void {
+		if (this.subscription) {
+			this.subscription.removeAllListeners();
+			this.subscription = null;
+		}
+	}
 
-  async getAll(): Promise<Transaction[]> {
-    const realmObjs = this.realm.objects<RealmTransaction>("Transaction");
-    const mapped = realmObjs.map(TransactionAdapter.localToState);
-    return mapped;
-  }
+	async getAll(): Promise<Transaction[]> {
+		const realmObjs = this.realm.objects<RealmTransaction>("Transaction");
+		const mapped = realmObjs.map(TransactionAdapter.localToState);
+		return mapped;
+	}
 
-  async getById(id: string): Promise<Transaction | null> {
-    const realmObj = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
-    if (!realmObj) {
-      console.warn(`[RealmTransactionRepository] Transaction not found: ${id}`);
-      return null;
-    }
-    const mapped: Transaction = TransactionAdapter.localToState(realmObj);
-    return mapped;
-  }
+	async getById(id: string): Promise<Transaction | null> {
+		const realmObj = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
+		if (!realmObj) {
+			console.warn(`[RealmTransactionRepository] Transaction not found: ${id}`);
+			return null;
+		}
+		const mapped: Transaction = TransactionAdapter.localToState(realmObj);
+		return mapped;
+	}
 
-  async add(expense: Transaction): Promise<void> {
-    this.realm.write(() => {
-      this.realm.create<RealmTransaction>("Transaction", expense);
-    });
-  }
+	async add(expense: Transaction): Promise<void> {
+		this.realm.write(() => {
+			this.realm.create<RealmTransaction>("Transaction", expense);
+		});
+	}
 
-  async update(expense: Transaction): Promise<void> {
-    this.realm.write(() => {
-      this.realm.create<RealmTransaction>("Transaction", expense, UpdateMode.All);
-    });
-  }
+	async update(expense: Transaction): Promise<void> {
+		this.realm.write(() => {
+			this.realm.create<RealmTransaction>("Transaction", expense, UpdateMode.All);
+		});
+	}
 
-  async delete(id: string): Promise<void> {
-    this.realm.write(() => {
-      const expense = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
-      if (expense) {
-        this.realm.delete(expense);
-      }
-    });
-  }
+	async delete(id: string): Promise<void> {
+		this.realm.write(() => {
+			const expense = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
+			if (expense) {
+				this.realm.delete(expense);
+			}
+		});
+	}
 
-  async getUnsynced(): Promise<Transaction[]> {
-    const realmObjs = this.realm.objects<RealmTransaction>("Transaction").filtered("syncStatus != 'synced'");
-    const mapped = realmObjs.map(TransactionAdapter.localToState);
-    return mapped;
-  }
+	async getUnsynced(): Promise<Transaction[]> {
+		const realmObjs = this.realm
+			.objects<RealmTransaction>("Transaction")
+			.filtered("syncStatus != 'synced'");
+		const mapped = realmObjs.map(TransactionAdapter.localToState);
+		return mapped;
+	}
 
-  async markAsSynced(id: string): Promise<void> {
-    this.realm.write(() => {
-      const expense = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
-      if (expense) {
-        this.realm.create(
-          "Transaction",
-          {
-            ...expense,
-            syncStatus: "synced",
-          },
-          UpdateMode.All,
-        );
-      }
-    });
-  }
+	async markAsSynced(id: string): Promise<void> {
+		this.realm.write(() => {
+			const expense = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
+			if (expense) {
+				this.realm.create(
+					"Transaction",
+					{
+						...expense,
+						syncStatus: "synced",
+					},
+					UpdateMode.All,
+				);
+			}
+		});
+	}
 }

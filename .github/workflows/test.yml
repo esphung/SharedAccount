@@ -1,24 +1,34 @@
 name: Tests
 
 on:
-  push:
-    branches-ignore: [develop]
+    push:
+        branches-ignore: [develop]
 
 jobs:
-  test:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
+    test:
+        runs-on: macos-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
+            - name: Install dependencies
+              uses: ./.github/actions/install-dependencies
 
-      - name: Run tests
-        run: yarn test
+            - name: Run tests
+              run: yarn test
 
-      - name: Upload test coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: coverage/
-          if-no-files-found: ignore
+            - name: Run lint check
+              run: yarn lint
+              shell: bash
+            - name: Run type check
+              run: yarn typecheck
+              shell: bash
+            - name: Run prettier check
+              run: yarn format:check
+              shell: bash
+
+            - name: Upload test coverage
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage
+                  path: coverage/
+                  if-no-files-found: ignore
