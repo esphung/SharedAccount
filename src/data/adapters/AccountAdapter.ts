@@ -4,22 +4,35 @@ import TransactionAdapter from "./TransactionAdapter";
 
 type LocalAccount = {toJSON(): object};
 
-const AccountAdapter: DataModelAdapter<Account, LocalAccount> = {
-	localToState(local): Account {
+type IAccountAdapter = DataModelAdapter<Account, LocalAccount, Account>;
+
+const AccountAdapter: IAccountAdapter = {
+	localToState(local) {
 		const json = local.toJSON ? local.toJSON() : local;
 		const parsed = JSON.parse(JSON.stringify(json));
-		const id = parsed.id;
-		if (!id) {
-			throw new Error("[AccountAdapter] Missing id");
-		}
-
 		const transactions = [...(parsed.transactions || [])].map(TransactionAdapter.localToState);
 		return {
 			...parsed,
-			startingBalance: parsed.startingBalance || 0,
+			startingBalance: Number(parsed.startingBalance) || 0,
 			transactions,
+			version: Number(parsed.version),
 			name: parsed.name || "",
-			id,
+		};
+	},
+	stateToRemote(state) {
+		return {
+			...state,
+			startingBalance: Number(state.startingBalance) || 0,
+			version: Number(state.version),
+			name: state.name || "",
+		};
+	},
+	remoteToState(remote) {
+		return {
+			...remote,
+			startingBalance: Number(remote.startingBalance) || 0,
+			version: Number(remote.version),
+			name: remote.name || "",
 		};
 	},
 };

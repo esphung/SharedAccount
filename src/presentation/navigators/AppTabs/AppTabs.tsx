@@ -172,12 +172,12 @@ const AppTabs = () => {
 						strokeWidth={2}
 					/>
 				),
-				onPress: openTransactionModal,
+				onPress: !currentAccount?.id ? openAccountModal : openTransactionModal,
 				disabled: false,
 			},
 		],
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[],
+		[currentAccount?.id],
 	);
 
 	return (

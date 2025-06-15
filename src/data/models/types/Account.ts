@@ -5,4 +5,5 @@ export type Account = {
 	name: string;
 	startingBalance: number;
 	transactions: Transaction[];
+	version: number;
 };

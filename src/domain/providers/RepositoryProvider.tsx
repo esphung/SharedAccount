@@ -10,23 +10,26 @@ type Props = PropsWithChildren<{
 }>;
 
 const RepositoryProvider: React.FC<Props> = ({children}) => {
-	const transactionRepo = RepositoryFactory.createTransactionRepository();
-	const accountRepo = RepositoryFactory.createAccountRepository();
+	const localTransactionRepo = RepositoryFactory.createTransactionRepository();
+	const localAccountRepo = RepositoryFactory.createAccountRepository();
+	const remoteAccountRepo = RepositoryFactory.createRemoteAccountRepository();
 	return (
-		<RepositoryContext.Provider value={{transactionRepo, accountRepo}}>
+		<RepositoryContext.Provider value={{localTransactionRepo, localAccountRepo, remoteAccountRepo}}>
 			{children}
 		</RepositoryContext.Provider>
 	);
 };
 
 const RepositoryContext = createContext<{
-	transactionRepo: DataModelRepository<Transaction>;
-	accountRepo: DataModelRepository<Account>;
+	localTransactionRepo: DataModelRepository<Transaction>;
+	localAccountRepo: DataModelRepository<Account>;
+	remoteAccountRepo: DataModelRepository<Account>;
 } | null>(null);
 
 export const useRepository = (): {
-	transactionRepo: DataModelRepository<Transaction>;
-	accountRepo: DataModelRepository<Account>;
+	localTransactionRepo: DataModelRepository<Transaction>;
+	localAccountRepo: DataModelRepository<Account>;
+	remoteAccountRepo: DataModelRepository<Account>;
 } => {
 	const context = useContext(RepositoryContext);
 	if (!context) {
