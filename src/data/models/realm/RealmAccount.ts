@@ -7,6 +7,7 @@ export default class RealmAccount extends Realm.Object implements Account {
 	name: string = "";
 	startingBalance: number = 0; // kept in cents
 	transactions: Transaction[] = [];
+	version: number = 0;
 
 	static schema = {
 		name: "Account",
@@ -16,6 +17,7 @@ export default class RealmAccount extends Realm.Object implements Account {
 			name: "string",
 			startingBalance: "int",
 			transactions: "Transaction[]",
+			version: "int",
 		},
 	};
 }

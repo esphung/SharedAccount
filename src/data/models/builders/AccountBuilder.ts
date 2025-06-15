@@ -9,6 +9,7 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 			startingBalance: 99999, // in cents
 			name: "Hello World",
 			transactions: [],
+			version: 0,
 			...initialInstance,
 		};
 		super(result, fakerSeed);

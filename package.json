@@ -1,7 +1,7 @@
 {
 	"name": "SharedAccount",
-	"version": "0.0.8",
-	"versionCode": 9,
+	"version": "0.0.9",
+	"versionCode": 10,
 	"private": true,
 	"scripts": {
 		"android": "npx @react-native-community/cli run-android",
@@ -25,6 +25,7 @@
 		"@react-navigation/bottom-tabs": "^7.2.1",
 		"@react-navigation/native": "^7.0.15",
 		"@realm/react": "^0.11.0",
+		"axios": "^1.10.0",
 		"luxon": "^3.5.0",
 		"react": "19.0.0",
 		"react-native": "0.78.0",

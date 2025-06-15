@@ -104,6 +104,7 @@ describe("AccountList", () => {
 						name: "Account 2",
 						startingBalance: 200,
 						transactions: [],
+						version: 0,
 					},
 				]}
 				onPressRemove={mockOnPressRemove}
@@ -112,6 +113,7 @@ describe("AccountList", () => {
 					name: "Account 2",
 					startingBalance: 200,
 					transactions: [],
+					version: 0,
 				}}
 				onPress={mockOnPress}
 			/>,

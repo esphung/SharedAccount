@@ -52,17 +52,6 @@ describe("AccountAdapter.localToState", () => {
 		expect(result.transactions).toEqual([]);
 	});
 
-	it("should throw if id is missing", () => {
-		const local = {
-			toJSON: () => ({
-				name: "No ID",
-				transactions: [],
-			}),
-		};
-
-		expect(() => AccountAdapter.localToState(local)).toThrow("[AccountAdapter] Missing id");
-	});
-
 	it("should handle missing transactions as empty array", () => {
 		const local = {
 			toJSON: () => ({

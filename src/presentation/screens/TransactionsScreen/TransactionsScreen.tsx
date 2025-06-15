@@ -3,7 +3,7 @@ import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountSc
 import TransactionList from "@components/TransactionList/TransactionList";
 import {isCreditTransaction, isExpenseTransaction} from "@data/validation/Transaction";
 import {useAccountsContext} from "@domain/providers/AccountsProvider";
-import {useSheetModalContext} from "@domain/providers/SheetModalProvider";
+// import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 import type {AppTabsParamList, AppTabsScreens} from "@presentation/navigators/AppTabs/AppTabs";
 import {handleCatchError} from "@presentation/utilities";
 import type {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
@@ -13,7 +13,7 @@ import {DateTime} from "luxon";
 import type {RefObject} from "react";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {AlertButton, SectionList} from "react-native";
-import {Alert} from "react-native";
+import {Alert, Button} from "react-native";
 import type {Account} from "types/Account";
 import type {Transaction} from "types/Transaction";
 
@@ -120,12 +120,13 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 	const listRef = useRef<SectionList<Transaction>>(null);
 
 	// hooks
-	const {openAccountModal} = useSheetModalContext();
+	// const {openAccountModal} = useSheetModalContext();
 	const {
 		fetchItems: fetchAccounts,
 		currentAccount,
 		currentAccount: {transactions: currentAccountTransactions = []} = {},
 		deleteTransaction,
+		deleteItem: removeAccount,
 	} = useAccountsContext();
 
 	const sectionsData = useMemo(() => {
@@ -137,10 +138,11 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 	useEffect(() => {
 		const onFocus = async () => {
 			setIsListReady(false);
-			const fetchedAccounts = await fetchAccounts().catch(handleCatchError("fetchAccounts"));
-			if (fetchedAccounts?.length === 0 && !currentAccount) {
-				promptToCreateAccount();
-			}
+			// const fetchedAccounts = await fetchAccounts().catch(handleCatchError("fetchAccounts"));
+			// if (fetchedAccounts?.length === 0 && !currentAccount) {
+			// 	promptToCreateAccount();
+			// }
+			await fetchAccounts().catch(handleCatchError("fetchAccounts"));
 			setIsListReady(true);
 			scrollToTop(sectionsData, listRef);
 		};
@@ -150,14 +152,14 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sectionsData]);
 
-	const promptToCreateAccount = useCallback(() => {
-		showAsyncAlertPrompt({
-			title: "Create Account",
-			message: "You don't have an account yet. Create one now to start tracking expenses!",
-			cancelable: false,
-		}).then(openAccountModal);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// const promptToCreateAccount = useCallback(() => {
+	// 	showAsyncAlertPrompt({
+	// 		title: "Create Account",
+	// 		message: "You don't have an account yet. Create one now to start tracking expenses!",
+	// 		cancelable: false,
+	// 	}).then(openAccountModal);
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 
 	const handleDeleteTransaction = useCallback(
 		(txnId: Transaction["id"]) =>
@@ -185,6 +187,18 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 
 	return (
 		<SharedAccountScreen {...generateTestIDs("transactions-screen")}>
+			{__DEV__ && (
+				<Button
+					title="Remove Account"
+					onPress={() => {
+						removeAccount(currentAccount?.id as `acct_${string}`).catch((error) =>
+							console.error("[TransactionsScreen] Error removing account:", error),
+						);
+					}}
+					disabled={!currentAccount}
+					{...generateTestIDs("remove-account-button")}
+				/>
+			)}
 			<ScreenTitle title="Transactions" subtitle={screenTitleBalance} />
 			<TransactionList
 				ref={listRef}
