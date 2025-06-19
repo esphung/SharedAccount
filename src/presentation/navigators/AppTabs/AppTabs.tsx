@@ -55,7 +55,13 @@ const mapBtnFromList = (
 	</CircleButton>
 );
 
-// component
+const addTransaction = async (
+	_params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">,
+	_accountId: string
+) => {
+	throw new Error("[AppTabs] addTransaction is not implemented yet");
+};
+
 const AppTabs = () => {
 	// refs
 	const listRef = useRef<SectionList>(null);
@@ -70,7 +76,7 @@ const AppTabs = () => {
 		closeAccountModal,
 	} = useSheetModalContext();
 
-	const { addItem: addAccount, currentAccount, addTransaction } = useAccountsContext();
+	const { addItem: addAccount, currentAccount } = useAccountsContext();
 
 	// memoized values
 	const Tab = useMemo(() => createBottomTabNavigator<AppTabsParamList>(), []);
@@ -130,7 +136,7 @@ const AppTabs = () => {
 
 	const handleCreateAccount = useCallback(
 		(data: Partial<Account>) => {
-			addAccount({ ...data, transactions: [] })
+			addAccount(data)
 				.then(() => {
 					Alert.alert("Account created successfully");
 					closeAccountModal();

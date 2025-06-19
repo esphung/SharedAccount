@@ -6,9 +6,8 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 	constructor(initialInstance?: Partial<Account>, fakerSeed?: number) {
 		const result: Account = {
 			id: `acct_${new Date().getTime()}`,
-			startingBalance: 99999, // in cents
+			startingBalance: 0, // in cents
 			name: "Hello World",
-			transactions: [],
 			version: 0,
 			...initialInstance,
 		};
@@ -27,15 +26,6 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 
 	withName(name: string): AccountBuilder {
 		this.instance.name = name;
-		return this;
-	}
-
-	withTransactions(transactions: Account["transactions"]): AccountBuilder {
-		const updated = transactions.map((transaction) => ({
-			...transaction,
-			sharedAccountId: this.instance.id,
-		}));
-		this.instance.transactions = updated;
 		return this;
 	}
 

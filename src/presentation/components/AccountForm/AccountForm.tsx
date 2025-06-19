@@ -57,7 +57,6 @@ const AccountForm = ({ onSubmit }: AccountFormProps) => {
 		const newAccount = new AccountBuilder()
 			.withName(randomName)
 			.withStartingBalance(randomAmount)
-			.withTransactions([])
 			.build();
 		handleChange("startingBalance", newAccount.startingBalance);
 		handleChange("name", newAccount.name);

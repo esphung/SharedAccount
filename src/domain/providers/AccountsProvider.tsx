@@ -1,23 +1,25 @@
 import { mergeAccounts } from "@domain/providers/AccountsProviderHelpers";
 import useAccountSync from "@domain/providers/hooks/useAccountSync";
 import { useRepository } from "@domain/providers/RepositoryProvider";
-import type { AccountContextOptions } from "@domain/providers/types/AccountContextOptions";
 import userDefaultsStorage from "@domain/storage/userDefaultsStorage";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { handleCatchError } from "@presentation/utilities";
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Account } from "types/Account";
-import type { Transaction } from "types/Transaction";
 
 type IAccountContext = (ReturnType<UseDataSource<Account>> & AccountContextOptions) | undefined;
+
+type AccountContextOptions = {
+	currentAccount?: Account;
+	selectCurrentAccount: (account: Account) => void;
+};
 
 const AccountsContext = createContext<IAccountContext>(undefined);
 
 export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	// repositories
-	const { localAccountRepo, localTransactionRepo, remoteAccountRepo, remoteTransactionRepo } =
-		useRepository();
+	const { localAccountRepo, remoteAccountRepo } = useRepository();
 
 	// custom hook for syncing accounts
 	const { syncAccounts } = useAccountSync();
@@ -27,45 +29,9 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	const [currentAccount, setCurrentAccount] = useState<Account>();
 
 	const fetchItems = useCallback(async () => {
-		const [allLocalTransactions, allRemoteTransactions] = await Promise.all([
-			localTransactionRepo.getAll(),
-			remoteTransactionRepo.getAll(),
-		]).catch(handleCatchError("AccountsProvider"));
-
-		/* Accounts */
-		// Sync local accounts with remote accounts
-		const syncedAccounts = await syncAccounts();
-
-		/* Transactions */
-		// Sync local transactions with remote transactions
-		const unsyncedTransactions = allLocalTransactions.filter(
-			(localTransaction) =>
-				!allRemoteTransactions.some(
-					(remoteTransaction) => remoteTransaction.id === localTransaction.id
-				)
-		);
-		if (unsyncedTransactions.length) {
-			await Promise.all(
-				unsyncedTransactions.map((transaction: Transaction) => {
-					return remoteTransactionRepo
-						.add(transaction)
-						.catch(handleCatchError("AccountsProvider:remoteTransactionAdd"));
-				})
-			);
-		}
-
-		// Set the transactions for each account
-		const updatedAccts = syncedAccounts.map((account: Account) => {
-			const transactions = allLocalTransactions.filter(
-				(transaction: Transaction) => transaction.sharedAccountId === account.id
-			);
-			account.transactions = transactions;
-			return account;
-		});
-
-		return updatedAccts;
+		return syncAccounts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentAccount?.id]);
+	}, []);
 
 	// Delete a account
 	const deleteItem = useCallback(async (id: string) => {
@@ -78,12 +44,11 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	// Add a account
 	const addItem = useCallback(
 		async (params: Partial<Account>) => {
-			const { name = "", startingBalance = 0, transactions = [], version = 0 } = params;
+			const { startingBalance = 0, name = "New Account", version = 1 } = params;
 			const acctId = params.id || `acct_${new Date().getTime()}`;
 			const newAccount: Account = {
 				id: acctId,
 				startingBalance,
-				transactions,
 				name,
 				version,
 			};
@@ -100,21 +65,11 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		[]
 	);
 
-	const updateCurrentAccount = useCallback(
-		(list: Account[]) => {
-			const newCurrentAcct = list.find((acct) => acct.id === currentAccount?.id) || list[0];
-			setCurrentAccount(newCurrentAcct); // pick first account by default
-		},
-		[currentAccount?.id]
-	);
-
 	// Start listening for live updates
 	const startListening = useCallback(() => {
 		const onUpdate = (updates: Account[]) => {
 			setAccounts((prevState: Account[]) => {
-				const merged = mergeAccounts(prevState, updates);
-				updateCurrentAccount(merged);
-				return merged;
+				return mergeAccounts(prevState, updates);
 			});
 		};
 
@@ -126,118 +81,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			localAccountRepo.stopListening();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentAccount?.id]);
-
-	// Delete a transaction from the current account
-	const deleteTransaction = useCallback(
-		async (txnId: Transaction["id"], accountId: Account["id"]) => {
-			if (!accountId) {
-				throw new Error("[AccountsProvider:deleteTransaction] Account ID is required");
-			}
-			// Update the account in the repository
-			const account = await localAccountRepo.getById(accountId);
-			if (!account) {
-				throw new Error("[AccountsProvider:deleteTransaction] Account not found");
-			}
-			account.transactions = account.transactions.filter(
-				(transaction: Transaction) => transaction.id !== txnId
-			);
-
-			const txn = await localTransactionRepo.getById(txnId);
-			if (!txn) {
-				throw new Error("[AccountsProvider:deleteTransaction] Transaction not found");
-			}
-
-			// Update the account in the repository
-			await remoteAccountRepo
-				.update({
-					...account,
-					transactions: account.transactions,
-					version: account.version + 1,
-				})
-				.catch(handleCatchError("AccountsProvider.remoteUpdate"));
-			await localAccountRepo
-				.update({
-					...account,
-					transactions: account.transactions,
-					version: account.version + 1,
-				})
-				.catch(handleCatchError("AccountsProvider"));
-
-			// Delete the transaction from the repository
-			await localTransactionRepo.delete(txn.id).catch(handleCatchError("AccountsProvider"));
-
-			// Update the local state
-			setAccounts((prevState: Account[]) => {
-				const updatedState = prevState.map((acct) => {
-					if (acct.id === accountId) {
-						return {
-							...acct,
-							transactions: acct.transactions.filter(
-								(transaction: Transaction) => transaction.id !== txnId
-							),
-						};
-					}
-					return acct;
-				});
-				updateCurrentAccount(updatedState);
-				return updatedState;
-			});
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
-
-	const addTransaction = useCallback(
-		async (
-			input: Partial<Transaction> & Omit<Transaction, "id" | "sharedAccountId" | "userId">,
-			accountId: Account["id"]
-		) => {
-			const {
-				id = `txn_${new Date().getTime()}`,
-				userId,
-				amount = 0,
-				category = "",
-				date = new Date(),
-				type = "expense",
-				name = "",
-				description,
-			} = input;
-			// Create the transaction params
-			const txnParams: Transaction = {
-				id: id || `txn_${new Date().getTime()}`,
-				amount,
-				name,
-				description,
-				category,
-				date,
-				sharedAccountId: accountId,
-				userId: userId || "usr_current_id", // Replace with actual user ID logic
-				type,
-			};
-			// Add the transaction to the repository
-			await localTransactionRepo.add(txnParams).catch(handleCatchError("AccountsProvider"));
-
-			// Update the account in the repository
-			const account = await localAccountRepo.getById(accountId);
-			if (!account) {
-				throw new Error("[AccountsProvider:addTransaction] Account not found");
-			}
-			const updatedAccount = {
-				...account,
-				transactions: [...(account?.transactions || []), txnParams],
-				version: account.version + 1,
-			};
-			await remoteAccountRepo
-				.update(updatedAccount)
-				.catch(handleCatchError("AccountsProvider.remoteUpdate"));
-			return localAccountRepo
-				.update(updatedAccount)
-				.catch(handleCatchError("AccountsProvider.localUpdate"));
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
+	}, []);
 
 	const selectCurrentAccount = useCallback((account: Account) => {
 		setCurrentAccount(account);
@@ -255,8 +99,6 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			addItem,
 			startListening,
 			currentAccount,
-			addTransaction,
-			deleteTransaction,
 			selectCurrentAccount,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -296,8 +138,9 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		() => {
 			fetchItems().then((fetchedAccounts) => {
 				if (fetchedAccounts.length) {
-					updateCurrentAccount(fetchedAccounts);
+					// If accounts are fetched, set them in state
 					setAccounts(fetchedAccounts);
+					setCurrentAccount(fetchedAccounts[0]);
 				} else {
 					console.warn("[AccountsProvider] No accounts found, consider adding one.");
 				}

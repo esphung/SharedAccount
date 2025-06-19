@@ -1,4 +1,3 @@
-import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import { AppTabsScreens } from "@navigators/AppTabs/AppTabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -116,18 +115,47 @@ describe("TransactionsScreen", () => {
 });
 
 describe("calculateTotal", () => {
-	it("calculates the total balance correctly", () => {
-		const account = new AccountBuilder()
-			.withId("acct_1")
-			.withStartingBalance(1000)
-			.withTransactions([
-				new TransactionBuilder().withAmount(100).build(),
-				new TransactionBuilder().withAmount(-50).build(),
-				new TransactionBuilder().withAmount(200).build(),
-			])
-			.build();
-		const result = calculateTotal(account);
-		expect(result).toBe("$7.50");
+	it("calculates the total balance correctly with no starting balance and one expense", () => {
+		const transactions = [new TransactionBuilder().withAmount(100).withType("expense").build()];
+		const result = calculateTotal({ transactions, startingBalance: 0 });
+		expect(result).toBe("-$1.00");
+	});
+	it("calculates the total balance correctly with no transactions", () => {
+		const result = calculateTotal({ transactions: [], startingBalance: 0 });
+		expect(result).toBe("$0.00");
+	});
+
+	it("calculates the total balance correctly with one credit transaction", () => {
+		const transactions = [new TransactionBuilder().withAmount(200).withType("credit").build()];
+		const result = calculateTotal({ transactions, startingBalance: 0 });
+		expect(result).toBe("$2.00");
+	});
+
+	it("calculates the total balance correctly with mixed transactions", () => {
+		const transactions = [
+			new TransactionBuilder().withAmount(100).withType("expense").build(),
+			new TransactionBuilder().withAmount(200).withType("credit").build(),
+		];
+		const result = calculateTotal({ transactions, startingBalance: 0 });
+		expect(result).toBe("$1.00");
+	});
+
+	it("calculates the total balance correctly with a starting balance", () => {
+		const transactions = [
+			new TransactionBuilder().withAmount(100).withType("expense").build(),
+			new TransactionBuilder().withAmount(200).withType("credit").build(),
+		];
+		const result = calculateTotal({ transactions, startingBalance: 500 });
+		expect(result).toBe("$6.00");
+	});
+
+	it("calculates the total balance correctly with negative amounts", () => {
+		const transactions = [
+			new TransactionBuilder().withAmount(-100).withType("expense").build(),
+			new TransactionBuilder().withAmount(-200).withType("credit").build(),
+		];
+		const result = calculateTotal({ transactions, startingBalance: 0 });
+		expect(result).toBe("$1.00");
 	});
 });
 

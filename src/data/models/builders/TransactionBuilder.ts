@@ -35,7 +35,7 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
 	}
 
 	withAmount(amount: number): TransactionBuilder {
-		this.instance.amount = amount;
+		this.instance.amount = Math.abs(amount); // Ensure amount is always positive
 		return this;
 	}
 

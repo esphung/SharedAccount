@@ -1,24 +1,10 @@
 import AccountAdapter from "@data/adapters/AccountAdapter";
-import TransactionAdapter from "@data/adapters/TransactionAdapter";
 import AccountBuilder from "@data/models/builders/AccountBuilder";
-import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import type { Account } from "types/Account";
 
 const baseAccount: Account = new AccountBuilder()
 	.withName("Test Account")
 	.withStartingBalance(1000)
-	.withTransactions([
-		new TransactionBuilder()
-			.withId("txn_1")
-			.withAmount(100)
-			.withDate(new Date("2023-01-01"))
-			.build(),
-		new TransactionBuilder()
-			.withId("txn_2")
-			.withAmount(-50)
-			.withDate(new Date("2023-01-02"))
-			.build(),
-	])
 	.build();
 
 describe("AccountAdapter", () => {
@@ -28,16 +14,10 @@ describe("AccountAdapter", () => {
 
 	describe("localToState", () => {
 		it("should convert local Account object to state Account", () => {
-			const spy = jest.spyOn(TransactionAdapter, "localToState");
 			const result = AccountAdapter.localToState(baseAccount);
 			expect(result.startingBalance).toBe(1000);
 			expect(result.version).toBe(0);
 			expect(result.name).toBe(baseAccount.name);
-			expect(Array.isArray(result.transactions)).toBe(true);
-			expect(result.transactions[0].sharedAccountId).toBe(
-				baseAccount.transactions[0].sharedAccountId
-			);
-			expect(spy).toHaveBeenCalledTimes(2);
 		});
 
 		it("should handle local object with toJSON method", () => {
@@ -47,17 +27,6 @@ describe("AccountAdapter", () => {
 			const result = AccountAdapter.localToState(local);
 			expect(result.startingBalance).toBe(1000);
 			expect(result.version).toBe(0);
-			expect(result.transactions[0].sharedAccountId).toBe(
-				baseAccount.transactions[0].sharedAccountId
-			);
-		});
-
-		it("should handle missing transactions", () => {
-			const accountNoTx = { ...baseAccount, transactions: undefined };
-			// @ts-expect-error Allow undefined transactions for this test
-			const result = AccountAdapter.localToState(accountNoTx);
-			expect(Array.isArray(result.transactions)).toBe(true);
-			expect(result.transactions.length).toBe(0);
 		});
 	});
 

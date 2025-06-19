@@ -7,18 +7,6 @@ export const mergeAccounts = (previous: Account[], updates: Account[]): Account[
 			return {
 				...account,
 				...updatedAccount,
-				transactions: updatedAccount.transactions.map((updatedTransaction) => {
-					const existingTransaction = account.transactions.find(
-						(transaction) => transaction.id === updatedTransaction.id
-					);
-					if (existingTransaction) {
-						return {
-							...existingTransaction,
-							...updatedTransaction,
-						};
-					}
-					return updatedTransaction;
-				}),
 			};
 		}
 		return account;

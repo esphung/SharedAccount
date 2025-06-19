@@ -11,7 +11,6 @@ import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AlertButton, SectionList } from "react-native";
 import { Alert, Button } from "react-native";
-import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
 type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>;
@@ -24,29 +23,25 @@ export const isCreditTransaction = (
 	transaction: Transaction
 ): transaction is Transaction<"credit"> => transaction.type === "credit";
 
-export const calculateTotal = (account: Account) => {
-	// current starting balance
-	const total = 0;
-
-	// reduce all transactions to get the total balance
-	const transactionsTotal = [...(account?.transactions || [])].reduce((acc, transaction) => {
+export const calculateTotal = ({
+	transactions = [],
+	startingBalance = 0,
+}: {
+	transactions: Transaction[];
+	startingBalance: number;
+}) => {
+	// Calculate total starting with the starting balance (in cents)
+	const totalInCents = transactions.reduce((acc, transaction) => {
 		if (isExpenseTransaction(transaction)) {
 			return acc - transaction.amount;
-		}
-		if (isCreditTransaction(transaction)) {
+		} else if (isCreditTransaction(transaction)) {
 			return acc + transaction.amount;
 		}
 		return acc;
-	}, total);
+	}, startingBalance);
 
-	// get the current account balance
-	const currentAccountBalance = account?.startingBalance || 0;
-
-	// get the total balance in cents
-	const centsTotalBalance = currentAccountBalance + (transactionsTotal || 0);
-
-	// return the total balance in dollars as a formatted string
-	return MoneyFunctions.formatMoney(centsTotalBalance, 2);
+	// Format as currency (assuming amounts are stored in cents)
+	return MoneyFunctions.formatMoney(totalInCents, 2);
 };
 
 export const groupTransactionsByDate = (expenses: Transaction[], credits: Transaction[]) => {
@@ -126,19 +121,16 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
 	const listRef = useRef<SectionList<Transaction>>(null);
 
 	// hooks
-	// const {openAccountModal} = useSheetModalContext();
-	const {
-		currentAccount,
-		currentAccount: { transactions: currentAccountTransactions = [] } = {},
-		deleteTransaction,
-		deleteItem: removeAccount,
-	} = useAccountsContext();
+	const { currentAccount, deleteItem: removeAccount } = useAccountsContext();
+
+	// TODO: Replace with actual transactions fetching logic
+	const transactions: Transaction[] = useMemo(() => [], []);
 
 	const sectionsData = useMemo(() => {
-		const expenses = currentAccountTransactions.filter(isExpenseTransaction);
-		const credits = currentAccountTransactions.filter(isCreditTransaction);
+		const expenses = transactions.filter(isExpenseTransaction);
+		const credits = transactions.filter(isCreditTransaction);
 		return groupTransactionsByDate(expenses, credits);
-	}, [currentAccountTransactions]);
+	}, [transactions]);
 
 	useEffect(() => {
 		const onFocus = async () => {
@@ -151,38 +143,25 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sectionsData]);
 
-	// const promptToCreateAccount = useCallback(() => {
-	// 	showAsyncAlertPrompt({
-	// 		title: "Create Account",
-	// 		message: "You don't have an account yet. Create one now to start tracking expenses!",
-	// 		cancelable: false,
-	// 	}).then(openAccountModal);
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, []);
-
 	const handleDeleteTransaction = useCallback(
-		(txnId: Transaction["id"]) =>
+		(_txnId: Transaction["id"]) =>
 			showAsyncAlertPrompt({
 				title: "Delete Transaction",
 				message: "Are you sure you want to delete this transaction?",
 				cancelable: true,
 			}).then((shouldDelete) => {
 				if (shouldDelete) {
-					deleteTransaction(txnId, currentAccount?.id as `acct_${string}`).catch(
-						(error) =>
-							console.error("[TransactionsScreen] Error deleting transaction:", error)
-					);
+					throw new Error("Delete transaction not implemented yet");
 				}
 			}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[currentAccount?.id]
+		[]
 	);
 
 	const screenTitleBalance = useMemo(() => {
 		if (!currentAccount) {
 			return "No account";
 		}
-		return `Balance: ${calculateTotal(currentAccount)}`;
+		return `Balance: ${calculateTotal({ transactions: [], startingBalance: currentAccount.startingBalance })}`;
 	}, [currentAccount]);
 
 	return (
