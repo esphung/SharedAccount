@@ -1,5 +1,5 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
-import type {User} from "@data/models/types/User";
+import type { User } from "@data/models/types/User";
 
 export default class UserBuilder extends BaseBuilder<User> {
 	constructor(initialInstance?: Partial<User>, fakerSeed?: number) {

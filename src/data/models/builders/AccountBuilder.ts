@@ -1,6 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
 
-import type {Account} from "@data/models/types/Account";
+import type { Account } from "@data/models/types/Account";
 
 export default class AccountBuilder extends BaseBuilder<Account> {
 	constructor(initialInstance?: Partial<Account>, fakerSeed?: number) {

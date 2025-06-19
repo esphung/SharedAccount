@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef} from "react";
-import {Animated} from "react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Animated } from "react-native";
 
 const FadeInView = ({
 	children,
@@ -30,7 +30,7 @@ const FadeInView = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [animate]);
 
-	return <Animated.View style={{opacity: fadeAnim}}>{children}</Animated.View>;
+	return <Animated.View style={{ opacity: fadeAnim }}>{children}</Animated.View>;
 };
 
 export default FadeInView;

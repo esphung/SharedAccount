@@ -1,6 +1,6 @@
 export type ApiClient<TParams, TResponse> = {
 	get: (url: string) => Promise<{
-		data: {data: TResponse[]; message?: string; error?: string};
+		data: { data: TResponse[]; message?: string; error?: string };
 		status: number;
 		statusText: string;
 	}>;

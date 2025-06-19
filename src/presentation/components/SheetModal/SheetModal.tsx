@@ -1,7 +1,7 @@
 import React from "react";
 
-import type {ModalProps} from "react-native";
-import {Button, Modal, StyleSheet, View} from "react-native";
+import type { ModalProps } from "react-native";
+import { Button, Modal, StyleSheet, View } from "react-native";
 
 const SheetModal = (
 	props: {
@@ -11,7 +11,7 @@ const SheetModal = (
 		onDismiss?: () => void;
 		testID?: string;
 		nonDismissable?: boolean;
-	} & ModalProps,
+	} & ModalProps
 ) => {
 	const {
 		testID,
@@ -42,11 +42,14 @@ const SheetModal = (
 				onRequestClose: () => {},
 				hardwareAccelerated: true,
 			})}
-			{...rest}>
+			{...rest}
+		>
 			{/* Sheet Header */}
 			<View>
 				<View style={styles.headerContainer}>
-					{!nonDismissable && <Button title="Close" onPress={() => setModalVisible(false)} />}
+					{!nonDismissable && (
+						<Button title="Close" onPress={() => setModalVisible(false)} />
+					)}
 				</View>
 			</View>
 			{children}

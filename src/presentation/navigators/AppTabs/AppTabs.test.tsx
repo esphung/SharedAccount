@@ -1,5 +1,5 @@
-import {render, screen} from "@testing-library/react-native";
-import {NavigationContainer} from "@react-navigation/native";
+import { render, screen } from "@testing-library/react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import AppTabs from "./AppTabs";
 
@@ -14,14 +14,6 @@ jest.mock("@domain/providers/SheetModalProvider", () => ({
 		closeAccountModal: jest.fn(),
 	})),
 }));
-
-jest.mock("@presentation/screens/HomeScreen/HomeScreen", () => {
-	return {
-		__esModule: true,
-		// eslint-disable-next-line react-native/no-raw-text
-		default: () => <div>Home</div>,
-	};
-});
 
 jest.mock("@presentation/screens/TransactionsScreen/TransactionsScreen", () => {
 	return {
@@ -46,22 +38,16 @@ jest.mock("@domain/providers/AccountsProvider", () => ({
 		selectCurrentAccount: (_accountId: string) => {},
 	})),
 	AccountsContext: {
-		Provider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	},
 }));
 
 describe("AppTabs Navigator", () => {
 	const renderWithProviders = () => {
 		render(<AppTabs />, {
-			wrapper: ({children}) => <NavigationContainer>{children}</NavigationContainer>,
+			wrapper: ({ children }) => <NavigationContainer>{children}</NavigationContainer>,
 		});
 	};
-
-	it("renders the HomeScreen tab", () => {
-		renderWithProviders();
-		const homeScreen = screen.queryByText("Home");
-		expect(homeScreen).toBeDefined();
-	});
 
 	it("renders the TransactionsScreen tab", () => {
 		renderWithProviders();

@@ -1,6 +1,6 @@
 import React from "react";
 import TransactionListItem from "./TransactionListItem";
-import {render, fireEvent} from "@testing-library/react-native";
+import { render, fireEvent } from "@testing-library/react-native";
 
 describe("TransactionListItem", () => {
 	const mockTransaction = {
@@ -24,14 +24,14 @@ describe("TransactionListItem", () => {
 	const mockOnPress = jest.fn();
 
 	it("renders correctly with all props", () => {
-		const {getByTestId, getByText} = render(
+		const { getByTestId, getByText } = render(
 			<TransactionListItem
 				item={mockTransaction}
 				user={mockUser}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}
-			/>,
+			/>
 		);
 
 		expect(getByTestId("transaction-list-item")).toBeTruthy();
@@ -41,14 +41,14 @@ describe("TransactionListItem", () => {
 	});
 
 	it("calls onPress with the correct id when pressed", () => {
-		const {getByTestId} = render(
+		const { getByTestId } = render(
 			<TransactionListItem
 				item={mockTransaction}
 				user={mockUser}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}
-			/>,
+			/>
 		);
 
 		fireEvent.press(getByTestId("transaction-list-item"));
@@ -56,30 +56,30 @@ describe("TransactionListItem", () => {
 	});
 
 	it("renders default avatar when user avatar is not provided", () => {
-		const {getByTestId} = render(
+		const { getByTestId } = render(
 			<TransactionListItem
 				item={mockTransaction}
 				user={undefined}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}
-			/>,
+			/>
 		);
 
 		expect(getByTestId("avatar-image").props.source.uri).toBe("https://picsum.photos/200/300");
 	});
 
 	it("renders ArrowUpSvg for credit transactions", () => {
-		const debitTransaction = {...mockTransaction, type: "credit" as const};
+		const debitTransaction = { ...mockTransaction, type: "credit" as const };
 
-		const {getByTestId} = render(
+		const { getByTestId } = render(
 			<TransactionListItem
 				item={debitTransaction}
 				user={mockUser}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}
-			/>,
+			/>
 		);
 
 		expect(getByTestId("arrow-up-svg")).toBeTruthy();
@@ -91,14 +91,14 @@ describe("TransactionListItem", () => {
 			type: "expense" as const,
 		};
 
-		const {getByTestId} = render(
+		const { getByTestId } = render(
 			<TransactionListItem
 				item={creditTransaction}
 				user={mockUser}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}
-			/>,
+			/>
 		);
 
 		expect(getByTestId("arrow-down-svg")).toBeTruthy();

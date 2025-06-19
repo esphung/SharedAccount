@@ -1,5 +1,5 @@
 import colors from "@config/themes/colors";
-import {StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
 	buttonBar: {
@@ -17,7 +17,7 @@ export default StyleSheet.create({
 		elevation: 8,
 		padding: 20,
 		shadowColor: colors.softGray,
-		shadowOffset: {width: 0, height: 4},
+		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,
 		shadowRadius: 4,
 	},

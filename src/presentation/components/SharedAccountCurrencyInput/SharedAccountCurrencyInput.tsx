@@ -1,7 +1,12 @@
-import React, {forwardRef, useCallback, useEffect, useState} from "react";
+import React, { forwardRef, useCallback, useEffect, useState } from "react";
 
-import type {NativeSyntheticEvent, TextInput, TextInputFocusEventData, TextInputProps} from "react-native";
-import {StyleSheet} from "react-native";
+import type {
+	NativeSyntheticEvent,
+	TextInput,
+	TextInputFocusEventData,
+	TextInputProps,
+} from "react-native";
+import { StyleSheet } from "react-native";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 
 type Props = Omit<TextInputProps, "value"> & {
@@ -12,13 +17,20 @@ type Props = Omit<TextInputProps, "value"> & {
 	onFocus?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 };
 
-const calculateNewCursorPosition = (oldText: string, newText: string, oldCursor: number): number => {
+const calculateNewCursorPosition = (
+	oldText: string,
+	newText: string,
+	oldCursor: number
+): number => {
 	const diff = newText.length - oldText.length;
 	return Math.max(0, oldCursor + diff);
 };
 
 const SharedAccountCurrencyInput = forwardRef<TextInput, Props>(
-	({value = 0, onChangeValue, locale = "en-US", currency = "USD", style, onFocus, ...props}, ref) => {
+	(
+		{ value = 0, onChangeValue, locale = "en-US", currency = "USD", style, onFocus, ...props },
+		ref
+	) => {
 		const [displayValue, setDisplayValue] = useState<string>("");
 		const [selection, setSelection] = useState<{
 			start: number;
@@ -36,7 +48,7 @@ const SharedAccountCurrencyInput = forwardRef<TextInput, Props>(
 		}, [value, locale, currency]);
 
 		const setCursorToEnd = useCallback((position: number) => {
-			setSelection({start: position, end: position});
+			setSelection({ start: position, end: position });
 		}, []);
 
 		const handleChangeText = useCallback(
@@ -48,13 +60,17 @@ const SharedAccountCurrencyInput = forwardRef<TextInput, Props>(
 				onChangeValue(cents);
 
 				if (formatted !== displayValue) {
-					const newCursor = calculateNewCursorPosition(displayValue, formatted, selection.start);
+					const newCursor = calculateNewCursorPosition(
+						displayValue,
+						formatted,
+						selection.start
+					);
 					setDisplayValue(formatted);
-					setSelection({start: newCursor, end: newCursor});
+					setSelection({ start: newCursor, end: newCursor });
 				}
 			},
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-			[displayValue, locale, currency, selection.start],
+			[displayValue, locale, currency, selection.start]
 		);
 
 		const handleFocus = useCallback(
@@ -63,10 +79,13 @@ const SharedAccountCurrencyInput = forwardRef<TextInput, Props>(
 				onFocus?.(e);
 			},
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-			[displayValue.length],
+			[displayValue.length]
 		);
 
-		const memoizedStyle = React.useMemo(() => StyleSheet.flatten([styles.input, style]), [style]);
+		const memoizedStyle = React.useMemo(
+			() => StyleSheet.flatten([styles.input, style]),
+			[style]
+		);
 
 		return (
 			<SharedAccountTextInput
@@ -82,7 +101,7 @@ const SharedAccountCurrencyInput = forwardRef<TextInput, Props>(
 				{...props}
 			/>
 		);
-	},
+	}
 );
 
 const formatCurrency = (cents: number, locale: string, currency: string): string => {

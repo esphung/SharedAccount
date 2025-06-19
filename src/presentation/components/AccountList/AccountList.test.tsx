@@ -1,9 +1,9 @@
 import AccountList from "@components/AccountList/AccountList";
 import AccountBuilder from "@data/models/builders/AccountBuilder";
-import {fireEvent, render, screen, userEvent} from "@testing-library/react-native";
+import { fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import React from "react";
 
-import type {TextInputProps} from "react-native";
+import type { TextInputProps } from "react-native";
 
 const mockOnPress = jest.fn();
 
@@ -34,7 +34,7 @@ jest.mock("@domain/storage/userDefaultsStorage", () => ({
 
 jest.mock("@components/SharedAccountText/SharedAccountText", () => {
 	const MockText = jest.requireActual("react-native").Text;
-	return ({children, ...props}: TextInputProps) => <MockText {...props}>{children}</MockText>;
+	return ({ children, ...props }: TextInputProps) => <MockText {...props}>{children}</MockText>;
 });
 
 const mockOnPressRemove = jest.fn();
@@ -45,14 +45,22 @@ describe("AccountList", () => {
 	});
 
 	it("renders all accounts", () => {
-		render(<AccountList accounts={accounts} onPressRemove={mockOnPressRemove} onPress={mockOnPress} />);
+		render(
+			<AccountList
+				accounts={accounts}
+				onPressRemove={mockOnPressRemove}
+				onPress={mockOnPress}
+			/>
+		);
 		expect(screen.getByText("$1.00")).toBeTruthy();
 		expect(screen.getByText("$2.00")).toBeTruthy();
 	});
 
 	it("calls onPress with correct account when item is pressed", () => {
 		const onPress = jest.fn();
-		render(<AccountList accounts={accounts} onPress={onPress} onPressRemove={mockOnPressRemove} />);
+		render(
+			<AccountList accounts={accounts} onPress={onPress} onPressRemove={mockOnPressRemove} />
+		);
 		fireEvent.press(screen.getByText("Account 2"));
 		expect(onPress).toHaveBeenCalledWith(accounts[1]);
 	});
@@ -64,7 +72,7 @@ describe("AccountList", () => {
 				selectedAccount={accounts[1]}
 				onPressRemove={mockOnPressRemove}
 				onPress={mockOnPress}
-			/>,
+			/>
 		);
 		const icon = screen.queryByTestId("checkmark-account-item-icon-acct_1");
 		expect(icon).toBeNull();
@@ -77,7 +85,7 @@ describe("AccountList", () => {
 				selectedAccount={accounts[1]}
 				onPressRemove={mockOnPressRemove}
 				onPress={mockOnPress}
-			/>,
+			/>
 		);
 		await userEvent.press(screen.getByTestId("account-item-remove-acct_2"));
 		expect(mockOnPressRemove).toHaveBeenCalledWith(accounts[1]);
@@ -90,7 +98,7 @@ describe("AccountList", () => {
 				selectedAccount={undefined}
 				onPressRemove={mockOnPressRemove}
 				onPress={mockOnPress}
-			/>,
+			/>
 		);
 		expect(screen.queryByTestId("account-item-remove-acct_2")).toBeNull();
 	});
@@ -116,7 +124,7 @@ describe("AccountList", () => {
 					version: 0,
 				}}
 				onPress={mockOnPress}
-			/>,
+			/>
 		);
 		const elem = screen.getByTestId("account-item-icon-acct_2");
 		expect(elem).toBeDefined();

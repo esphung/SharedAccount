@@ -8,11 +8,11 @@ import SharedAccountCurrencyInput from "@components/SharedAccountCurrencyInput/S
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import useForm from "@presentation/hooks/useForm";
-import React, {useCallback, useMemo, useState} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
-import type {TextInput} from "react-native";
-import {Button, StyleSheet, View} from "react-native";
-import type {Transaction} from "types/Transaction";
+import type { TextInput } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
+import type { Transaction } from "types/Transaction";
 
 type FormState = Pick<Transaction, "amount" | "category" | "date" | "type" | "name">;
 type FieldKey = keyof FormState;
@@ -54,8 +54,8 @@ const filterInputList = (item: FormInputField, data: FormState) => {
 	return false;
 };
 
-const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
-	const {values, errors, handleChange, validate, resetForm, focusNextField, registerInput} =
+const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
+	const { values, errors, handleChange, validate, resetForm, focusNextField, registerInput } =
 		useForm<FormState>({
 			amount: 0,
 			category: "",
@@ -65,7 +65,7 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 		});
 
 	const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-	const {amount, category, type, date, name} = values;
+	const { amount, category, type, date, name } = values;
 
 	const handleSave = useCallback(() => {
 		const isValid = validate((input) => {
@@ -84,7 +84,7 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 		});
 
 		if (isValid) {
-			onSubmit({amount, category, date, type, name});
+			onSubmit({ amount, category, date, type, name });
 			resetForm();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,18 +117,18 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[category, name],
+		[category, name]
 	);
 
 	const shouldAnimDict = useMemo(
 		() => ({
-			amount: {initial: 1, animate: false},
-			category: {initial: 0, animate: !!values.amount},
-			name: {initial: 0, animate: !!values.amount},
-			date: {initial: 0, animate: !!values.amount},
-			type: {initial: 1, animate: false},
+			amount: { initial: 1, animate: false },
+			category: { initial: 0, animate: !!values.amount },
+			name: { initial: 0, animate: !!values.amount },
+			date: { initial: 0, animate: !!values.amount },
+			type: { initial: 1, animate: false },
 		}),
-		[values.amount],
+		[values.amount]
 	);
 
 	const inputListData: FormInputField[] = useMemo(
@@ -183,23 +183,23 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 			errors.type,
 			name,
 			type,
-		],
+		]
 	);
 
 	const categoryPillsList = useMemo(
 		() => [
-			{id: 1, label: "Food"},
-			{id: 2, label: "Transport"},
-			{id: 3, label: "Entertainment"},
-			{id: 4, label: "Utilities"},
-			{id: 5, label: "Rent"},
+			{ id: 1, label: "Food" },
+			{ id: 2, label: "Transport" },
+			{ id: 3, label: "Entertainment" },
+			{ id: 4, label: "Utilities" },
+			{ id: 5, label: "Rent" },
 		],
-		[],
+		[]
 	);
 
 	const renderInput = useCallback(
-		({item}: {item: FormInputField}) => {
-			const {error, label, key, value, placeholder, ref} = item;
+		({ item }: { item: FormInputField }) => {
+			const { error, label, key, value, placeholder, ref } = item;
 
 			let view: React.ReactNode = null;
 
@@ -209,7 +209,9 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 						<SegmentedControl
 							options={["Expense", "Income"]}
 							selectedIndex={value === "expense" ? 0 : 1}
-							onSelect={(index) => handleChange("type", index === 0 ? "expense" : "credit")}
+							onSelect={(index) =>
+								handleChange("type", index === 0 ? "expense" : "credit")
+							}
 						/>
 					);
 					break;
@@ -266,18 +268,23 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 				<FadeInView
 					key={`${key}-${item.label}`}
 					initialValue={shouldAnimDict[key].initial as 0 | 1}
-					animate={shouldAnimDict[key].animate}>
+					animate={shouldAnimDict[key].animate}
+				>
 					<View key={key}>
-						{label && <SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>}
+						{label && (
+							<SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>
+						)}
 						{view}
 						<View style={styles.spacer} />
-						{error && <SharedAccountText type="expenseFormError">{error}</SharedAccountText>}
+						{error && (
+							<SharedAccountText type="expenseFormError">{error}</SharedAccountText>
+						)}
 					</View>
 				</FadeInView>
 			);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[shouldAnimDict, isDatePickerVisible],
+		[shouldAnimDict, isDatePickerVisible]
 	);
 
 	return (
@@ -286,7 +293,7 @@ const ExpenseForm = ({onSubmit}: ExpenseFormProps) => {
 				<View style={styles.container}>
 					{inputListData
 						.filter((item) => filterInputList(item, values))
-						.map((item) => renderInput({item}))}
+						.map((item) => renderInput({ item }))}
 				</View>
 			</View>
 			<View style={styles.southPanel}>

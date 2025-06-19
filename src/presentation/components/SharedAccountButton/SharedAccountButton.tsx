@@ -1,8 +1,8 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
 import React from "react";
-import type {TouchableOpacityProps} from "react-native";
-import {StyleSheet, TouchableOpacity} from "react-native";
+import type { TouchableOpacityProps } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 type ButtonStyleKeys = keyof typeof styles;
 
@@ -16,7 +16,7 @@ type SharedAccountButtonProps = {
 } & TouchableOpacityProps;
 
 export default function SharedAccountButton(props: SharedAccountButtonProps) {
-	const {title, type = "primary", style, disabled, ...rest} = props;
+	const { title, type = "primary", style, disabled, ...rest } = props;
 
 	const memoizedStyle = React.useMemo(() => {
 		const typeStyle = {
@@ -32,14 +32,16 @@ export default function SharedAccountButton(props: SharedAccountButtonProps) {
 			disabled={disabled}
 			style={memoizedStyle}
 			activeOpacity={0.7}
-			{...rest}>
+			{...rest}
+		>
 			<SharedAccountText
 				type={type === "secondary" ? "secondaryButtonTitle" : "buttonTitle"}
 				style={StyleSheet.flatten([
 					disabled && styles.disabledText,
 					// @ts-expect-error - type is a string
 					styles[`${type}Text` as ButtonTextStyleKey],
-				])}>
+				])}
+			>
 				{title}
 			</SharedAccountText>
 		</TouchableOpacity>

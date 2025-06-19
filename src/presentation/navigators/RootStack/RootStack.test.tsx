@@ -1,20 +1,22 @@
-import {AccountsProvider} from "@domain/providers/AccountsProvider";
+import { AccountsProvider } from "@domain/providers/AccountsProvider";
 import RepositoryProvider from "@domain/providers/RepositoryProvider";
-import {SheetModalProvider} from "@domain/providers/SheetModalProvider";
+import { SheetModalProvider } from "@domain/providers/SheetModalProvider";
 import RootStack from "@presentation/navigators/RootStack/RootStack";
-import {NavigationContainer} from "@react-navigation/native";
-import {render} from "@testing-library/react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { render } from "@testing-library/react-native";
 import React from "react";
 
-jest.mock("@realm/react", () => ({RealmProvider: jest.fn()}));
+jest.mock("@realm/react", () => ({ RealmProvider: jest.fn() }));
 
 jest.mock("@config/realmSchema", () => {
-	return {realmSchemaVersion: 2};
+	return { realmSchemaVersion: 2 };
 });
 
-jest.mock("@domain/providers/RepositoryProvider", () => ({children}: {children: React.ReactNode}) => (
-	<>{children}</>
-));
+jest.mock(
+	"@domain/providers/RepositoryProvider",
+	() =>
+		({ children }: { children: React.ReactNode }) => <>{children}</>
+);
 
 const mockStateAccount = {
 	id: "acc_TEST_ACCOUNT_ID",
@@ -23,7 +25,7 @@ const mockStateAccount = {
 	transactions: [],
 };
 
-const MockNavigationContainer = ({children}: {children: React.ReactNode}) => (
+const MockNavigationContainer = ({ children }: { children: React.ReactNode }) => (
 	<NavigationContainer>{children}</NavigationContainer>
 );
 
@@ -35,12 +37,12 @@ export const renderWithProviders = (children: React.ReactNode) =>
 					<AccountsProvider>{children}</AccountsProvider>
 				</RepositoryProvider>
 			</MockNavigationContainer>
-		</SheetModalProvider>,
+		</SheetModalProvider>
 	);
 
 jest.mock("@domain/providers/AccountsProvider", () => ({
 	__esModule: true,
-	AccountsProvider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+	AccountsProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	useAccountsContext: () => ({
 		state: [mockStateAccount],
 		currentAccount: undefined,

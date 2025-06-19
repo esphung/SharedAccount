@@ -1,23 +1,28 @@
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import {isCreditTransaction, isExpenseTransaction} from "@data/validation/Transaction";
-import {useAccountsContext} from "@domain/providers/AccountsProvider";
-// import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
-import type {AppTabsParamList, AppTabsScreens} from "@presentation/navigators/AppTabs/AppTabs";
-import {handleCatchError} from "@presentation/utilities";
-import type {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
+import { useAccountsContext } from "@domain/providers/AccountsProvider";
+import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
-import {generateTestIDs} from "@utils/testUtils/generateTestIDs";
-import {DateTime} from "luxon";
-import type {RefObject} from "react";
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import type {AlertButton, SectionList} from "react-native";
-import {Alert, Button} from "react-native";
-import type {Account} from "types/Account";
-import type {Transaction} from "types/Transaction";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
+import { DateTime } from "luxon";
+import type { RefObject } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { AlertButton, SectionList } from "react-native";
+import { Alert, Button } from "react-native";
+import type { Account } from "types/Account";
+import type { Transaction } from "types/Transaction";
 
 type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>;
+
+export const isExpenseTransaction = (
+	transaction: Transaction
+): transaction is Transaction<"expense"> => transaction.type === "expense";
+
+export const isCreditTransaction = (
+	transaction: Transaction
+): transaction is Transaction<"credit"> => transaction.type === "credit";
 
 export const calculateTotal = (account: Account) => {
 	// current starting balance
@@ -58,13 +63,14 @@ export const groupTransactionsByDate = (expenses: Transaction[], credits: Transa
 		.map(([title, data]) => ({
 			title,
 			data: data.sort(
-				(a, b) => DateTime.fromJSDate(b.date).toMillis() - DateTime.fromJSDate(a.date).toMillis(),
+				(a, b) =>
+					DateTime.fromJSDate(b.date).toMillis() - DateTime.fromJSDate(a.date).toMillis()
 			),
 		}))
 		.sort(
 			(a, b) =>
 				DateTime.fromJSDate(new Date(b.title)).toMillis() -
-				DateTime.fromJSDate(new Date(a.title)).toMillis(),
+				DateTime.fromJSDate(new Date(a.title)).toMillis()
 		);
 };
 
@@ -98,8 +104,8 @@ export const showAsyncAlertPrompt = ({
 };
 
 const scrollToTop = (
-	data: {title: string; data: Transaction[]}[],
-	ref: RefObject<SectionList<Transaction> | null>,
+	data: { title: string; data: Transaction[] }[],
+	ref: RefObject<SectionList<Transaction> | null>
 ) => {
 	if (!!data && data?.length && ref?.current) {
 		ref.current.scrollToLocation({
@@ -112,7 +118,7 @@ const scrollToTop = (
 	}
 };
 
-export default function TransactionsScreen({navigation}: ScreenProps) {
+export default function TransactionsScreen({ navigation }: ScreenProps) {
 	// state
 	const [isListReady, setIsListReady] = useState(false);
 
@@ -122,9 +128,8 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 	// hooks
 	// const {openAccountModal} = useSheetModalContext();
 	const {
-		fetchItems: fetchAccounts,
 		currentAccount,
-		currentAccount: {transactions: currentAccountTransactions = []} = {},
+		currentAccount: { transactions: currentAccountTransactions = [] } = {},
 		deleteTransaction,
 		deleteItem: removeAccount,
 	} = useAccountsContext();
@@ -137,12 +142,6 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 
 	useEffect(() => {
 		const onFocus = async () => {
-			setIsListReady(false);
-			// const fetchedAccounts = await fetchAccounts().catch(handleCatchError("fetchAccounts"));
-			// if (fetchedAccounts?.length === 0 && !currentAccount) {
-			// 	promptToCreateAccount();
-			// }
-			await fetchAccounts().catch(handleCatchError("fetchAccounts"));
 			setIsListReady(true);
 			scrollToTop(sectionsData, listRef);
 		};
@@ -169,13 +168,14 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 				cancelable: true,
 			}).then((shouldDelete) => {
 				if (shouldDelete) {
-					deleteTransaction(txnId, currentAccount?.id as `acct_${string}`).catch((error) =>
-						console.error("[TransactionsScreen] Error deleting transaction:", error),
+					deleteTransaction(txnId, currentAccount?.id as `acct_${string}`).catch(
+						(error) =>
+							console.error("[TransactionsScreen] Error deleting transaction:", error)
 					);
 				}
 			}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[currentAccount?.id],
+		[currentAccount?.id]
 	);
 
 	const screenTitleBalance = useMemo(() => {
@@ -192,7 +192,7 @@ export default function TransactionsScreen({navigation}: ScreenProps) {
 					title="Remove Account"
 					onPress={() => {
 						removeAccount(currentAccount?.id as `acct_${string}`).catch((error) =>
-							console.error("[TransactionsScreen] Error removing account:", error),
+							console.error("[TransactionsScreen] Error removing account:", error)
 						);
 					}}
 					disabled={!currentAccount}

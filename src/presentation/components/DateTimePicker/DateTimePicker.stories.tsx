@@ -1,7 +1,7 @@
 import DateTimePicker from "@components/DateTimePicker/DateTimePicker";
-import type {Meta, StoryObj} from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const RenderItem = () => {
 	const [selectedDate, setSelectedDate] = React.useState(new Date());

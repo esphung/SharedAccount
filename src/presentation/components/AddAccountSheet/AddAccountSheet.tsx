@@ -1,9 +1,9 @@
 import AccountForm from "@components/AccountForm/AccountForm";
 import SheetModal from "@components/SheetModal/SheetModal";
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import type {Account} from "types/Account";
+import type { Account } from "types/Account";
 
 export default function AddAccountSheet({
 	modalVisible,
@@ -22,7 +22,8 @@ export default function AddAccountSheet({
 			modalVisible={modalVisible}
 			setModalVisible={setModalVisible}
 			presentationStyle="formSheet"
-			nonDismissable={nonDismissable}>
+			nonDismissable={nonDismissable}
+		>
 			<View style={styles.content}>
 				<AccountForm
 					onSubmit={(data) => {

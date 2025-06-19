@@ -1,6 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
 
-import type {Transaction} from "@data/models/types/Transaction";
+import type { Transaction } from "@data/models/types/Transaction";
 
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
 	constructor(initialInstance?: Partial<Transaction>, fakerSeed?: number) {

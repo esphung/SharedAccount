@@ -1,9 +1,9 @@
-import {DEFAULT_EXTRA_KEYBOARD_SPACE, DEFAULT_KEYBOARD_BOTTOM_OFFSET} from "@constants/layout";
+import { DEFAULT_EXTRA_KEYBOARD_SPACE, DEFAULT_KEYBOARD_BOTTOM_OFFSET } from "@constants/layout";
 import styles from "@presentation/components/AwareScrollView/AwareScrollView.style";
 import React from "react";
 
-import type {KeyboardAvoidingViewProps} from "react-native-keyboard-controller";
-import {KeyboardAwareScrollView} from "react-native-keyboard-controller";
+import type { KeyboardAvoidingViewProps } from "react-native-keyboard-controller";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 export default function AwareScrollView({
 	children,

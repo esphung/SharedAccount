@@ -1,16 +1,18 @@
 import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
-import {AppTabsScreens} from "@navigators/AppTabs/AppTabs";
-import {NavigationContainer} from "@react-navigation/native";
+import { AppTabsScreens } from "@navigators/AppTabs/AppTabs";
+import { NavigationContainer } from "@react-navigation/native";
 import TransactionsScreen, {
 	calculateTotal,
 	groupTransactionsByDate,
+	isCreditTransaction,
+	isExpenseTransaction,
 	showAsyncAlertPrompt,
 } from "@screens/TransactionsScreen/TransactionsScreen";
-import {render, screen} from "@testing-library/react-native";
-import {DateTime} from "luxon";
+import { render, screen } from "@testing-library/react-native";
+import { DateTime } from "luxon";
 import React from "react";
-import {Alert} from "react-native";
+import { Alert } from "react-native";
 
 jest.mock("@domain/providers/SheetModalProvider", () => ({
 	__esModule: true,
@@ -24,9 +26,11 @@ jest.mock("@domain/providers/SheetModalProvider", () => ({
 	})),
 }));
 
-jest.mock("@domain/providers/RepositoryProvider", () => ({children}: {children: React.ReactNode}) => (
-	<>{children}</>
-));
+jest.mock(
+	"@domain/providers/RepositoryProvider",
+	() =>
+		({ children }: { children: React.ReactNode }) => <>{children}</>
+);
 
 jest.mock("@domain/providers/AccountsProvider", () => ({
 	__esModule: true,
@@ -42,7 +46,7 @@ jest.mock("@domain/providers/AccountsProvider", () => ({
 		selectCurrentAccount: (_accountId: string) => {},
 	})),
 	AccountsContext: {
-		Provider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	},
 }));
 
@@ -82,19 +86,20 @@ const mockNavigation = {
 	preload: jest.fn(),
 	setStateForNextRouteNamesChange: jest.fn(),
 	jumpTo: jest.fn(),
+	replaceParams: jest.fn(),
 };
 
 jest.mock("@components/AddExpenseSheet/AddExpenseSheet", () => "AddExpenseSheet");
 jest.mock(
 	"@components/SharedAccountScreen/SharedAccountScreen",
 	() =>
-		({children}: {children: React.ReactNode}) => <>{children}</>,
+		({ children }: { children: React.ReactNode }) => <>{children}</>
 );
 
 describe("TransactionsScreen", () => {
 	const renderWithProviders = () => {
 		render(<TransactionsScreen route={mockRoute} navigation={mockNavigation} />, {
-			wrapper: ({children}) => <NavigationContainer>{children}</NavigationContainer>,
+			wrapper: ({ children }) => <NavigationContainer>{children}</NavigationContainer>,
 		});
 	};
 
@@ -189,5 +194,41 @@ describe("showAsyncAlertPrompt", () => {
 			message: "Test message",
 		});
 		expect(result).toBe(false);
+	});
+});
+
+describe("Transaction Validation", () => {
+	it("should identify an expense transaction", () => {
+		const transaction = new TransactionBuilder()
+			.withType("expense")
+			.withAmount(100)
+			.withDescription("Groceries")
+			.build();
+
+		expect(isExpenseTransaction(transaction)).toBe(true);
+		expect(isCreditTransaction(transaction)).toBe(false);
+	});
+
+	it("should identify a credit transaction", () => {
+		const transaction = new TransactionBuilder()
+			.withType("credit")
+			.withAmount(200)
+			.withDescription("Salary")
+			.build();
+
+		expect(isCreditTransaction(transaction)).toBe(true);
+		expect(isExpenseTransaction(transaction)).toBe(false);
+	});
+
+	it("should return false for an unknown transaction type", () => {
+		const transaction = new TransactionBuilder()
+			// @ts-expect-error testing unknown type
+			.withType("unknown")
+			.withAmount(300)
+			.withDescription("Unknown")
+			.build();
+
+		expect(isExpenseTransaction(transaction)).toBe(false);
+		expect(isCreditTransaction(transaction)).toBe(false);
 	});
 });

@@ -1,6 +1,6 @@
 import React from "react";
-import {DevSettings} from "react-native";
-import {Dirs} from "react-native-file-access";
+import { DevSettings } from "react-native";
+import { Dirs } from "react-native-file-access";
 
 const useDevMenu = () => {
 	// Debugging

@@ -1,4 +1,4 @@
-import {handleCatchError} from "./utilities";
+import { handleCatchError } from "./utilities";
 
 describe("handleCatchError", () => {
 	const originalWarn = console.warn;

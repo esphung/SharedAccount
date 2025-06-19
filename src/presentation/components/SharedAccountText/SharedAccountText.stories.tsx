@@ -1,8 +1,8 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import type {Meta, StoryObj} from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import colors from "@config/themes/colors";
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const meta = {
 	title: "SharedAccountText",

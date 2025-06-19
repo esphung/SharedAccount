@@ -1,10 +1,10 @@
 import ExpenseForm from "@components/ExpenseForm/ExpenseForm";
 import SheetModal from "@components/SheetModal/SheetModal";
 
-import type {RefObject} from "react";
+import type { RefObject } from "react";
 import React from "react";
-import {StyleSheet, View, type SectionList} from "react-native";
-import type {Transaction} from "types/Transaction";
+import { StyleSheet, View, type SectionList } from "react-native";
+import type { Transaction } from "types/Transaction";
 
 export default function AddExpenseSheet({
 	modalVisible,
@@ -21,7 +21,8 @@ export default function AddExpenseSheet({
 			testID="add-expense-sheet"
 			modalVisible={modalVisible}
 			setModalVisible={setModalVisible}
-			presentationStyle="formSheet">
+			presentationStyle="formSheet"
+		>
 			<View style={styles.content}>
 				<ExpenseForm
 					onSubmit={(data) => {

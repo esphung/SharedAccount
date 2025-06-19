@@ -1,22 +1,21 @@
-import type {Transaction} from "@data/models/types/Transaction";
-import type {DataModelAdapter} from "@data/types/DataModelAdapter";
+import type { Transaction } from "@data/models/types/Transaction";
 
-type LocalTransaction = {toJSON(): object};
+type LocalTransaction = { toJSON(): Transaction } | Transaction;
 
-const TransactionAdapter: DataModelAdapter<Transaction, LocalTransaction, Transaction> = {
-	localToState(local) {
-		const json = local.toJSON ? local.toJSON() : local;
-		const parsed = JSON.parse(JSON.stringify(json));
+const TransactionAdapter = {
+	localToState(local: LocalTransaction): Transaction {
+		const json = "toJSON" in local ? local.toJSON() : local;
 		const transaction: Transaction = {
-			...parsed,
-			date: new Date(parsed.date),
+			...json,
+			date: new Date(json.date),
+			amount: Number(json.amount),
 		};
 		return transaction;
 	},
-	stateToRemote(_state) {
-		return _state; // TODO: Implement this when remote API is ready
+	stateToRemote(state: Transaction) {
+		return state; // TODO: Implement this when remote API is ready
 	},
-	remoteToState(remote) {
+	remoteToState(remote: Transaction): Transaction {
 		return remote;
 	},
 };

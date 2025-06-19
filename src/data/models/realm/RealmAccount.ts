@@ -1,6 +1,6 @@
-import type {Account} from "@data/models/types/Account";
-import type {Transaction} from "@data/models/types/Transaction";
-import {Realm} from "@realm/react";
+import type { Account } from "@data/models/types/Account";
+import type { Transaction } from "@data/models/types/Transaction";
+import { Realm } from "@realm/react";
 
 export default class RealmAccount extends Realm.Object implements Account {
 	id: `acct_${string}` = `acct_${Math.random().toString(36).substr(2, 9)}`;

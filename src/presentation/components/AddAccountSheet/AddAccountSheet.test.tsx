@@ -1,14 +1,14 @@
-import {render, screen, userEvent} from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import React from "react";
-import type {Account} from "types/Account";
+import type { Account } from "types/Account";
 import AddAccountSheet from "@components/AddAccountSheet/AddAccountSheet";
 
 jest.mock("@components/AccountForm/AccountForm", () => {
 	const MockButton = jest.requireActual("react-native").Button;
-	return ({onSubmit}: {onSubmit: (data: Partial<Account>) => void}) => (
+	return ({ onSubmit }: { onSubmit: (data: Partial<Account>) => void }) => (
 		<MockButton
 			testID="mock-account-form"
-			onPress={() => onSubmit({name: "Test Account"})}
+			onPress={() => onSubmit({ name: "Test Account" })}
 			title="Mock AccountForm"
 		/>
 	);
@@ -38,26 +38,48 @@ describe("AddAccountSheet", () => {
 	});
 
 	it("renders SheetModal when modalVisible is true", () => {
-		render(<AddAccountSheet modalVisible={true} setModalVisible={setModalVisible} onSubmit={onSubmit} />);
+		render(
+			<AddAccountSheet
+				modalVisible={true}
+				setModalVisible={setModalVisible}
+				onSubmit={onSubmit}
+			/>
+		);
 		expect(screen.getByTestId("add-account-sheet")).toBeVisible();
 	});
 
 	it("does not crash when modalVisible is false", () => {
 		render(
-			<AddAccountSheet modalVisible={false} setModalVisible={setModalVisible} onSubmit={onSubmit} />,
+			<AddAccountSheet
+				modalVisible={false}
+				setModalVisible={setModalVisible}
+				onSubmit={onSubmit}
+			/>
 		);
 		expect(screen.getByTestId("add-account-sheet")).toBeVisible();
 	});
 
 	it("renders AccountForm inside SheetModal", () => {
-		render(<AddAccountSheet modalVisible={true} setModalVisible={setModalVisible} onSubmit={onSubmit} />);
+		render(
+			<AddAccountSheet
+				modalVisible={true}
+				setModalVisible={setModalVisible}
+				onSubmit={onSubmit}
+			/>
+		);
 		expect(screen.getByTestId("mock-account-form")).toBeVisible();
 	});
 
 	it("calls onSubmit and closes modal when AccountForm submits", async () => {
-		render(<AddAccountSheet modalVisible={true} setModalVisible={setModalVisible} onSubmit={onSubmit} />);
+		render(
+			<AddAccountSheet
+				modalVisible={true}
+				setModalVisible={setModalVisible}
+				onSubmit={onSubmit}
+			/>
+		);
 		await userEvent.press(screen.getByTestId("mock-account-form"));
-		expect(onSubmit).toHaveBeenCalledWith({name: "Test Account"});
+		expect(onSubmit).toHaveBeenCalledWith({ name: "Test Account" });
 		expect(setModalVisible).toHaveBeenCalledWith(false);
 	});
 });

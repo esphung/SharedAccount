@@ -1,68 +1,87 @@
-import type {Transaction} from "types/Transaction";
-import AccountAdapter from "./AccountAdapter";
-import TransactionAdapter from "./TransactionAdapter";
+import AccountAdapter from "@data/adapters/AccountAdapter";
+import TransactionAdapter from "@data/adapters/TransactionAdapter";
+import AccountBuilder from "@data/models/builders/AccountBuilder";
+import TransactionBuilder from "@data/models/builders/TransactionBuilder";
+import type { Account } from "types/Account";
 
-jest.mock("./TransactionAdapter", () => ({
-	__esModule: true,
-	default: {
-		localToState: jest.fn((txn: Transaction) => ({...txn, adapted: true})),
-	},
-}));
+const baseAccount: Account = new AccountBuilder()
+	.withName("Test Account")
+	.withStartingBalance(1000)
+	.withTransactions([
+		new TransactionBuilder()
+			.withId("txn_1")
+			.withAmount(100)
+			.withDate(new Date("2023-01-01"))
+			.build(),
+		new TransactionBuilder()
+			.withId("txn_2")
+			.withAmount(-50)
+			.withDate(new Date("2023-01-02"))
+			.build(),
+	])
+	.build();
 
-describe("AccountAdapter.localToState", () => {
+describe("AccountAdapter", () => {
 	afterEach(() => {
 		jest.clearAllMocks();
 	});
 
-	it("should convert a local account with all fields to state", () => {
-		const local = {
-			toJSON: () => ({
-				id: "acct_1",
-				name: "Checking",
-				startingBalance: 100,
-				transactions: [{id: "txn_1"}, {id: "txn_2"}],
-			}),
-		};
+	describe("localToState", () => {
+		it("should convert local Account object to state Account", () => {
+			const spy = jest.spyOn(TransactionAdapter, "localToState");
+			const result = AccountAdapter.localToState(baseAccount);
+			expect(result.startingBalance).toBe(1000);
+			expect(result.version).toBe(0);
+			expect(result.name).toBe(baseAccount.name);
+			expect(Array.isArray(result.transactions)).toBe(true);
+			expect(result.transactions[0].sharedAccountId).toBe(
+				baseAccount.transactions[0].sharedAccountId
+			);
+			expect(spy).toHaveBeenCalledTimes(2);
+		});
 
-		const result = AccountAdapter.localToState(local);
+		it("should handle local object with toJSON method", () => {
+			const local = {
+				toJSON: () => baseAccount,
+			};
+			const result = AccountAdapter.localToState(local);
+			expect(result.startingBalance).toBe(1000);
+			expect(result.version).toBe(0);
+			expect(result.transactions[0].sharedAccountId).toBe(
+				baseAccount.transactions[0].sharedAccountId
+			);
+		});
 
-		expect(result.id).toBe("acct_1");
-		expect(result.name).toBe("Checking");
-		expect(result.startingBalance).toBe(100);
-		expect(TransactionAdapter.localToState).toHaveBeenCalledTimes(2);
-		expect(result.transactions).toEqual([
-			{id: "txn_1", adapted: true},
-			{id: "txn_2", adapted: true},
-		]);
+		it("should handle missing transactions", () => {
+			const accountNoTx = { ...baseAccount, transactions: undefined };
+			// @ts-expect-error Allow undefined transactions for this test
+			const result = AccountAdapter.localToState(accountNoTx);
+			expect(Array.isArray(result.transactions)).toBe(true);
+			expect(result.transactions.length).toBe(0);
+		});
 	});
 
-	it("should handle missing optional fields and default them", () => {
-		const local = {
-			toJSON: () => ({
-				id: "acct_2",
-				transactions: [],
-			}),
-		};
-
-		const result = AccountAdapter.localToState(local);
-
-		expect(result.id).toBe("acct_2");
-		expect(result.name).toBe("");
-		expect(result.startingBalance).toBe(0);
-		expect(result.transactions).toEqual([]);
+	describe("stateToRemote", () => {
+		it("should convert state Account to remote format", () => {
+			const result = AccountAdapter.stateToRemote({
+				...baseAccount,
+				startingBalance: 500,
+				version: 3,
+			});
+			expect(result.startingBalance).toBe(500);
+			expect(result.version).toBe(3);
+			expect(result.name).toBe(baseAccount.name);
+		});
 	});
 
-	it("should handle missing transactions as empty array", () => {
-		const local = {
-			toJSON: () => ({
-				id: "acct_4",
-				name: "No Txns",
-			}),
-		};
-
-		const result = AccountAdapter.localToState(local);
-
-		expect(result.id).toBe("acct_4");
-		expect(result.transactions).toEqual([]);
+	describe("remoteToState", () => {
+		it("should convert remote Account to state Account", () => {
+			const remote = { ...baseAccount, startingBalance: "1500", version: "4" };
+			// @ts-expect-error Allow string types for this test
+			const result = AccountAdapter.remoteToState(remote);
+			expect(result.startingBalance).toBe(1500);
+			expect(result.version).toBe(4);
+			expect(result.name).toBe(baseAccount.name);
+		});
 	});
 });

@@ -1,7 +1,7 @@
 import colors from "@config/themes/colors";
 import SharedAccountText from "@presentation/components/SharedAccountText/SharedAccountText";
 import React from "react";
-import {FlatList, StyleSheet, TouchableOpacity, View} from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Option = {
 	id: number;
@@ -15,7 +15,12 @@ type SingleSelectPillsProps = {
 	disabled?: boolean;
 };
 
-const SingleSelectPills = ({disabled = false, options = [], selected, onChange}: SingleSelectPillsProps) => {
+const SingleSelectPills = ({
+	disabled = false,
+	options = [],
+	selected,
+	onChange,
+}: SingleSelectPillsProps) => {
 	return (
 		<View style={styles.scrollView}>
 			<View style={styles.content}>
@@ -24,8 +29,8 @@ const SingleSelectPills = ({disabled = false, options = [], selected, onChange}:
 					nestedScrollEnabled
 					data={options}
 					horizontal
-					keyExtractor={({id}) => id.toString()}
-					renderItem={({item: {id, label}}) => (
+					keyExtractor={({ id }) => id.toString()}
+					renderItem={({ item: { id, label } }) => (
 						<TouchableOpacity
 							disabled={disabled}
 							key={id}
@@ -33,15 +38,18 @@ const SingleSelectPills = ({disabled = false, options = [], selected, onChange}:
 							style={[
 								styles.item,
 								{
-									backgroundColor: selected === label ? colors.primary : colors.light,
+									backgroundColor:
+										selected === label ? colors.primary : colors.light,
 									borderWidth: StyleSheet.hairlineWidth,
 									borderColor: selected === label ? colors.primary : colors.light,
 								},
-							]}>
+							]}
+						>
 							<SharedAccountText
 								style={{
 									color: selected === label ? colors.light : colors.dark,
-								}}>
+								}}
+							>
 								{label}
 							</SharedAccountText>
 						</TouchableOpacity>

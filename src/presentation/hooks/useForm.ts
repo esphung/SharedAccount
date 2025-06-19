@@ -1,6 +1,6 @@
-import {useCallback, useRef, useState} from "react";
+import { useCallback, useRef, useState } from "react";
 
-import type {TextInput} from "react-native";
+import type { TextInput } from "react-native";
 
 type FormFields<T> = {
 	[K in keyof T]: T[K];
@@ -14,15 +14,15 @@ function useForm<T extends object>(initialValues: T) {
 	const [values, setValues] = useState<FormFields<T>>(initialValues);
 	const [errors, setErrors] = useState<FormErrors<T>>({});
 
-	const inputRefs = useRef<{[K in keyof T]?: TextInput | null}>({});
+	const inputRefs = useRef<{ [K in keyof T]?: TextInput | null }>({});
 
 	const handleChange = useCallback(<K extends keyof T>(key: K, value: T[K]) => {
-		setValues((prev) => ({...prev, [key]: value}));
-		setErrors((prev) => ({...prev, [key]: undefined}));
+		setValues((prev) => ({ ...prev, [key]: value }));
+		setErrors((prev) => ({ ...prev, [key]: undefined }));
 	}, []);
 
 	const setFieldError = useCallback(<K extends keyof T>(key: K, error: string) => {
-		setErrors((prev) => ({...prev, [key]: error}));
+		setErrors((prev) => ({ ...prev, [key]: error }));
 	}, []);
 
 	const validate = useCallback(
@@ -31,7 +31,7 @@ function useForm<T extends object>(initialValues: T) {
 			setErrors(validationErrors);
 			return Object.keys(validationErrors).length === 0;
 		},
-		[values],
+		[values]
 	);
 
 	const resetForm = useCallback(() => {
@@ -53,7 +53,7 @@ function useForm<T extends object>(initialValues: T) {
 				}
 			}
 		},
-		[values],
+		[values]
 	);
 
 	return {

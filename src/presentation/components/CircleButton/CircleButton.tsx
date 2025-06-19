@@ -1,8 +1,8 @@
 import colors from "@config/themes/colors";
-import {generateTestIDs} from "@utils/testUtils/generateTestIDs";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React from "react";
-import type {GestureResponderEvent, TouchableOpacityProps, ViewStyle} from "react-native";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import type { GestureResponderEvent, TouchableOpacityProps, ViewStyle } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type CircleButtonProps = {
 	onPress: (event: GestureResponderEvent) => void;
@@ -12,7 +12,13 @@ type CircleButtonProps = {
 
 const CIRCLE_BUTTON_SIZE = 64;
 
-const CircleButton = ({onPress, children, containerStyle, disabled, ...rest}: CircleButtonProps) => {
+const CircleButton = ({
+	onPress,
+	children,
+	containerStyle,
+	disabled,
+	...rest
+}: CircleButtonProps) => {
 	return (
 		<TouchableOpacity
 			disabled={!!disabled}
@@ -20,7 +26,8 @@ const CircleButton = ({onPress, children, containerStyle, disabled, ...rest}: Ci
 			onPress={onPress}
 			style={StyleSheet.flatten([styles.container, containerStyle])}
 			activeOpacity={0.8}
-			{...rest}>
+			{...rest}
+		>
 			<View style={[styles.circle, disabled && styles.disabled]}>{children}</View>
 		</TouchableOpacity>
 	);
@@ -35,7 +42,7 @@ const styles = StyleSheet.create({
 		height: CIRCLE_BUTTON_SIZE,
 		justifyContent: "center",
 		shadowColor: colors.black,
-		shadowOffset: {width: 0, height: 4},
+		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.3,
 		shadowRadius: 4,
 		width: CIRCLE_BUTTON_SIZE,
