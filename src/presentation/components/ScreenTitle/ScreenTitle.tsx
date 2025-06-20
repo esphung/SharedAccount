@@ -28,7 +28,7 @@ const ScreenTitle: React.FC<ScreenTitleProps> = ({ title, subtitle }) => {
 
 	return (
 		<>
-			{__DEV__ && <Button title="Sign Out" onPress={handleSignOut} />}
+			<Button title="Sign Out" onPress={handleSignOut} />
 			<View {...generateTestIDs("screen-title-container")} style={styles.row}>
 				<View style={styles.container}>
 					<SharedAccountText
