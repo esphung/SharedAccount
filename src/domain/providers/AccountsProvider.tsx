@@ -1,9 +1,8 @@
-import { mergeAccounts } from "@domain/providers/AccountsProviderHelpers";
-import useAccountSync from "@domain/providers/hooks/useAccountSync";
 import { useRepository } from "@domain/providers/RepositoryProvider";
 import userDefaultsStorage from "@domain/storage/userDefaultsStorage";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { handleCatchError } from "@presentation/utilities";
+import { mergeRecords } from "@utils/listFunctions";
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Account } from "types/Account";
@@ -17,19 +16,47 @@ type AccountContextOptions = {
 
 const AccountsContext = createContext<IAccountContext>(undefined);
 
+export const mergeAccounts = (local: Account[] = [], remote: Account[] = []) => {
+	return local.map((localAccount) => {
+		const remoteAccount = remote.find((acct) => acct.id === localAccount.id);
+		if (remoteAccount) {
+			return { ...localAccount, ...remoteAccount };
+		}
+		return localAccount;
+	});
+};
+
 export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	// repositories
 	const { localAccountRepo, remoteAccountRepo } = useRepository();
-
-	// custom hook for syncing accounts
-	const { syncAccounts } = useAccountSync();
 
 	// state
 	const [accounts, setAccounts] = useState<Account[]>([]);
 	const [currentAccount, setCurrentAccount] = useState<Account>();
 
 	const fetchItems = useCallback(async () => {
-		return syncAccounts();
+		const local = await localAccountRepo.getAll();
+		const remote = await remoteAccountRepo.getAll();
+		const mergedAccounts = await mergeRecords<Account>({
+			local: {
+				list: local,
+				update: localAccountRepo.update,
+				add: localAccountRepo.add,
+			},
+			remote: {
+				list: remote,
+				update: remoteAccountRepo.update,
+				add: remoteAccountRepo.add,
+			},
+		});
+		if (__DEV__) {
+			console.info("[AccountsProvider] Fetched accounts:", mergedAccounts?.length, {
+				remote: remote.length,
+				local: local.length,
+				merged: mergedAccounts.length,
+			});
+		}
+		return mergedAccounts;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

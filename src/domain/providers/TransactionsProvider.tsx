@@ -2,10 +2,21 @@ import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Transaction } from "types/Transaction";
 import { useRepository } from "./RepositoryProvider";
+import { mergeRecords } from "@utils/listFunctions";
 
 type TransactionsContextProps = ReturnType<UseDataSource<Transaction>>;
 
 const TransactionsContext = createContext<TransactionsContextProps | undefined>(undefined);
+
+export const mergeTransactions = (local: Transaction[] = [], remote: Transaction[] = []) => {
+	return local.map((localTransaction) => {
+		const remoteTransaction = remote.find((txn) => txn.id === localTransaction.id);
+		if (remoteTransaction) {
+			return { ...localTransaction, ...remoteTransaction };
+		}
+		return localTransaction;
+	});
+};
 
 export const useTransactionSync = () => {
 	const { localTransactionRepo, remoteTransactionRepo } = useRepository();
@@ -59,10 +70,10 @@ export const useTransactionSync = () => {
 
 		const syncedTransactions = await Promise.all(syncTransactionsPromises);
 		if (__DEV__) {
-			// eslint-disable-next-line no-console
-			console.debug("[useTransactionSync] Synced transactions:", syncedTransactions?.length, {
+			console.info("[useTransactionSync] Synced transactions:", syncedTransactions?.length, {
 				remote: allRemoteTransactions.length,
 				local: allLocalTransactions.length,
+				merged: syncedTransactions.length,
 			});
 		}
 		return syncedTransactions;
@@ -72,29 +83,40 @@ export const useTransactionSync = () => {
 	return { syncTransactions };
 };
 
-export const mergeTransactions = (local: Transaction[] = [], remote: Transaction[] = []) => {
-	return local.map((localTransaction) => {
-		const remoteTransaction = remote.find((txn) => txn.id === localTransaction.id);
-		if (remoteTransaction) {
-			return { ...localTransaction, ...remoteTransaction };
-		}
-		return localTransaction;
-	});
-};
-
 export const TransactionsProvider = ({ children }: { children: React.ReactNode }) => {
 	// repositories
 	const { localTransactionRepo, remoteTransactionRepo } = useRepository();
-
-	// custom hook for syncing transactions
-	const { syncTransactions } = useTransactionSync();
 
 	// state
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
 
 	const fetchItems = useCallback(async () => {
-		// TODO: Implement early return if network is offline
-		return syncTransactions();
+		const local = await localTransactionRepo.getAll();
+		const remote = await remoteTransactionRepo.getAll();
+		const mergedTransactions = await mergeRecords<Transaction>({
+			local: {
+				list: local,
+				update: localTransactionRepo.update,
+				add: localTransactionRepo.add,
+			},
+			remote: {
+				list: remote,
+				update: remoteTransactionRepo.update,
+				add: remoteTransactionRepo.add,
+			},
+		});
+		if (__DEV__) {
+			console.info(
+				"[TransactionsProvider] Fetched transactions:",
+				mergedTransactions.length,
+				{
+					remote: remote.length,
+					local: local.length,
+					merged: mergedTransactions.length,
+				}
+			);
+		}
+		return mergedTransactions;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -157,6 +179,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 	// Start listening for live updates
 	const startListening = useCallback(() => {
 		const onUpdate = (updates: Transaction[]) => {
+			// Merge updates with existing transactions
 			setTransactions((prevState: Transaction[]) => {
 				return mergeTransactions(prevState, updates);
 			});
@@ -178,13 +201,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 	useEffect(() => {
 		fetchItems()
 			// .then(setTransactions)
-			.then((fetchedTransactions) => {
-				if (fetchedTransactions?.length) {
-					setTransactions(fetchedTransactions);
-				} else {
-					console.warn("[TransactionsProvider] No transactions found");
-				}
-			})
+			.then(setTransactions)
 			.catch((error) => {
 				console.error("[TransactionsProvider] Error fetching transactions:", error);
 			});

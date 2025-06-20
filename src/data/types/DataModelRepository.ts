@@ -1,4 +1,4 @@
-type BaseDataModelRepository<T> = {
+export type BaseDataModelRepository<T> = {
 	getAll(): Promise<T[]>;
 	getById(id: string): Promise<T | null>;
 	add(data: T): Promise<void>;

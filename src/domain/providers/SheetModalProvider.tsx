@@ -37,10 +37,10 @@ export const SheetModalProvider = ({ children }: { children: ReactNode }) => {
 
 	const memoizedValue = useMemo(
 		() => ({
+			accountModalVisible,
 			transactionModalVisible,
 			openTransactionModal,
 			closeTransactionModal,
-			accountModalVisible,
 			openAccountModal,
 			closeAccountModal,
 		}),

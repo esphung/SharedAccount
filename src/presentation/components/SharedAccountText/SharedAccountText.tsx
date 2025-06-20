@@ -1,6 +1,5 @@
 import colors from "@config/themes/colors";
 import React from "react";
-
 import type { TextProps } from "react-native";
 // eslint-disable-next-line no-restricted-imports
 import { StyleSheet, Text } from "react-native";
@@ -38,6 +37,13 @@ const styles = StyleSheet.create({
 	expenseFormLabel: {
 		fontSize: 16,
 		fontWeight: "bold",
+	},
+	// eslint-disable-next-line react-native/no-unused-styles
+	link: {
+		// blue color for links
+		color: colors.primary,
+		fontSize: 16,
+		fontWeight: "600",
 	},
 	// eslint-disable-next-line react-native/no-unused-styles
 	listHeader: {
