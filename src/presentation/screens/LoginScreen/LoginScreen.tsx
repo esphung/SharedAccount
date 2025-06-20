@@ -4,8 +4,10 @@ import colors from "@config/themes/colors";
 import { selectAuth0Token, setAuth0Token, useStore } from "@stores/zustand/useStore";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React, { useCallback, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useAuth0 } from "react-native-auth0";
+import PKG_JSON from "./../../../../package.json";
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 
 const LoginScreen = () => {
 	const { authorize, user, getCredentials, clearCredentials, clearSession } = useAuth0();
@@ -63,11 +65,36 @@ const LoginScreen = () => {
 
 	return (
 		<SharedAccountScreen {...generateTestIDs("login-screen")} style={styles.fill}>
-			<SharedAccountButton
-				style={styles.btn}
-				onPress={token ? onLogoutCallback : onLoginCallback}
-				title={token ? "Log out" : "Log in"}
-			/>
+			<View style={styles.northPanel}>
+				<SharedAccountText
+					{...generateTestIDs("package-version-label", "text")}
+					type="listSectionHeader"
+				>
+					Version: {PKG_JSON.version}
+				</SharedAccountText>
+			</View>
+			<View style={styles.centerPanel}>
+				<SharedAccountText
+					{...generateTestIDs("login-screen-title", "text")}
+					type="screenHeader"
+				>
+					{token ? "Welcome back!" : "Please log in"}
+				</SharedAccountText>
+				<SharedAccountText
+					{...generateTestIDs("login-screen-subtitle", "text")}
+					type="listSectionHeader"
+				>
+					{token ? `Logged in as ${user?.name}` : "You need to log in to continue."}
+				</SharedAccountText>
+			</View>
+			<View style={styles.southPanel}>
+				<SharedAccountButton
+					{...generateTestIDs("login-button")}
+					style={styles.btn}
+					onPress={token ? onLogoutCallback : onLoginCallback}
+					title={token ? "Log out" : "Log in"}
+				/>
+			</View>
 		</SharedAccountScreen>
 	);
 };
@@ -77,12 +104,28 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		width: "80%",
 	},
+	centerPanel: {
+		alignItems: "center",
+		backgroundColor: colors.white,
+		flex: 1,
+		gap: 10,
+		justifyContent: "center",
+	},
 	fill: {
 		alignItems: "center",
 		backgroundColor: colors.white,
 		flex: 1,
-		justifyContent: "flex-end",
-		paddingBottom: 200, // Adjust padding as needed
+	},
+	northPanel: {
+		alignItems: "center",
+		backgroundColor: colors.white,
+	},
+	southPanel: {
+		alignItems: "center",
+		backgroundColor: colors.white,
+		paddingBottom: 20,
+		paddingTop: 20,
+		width: "100%",
 	},
 });
 
