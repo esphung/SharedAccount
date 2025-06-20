@@ -1,17 +1,17 @@
-import {Money} from "ts-money";
+import { Money } from "ts-money";
 
 type FormatMoneyFunc = (
 	amount: number,
 	precision?: number,
 	currency?: "USD",
-	style?: "currency" | "decimal",
+	style?: "currency" | "decimal"
 ) => string;
 
 const formatMoney: FormatMoneyFunc = (
 	amount,
 	precision = 0,
 	currency = "USD",
-	style: "currency" | "decimal" = "currency",
+	style: "currency" | "decimal" = "currency"
 ) => {
 	const amountDollars = new Money(amount, currency).getAmount() / 100;
 

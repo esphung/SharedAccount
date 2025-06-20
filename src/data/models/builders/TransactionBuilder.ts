@@ -1,6 +1,6 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
 
-import type {Transaction} from "@data/models/types/Transaction";
+import type { Transaction } from "@data/models/types/Transaction";
 
 export default class TransactionBuilder extends BaseBuilder<Transaction> {
 	constructor(initialInstance?: Partial<Transaction>, fakerSeed?: number) {
@@ -14,6 +14,7 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
 			date: new Date("2023-10-01T00:00:00Z"),
 			description: "Weekly groceries",
 			type: "expense" as const,
+			version: 1,
 			...initialInstance,
 		};
 		super(result, fakerSeed);
@@ -35,7 +36,7 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
 	}
 
 	withAmount(amount: number): TransactionBuilder {
-		this.instance.amount = amount;
+		this.instance.amount = Math.abs(amount); // Ensure amount is always positive
 		return this;
 	}
 
@@ -66,6 +67,11 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
 
 	withTransaction(transaction: Transaction): TransactionBuilder {
 		this.instance = transaction;
+		return this;
+	}
+
+	withVersion(version: number): TransactionBuilder {
+		this.instance.version = version;
 		return this;
 	}
 

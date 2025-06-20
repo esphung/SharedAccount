@@ -1,7 +1,10 @@
-import {StorybookConfig} from "@storybook/react-native";
+import { StorybookConfig } from "@storybook/react-native";
 
 const main: StorybookConfig = {
-	stories: ["./stories/**/*.stories.?(ts|tsx|js|jsx)", "./../src/**/**/*.stories.?(ts|tsx|js|jsx)"],
+	stories: [
+		"./stories/**/*.stories.?(ts|tsx|js|jsx)",
+		"./../src/**/**/*.stories.?(ts|tsx|js|jsx)",
+	],
 	addons: ["@storybook/addon-ondevice-controls"],
 };
 

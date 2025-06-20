@@ -1,17 +1,15 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
 import colors from "@config/themes/colors";
-import type {Transaction} from "@data/models/types/Transaction";
-import type {User} from "@data/models/types/User";
-import {generateTestIDs} from "@utils/testUtils/generateTestIDs";
-import {getUserById} from "@utils/UserFunctions";
-import React, {forwardRef, useCallback} from "react";
-import {SectionList, StyleSheet} from "react-native";
+import type { Transaction } from "@data/models/types/Transaction";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
+import React, { forwardRef, useCallback } from "react";
+import { SectionList, StyleSheet } from "react-native";
 
 const ITEM_HEIGHT = 100; // List item height
 
 type TransactionListProps = {
-	users?: User[];
+	users: { avatar: string; id: `usr_${string}` }[];
 	onPress: (id: Transaction["id"]) => void;
 	data: {
 		title: string;
@@ -21,13 +19,19 @@ type TransactionListProps = {
 	isListReady: boolean;
 };
 
+const getUserById = (userId: string, users: { avatar: string; id: `usr_${string}` }[] = []) =>
+	users.find((user) => user.id === userId);
+
 // Main Component
 const TransactionList = forwardRef<SectionList, TransactionListProps>((props, ref) => {
-	const {onContentSizeChange, data = [], users = [], onPress, isListReady} = props;
+	const { onContentSizeChange, data = [], users = [], onPress, isListReady } = props;
 
 	const renderItemCallback = useCallback(
-		({item}: {item: Transaction}) => {
-			const user = getUserById(item.userId, users);
+		({ item }: { item: Transaction }) => {
+			const user = getUserById(item.userId, users) || {
+				avatar: "https://picsum.photos/200/300",
+				id: "usr_default",
+			};
 			return (
 				<TransactionListItem
 					testID={`transaction-list-item-${item.id}`}
@@ -40,7 +44,7 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 			);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[users, isListReady],
+		[users, isListReady]
 	);
 
 	return (
@@ -50,7 +54,7 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 			sections={data}
 			keyExtractor={(item) => item.id}
 			renderItem={renderItemCallback}
-			renderSectionHeader={({section: {title}}) => (
+			renderSectionHeader={({ section: { title } }) => (
 				<SharedAccountText type="listSectionHeader" style={styles.header}>
 					{title}
 				</SharedAccountText>

@@ -1,5 +1,5 @@
-import type {ReactNode} from "react";
-import React, {createContext, useCallback, useContext, useMemo, useState} from "react";
+import type { ReactNode } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 // Define the shape of the context
 type SheetModalContextType = {
@@ -15,7 +15,7 @@ type SheetModalContextType = {
 const SheetModalContext = createContext<SheetModalContextType | undefined>(undefined);
 
 // Provider component
-export const SheetModalProvider = ({children}: {children: ReactNode}) => {
+export const SheetModalProvider = ({ children }: { children: ReactNode }) => {
 	const [transactionModalVisible, setTransactionModalVisible] = useState(false);
 	const [accountModalVisible, setAccountModalVisible] = useState(false);
 
@@ -37,18 +37,20 @@ export const SheetModalProvider = ({children}: {children: ReactNode}) => {
 
 	const memoizedValue = useMemo(
 		() => ({
+			accountModalVisible,
 			transactionModalVisible,
 			openTransactionModal,
 			closeTransactionModal,
-			accountModalVisible,
 			openAccountModal,
 			closeAccountModal,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[transactionModalVisible, accountModalVisible],
+		[transactionModalVisible, accountModalVisible]
 	);
 
-	return <SheetModalContext.Provider value={memoizedValue}>{children}</SheetModalContext.Provider>;
+	return (
+		<SheetModalContext.Provider value={memoizedValue}>{children}</SheetModalContext.Provider>
+	);
 };
 
 // Custom hook for consuming the context

@@ -1,9 +1,10 @@
 import AccountForm from "@components/AccountForm/AccountForm";
 import SheetModal from "@components/SheetModal/SheetModal";
-import React from "react";
-import {StyleSheet, View} from "react-native";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
+import React, { useCallback } from "react";
+import { StyleSheet, View } from "react-native";
 
-import type {Account} from "types/Account";
+import type { Account } from "types/Account";
 
 export default function AddAccountSheet({
 	modalVisible,
@@ -16,20 +17,25 @@ export default function AddAccountSheet({
 	onSubmit: (data: Partial<Account>) => void;
 	nonDismissable?: boolean;
 }) {
+	const onSubmitCallback = useCallback(
+		(data: Partial<Account>) => {
+			onSubmit(data);
+			setModalVisible(false);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
 	return (
 		<SheetModal
-			testID="add-account-sheet"
+			{...generateTestIDs("add-account-sheet")}
 			modalVisible={modalVisible}
 			setModalVisible={setModalVisible}
 			presentationStyle="formSheet"
-			nonDismissable={nonDismissable}>
+			nonDismissable={nonDismissable}
+		>
 			<View style={styles.content}>
-				<AccountForm
-					onSubmit={(data) => {
-						onSubmit(data);
-						setModalVisible(false);
-					}}
-				/>
+				<AccountForm onSubmit={onSubmitCallback} />
 			</View>
 		</SheetModal>
 	);

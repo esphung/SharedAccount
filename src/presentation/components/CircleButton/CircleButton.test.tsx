@@ -1,8 +1,8 @@
-import {render, screen, userEvent} from "@testing-library/react-native";
+import { render, screen, userEvent } from "@testing-library/react-native";
 import React from "react";
 import CircleButton from "./CircleButton";
 // eslint-disable-next-line no-restricted-imports
-import {Text} from "react-native";
+import { Text } from "react-native";
 
 describe("CircleButton", () => {
 	const mockOnPress = jest.fn();
@@ -10,7 +10,7 @@ describe("CircleButton", () => {
 		render(
 			<CircleButton onPress={mockOnPress}>
 				<Text>Test Child</Text>
-			</CircleButton>,
+			</CircleButton>
 		);
 		expect(screen.getByText("Test Child")).toBeVisible();
 	});
@@ -19,7 +19,7 @@ describe("CircleButton", () => {
 		render(
 			<CircleButton onPress={mockOnPress}>
 				<Text>Press me</Text>
-			</CircleButton>,
+			</CircleButton>
 		);
 		await userEvent.press(screen.getByRole("button"));
 		expect(mockOnPress).toHaveBeenCalledTimes(1);

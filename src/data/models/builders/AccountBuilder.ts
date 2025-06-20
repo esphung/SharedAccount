@@ -1,14 +1,13 @@
 import BaseBuilder from "@data/models/builders/BaseBuilder";
 
-import type {Account} from "@data/models/types/Account";
+import type { Account } from "@data/models/types/Account";
 
 export default class AccountBuilder extends BaseBuilder<Account> {
 	constructor(initialInstance?: Partial<Account>, fakerSeed?: number) {
 		const result: Account = {
 			id: `acct_${new Date().getTime()}`,
-			startingBalance: 99999, // in cents
+			startingBalance: 0, // in cents
 			name: "Hello World",
-			transactions: [],
 			version: 0,
 			...initialInstance,
 		};
@@ -30,12 +29,8 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 		return this;
 	}
 
-	withTransactions(transactions: Account["transactions"]): AccountBuilder {
-		const updated = transactions.map((transaction) => ({
-			...transaction,
-			sharedAccountId: this.instance.id,
-		}));
-		this.instance.transactions = updated;
+	withVersion(version: number): AccountBuilder {
+		this.instance.version = version;
 		return this;
 	}
 

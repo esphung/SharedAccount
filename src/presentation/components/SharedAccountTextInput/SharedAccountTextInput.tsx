@@ -1,10 +1,10 @@
 import colors from "@config/themes/colors";
 import React from "react";
-import type {TextInputProps} from "react-native";
-import {StyleSheet, TextInput} from "react-native";
+import type { TextInputProps } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 const SharedAccountTextInput = React.forwardRef<TextInput, TextInputProps>((props, ref) => {
-	const {value, style, onChangeText, placeholder = "Type here...", ...otherProps} = props;
+	const { value, style, onChangeText, placeholder = "Type here...", ...otherProps } = props;
 	return (
 		<TextInput
 			ref={ref}

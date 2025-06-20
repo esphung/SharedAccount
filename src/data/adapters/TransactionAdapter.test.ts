@@ -1,52 +1,62 @@
+import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import TransactionAdapter from "./TransactionAdapter";
 
-describe("TransactionAdapter.localToState", () => {
-	it("should convert a local transaction with all fields to state", () => {
-		const local = {
-			toJSON: () => ({
-				id: "txn_1",
-				amount: 50,
-				date: "2024-06-01T12:00:00.000Z",
-				description: "Test transaction",
-			}),
-		};
+describe("TransactionAdapter", () => {
+	const baseTransaction = new TransactionBuilder()
+		.withId("txn_123")
+		.withAmount(100050)
+		.withType("expense")
+		.withDescription("Test Transaction")
+		.withCategory("Test Category")
+		.withSharedAccountId("acct_123")
+		.withVersion(1)
+		.build();
 
-		const result = TransactionAdapter.localToState(local);
+	describe("localToState", () => {
+		it("should convert a plain Transaction object with string date and amount to correct types", () => {
+			const result = TransactionAdapter.localToState(baseTransaction);
+			expect(result).toEqual({
+				...baseTransaction,
+				date: new Date(baseTransaction.date),
+				amount: Number(baseTransaction.amount),
+			});
+			expect(result.date).toBeInstanceOf(Date);
+			expect(typeof result.amount).toBe("number");
+		});
 
-		expect(result.id).toBe("txn_1");
-		expect(result.amount).toBe(50);
-		expect(result.description).toBe("Test transaction");
-		expect(result.date).toBeInstanceOf(Date);
-		expect(result.date.toISOString()).toBe("2024-06-01T12:00:00.000Z");
+		it("should convert an object with toJSON method", () => {
+			const local = {
+				toJSON: () => baseTransaction,
+			};
+			const result = TransactionAdapter.localToState(local);
+			expect(result).toEqual({
+				...baseTransaction,
+				date: new Date(baseTransaction.date),
+				amount: Number(baseTransaction.amount),
+			});
+			expect(result.date).toBeInstanceOf(Date);
+			expect(typeof result.amount).toStrictEqual("number");
+		});
 	});
 
-	it("should handle local object without toJSON", () => {
-		const local = {
-			id: "txn_2",
-			amount: 100,
-			date: "2024-06-02T10:00:00.000Z",
-			description: "No toJSON",
-		};
-
-		const result = TransactionAdapter.localToState(local as unknown as {toJSON: () => object});
-
-		expect(result.id).toBe("txn_2");
-		expect(result.amount).toBe(100);
-		expect(result.description).toBe("No toJSON");
-		expect(result.date).toBeInstanceOf(Date);
-		expect(result.date.toISOString()).toBe("2024-06-02T10:00:00.000Z");
+	describe("stateToRemote", () => {
+		it("should return the state as is", () => {
+			const state = {
+				...baseTransaction,
+				date: new Date(baseTransaction.date),
+				amount: 100.5,
+				version: 1,
+			};
+			const result = TransactionAdapter.stateToRemote(state);
+			expect(result).toStrictEqual(state);
+		});
 	});
 
-	it("should deeply clone the input object", () => {
-		const input = {
-			id: "txn_4",
-			amount: 75,
-			date: "2024-06-03T08:00:00.000Z",
-			meta: {tag: "test"},
-		};
-		const local = {toJSON: () => input};
-		const result = TransactionAdapter.localToState(local);
-
-		expect(result).not.toBe(input);
+	describe("remoteToState", () => {
+		it("should return the remote transaction as is", () => {
+			const remote = { ...baseTransaction };
+			const result = TransactionAdapter.remoteToState(remote);
+			expect(result).toStrictEqual(remote);
+		});
 	});
 });

@@ -1,11 +1,11 @@
 import ClockSvgIcon from "@assets/svg/clock-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import React from "react";
-import type {ViewStyle} from "react-native";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
-import type {DateTimePickerProps} from "react-native-modal-datetime-picker";
+import type { ViewStyle } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import type { DateTimePickerProps } from "react-native-modal-datetime-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const getHumanDateTimeStr = (date: Date): string => {
@@ -34,7 +34,7 @@ const DateTimePicker = React.forwardRef<
 			isDatePickerVisible: isDatePickerVisibleProp,
 			onDatePickerVisibilityChange: onDatePickerVisibilityChangeProp,
 		},
-		ref,
+		ref
 	) => {
 		const onConfirmCallback = React.useCallback((date: Date) => {
 			// setDatePickerVisible(false);
@@ -53,7 +53,9 @@ const DateTimePicker = React.forwardRef<
 				>
 					<ClockSvgIcon width={20} height={20} />
 					<SharedAccountText>
-						{selectedDate ? `${getHumanDateTimeStr(selectedDate)}`.trim() : "Select Date"}
+						{selectedDate
+							? `${getHumanDateTimeStr(selectedDate)}`.trim()
+							: "Select Date"}
 					</SharedAccountText>
 				</TouchableOpacity>
 
@@ -67,7 +69,7 @@ const DateTimePicker = React.forwardRef<
 				/>
 			</View>
 		);
-	},
+	}
 );
 
 const styles = StyleSheet.create({

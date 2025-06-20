@@ -29,6 +29,7 @@
 		"luxon": "^3.5.0",
 		"react": "19.0.0",
 		"react-native": "0.78.0",
+		"react-native-auth0": "^4.6.0",
 		"react-native-file-access": "3.1.1",
 		"react-native-keyboard-controller": "1.16.8",
 		"react-native-linear-gradient": "^2.8.3",
@@ -36,7 +37,8 @@
 		"react-native-screens": "^4.9.2",
 		"react-native-svg": "^15.11.2",
 		"realm": "12.14.1",
-		"ts-money": "0.4.8"
+		"ts-money": "0.4.8",
+		"zustand": "^5.0.5"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.25.2",
@@ -58,6 +60,7 @@
 		"@react-native/typescript-config": "0.78.0",
 		"@storybook/addon-ondevice-controls": "^8.6.1",
 		"@storybook/react-native": "^8.6.1",
+		"@testing-library/react-hooks": "^8.0.1",
 		"@testing-library/react-native": "^13.2.0",
 		"@types/jest": "^29.5.13",
 		"@types/luxon": "^3",

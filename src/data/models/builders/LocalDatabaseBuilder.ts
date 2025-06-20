@@ -2,10 +2,10 @@ import BaseBuilder from "@data/models/builders/BaseBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import UserBuilder from "@data/models/builders/UserBuilder";
 
-import type {Transaction} from "@data/models/types/Transaction";
-import type {User} from "@data/models/types/User";
-import {faker} from "@faker-js/faker";
-import {DateTime} from "luxon";
+import type { Transaction } from "@data/models/types/Transaction";
+import type { User } from "@data/models/types/User";
+import { faker } from "@faker-js/faker";
+import { DateTime } from "luxon";
 
 type LocalDatabase = {
 	users: User[];
@@ -25,13 +25,13 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
 		];
 
 		const transactions: Transaction[] = [
-			...Array.from({length: 30}, (_, i) => {
+			...Array.from({ length: 30 }, (_, i) => {
 				const fakeUserId: `usr_${string}` = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
 				return new TransactionBuilder()
 					.withId(`txn_${faker.database.mongodbObjectId()}`)
 					.withType(faker.helpers.arrayElement(["credit", "expense"]))
 					.withSharedAccountId(fakeSharedAccountId)
-					.withDate(DateTime.now().minus({days: i}).toJSDate())
+					.withDate(DateTime.now().minus({ days: i }).toJSDate())
 					.withUserId(fakeUserId)
 					.build();
 			}),

@@ -1,6 +1,6 @@
 import colors from "@config/themes/colors";
 import React from "react";
-import {Animated, Easing, StyleSheet, View} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 
 type SkeletonLoaderProps = {
 	width?: number | string;
@@ -26,7 +26,7 @@ export default function SkeletonLoader({
 				duration: 1000,
 				easing: Easing.linear,
 				useNativeDriver: true,
-			}),
+			})
 		).start();
 	}, [shimmerAnim]);
 
@@ -38,12 +38,13 @@ export default function SkeletonLoader({
 	return (
 		<View
 			testID={testID || "skeleton-loader"}
-			style={[styles.container, {width, height, borderRadius}, style]}>
+			style={[styles.container, { width, height, borderRadius }, style]}
+		>
 			<Animated.View
 				style={[
 					StyleSheet.absoluteFillObject,
 					{
-						transform: [{translateX}],
+						transform: [{ translateX }],
 					},
 					styles.skeleton,
 				]}

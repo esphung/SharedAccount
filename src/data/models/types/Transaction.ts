@@ -8,4 +8,5 @@ export type Transaction<T = "credit" | "expense"> = {
 	description?: string; // Optional
 	date: Date; // when the transaction occurred
 	type: T; // To differentiate between credits and expenses
+	version: number; // For optimistic updates and conflict resolution
 };

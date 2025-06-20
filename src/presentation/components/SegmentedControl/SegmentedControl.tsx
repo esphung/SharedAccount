@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from "react";
-import {FlatList, StyleSheet, TouchableOpacity, type ViewStyle} from "react-native";
+import React, { useCallback, useState } from "react";
+import { FlatList, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import colors from "@config/themes/colors";
 import SharedAccountText from "@presentation/components/SharedAccountText/SharedAccountText";
 
@@ -27,23 +27,25 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({
 	const keyExtractor = useCallback((item: string, index: number) => `${item}-${index}`, []);
 
 	const renderItem = useCallback(
-		({item, index}: {item: string; index: number}) => {
+		({ item, index }: { item: string; index: number }) => {
 			const isSelected = selected === index;
 			return (
 				<TouchableOpacity
 					onPress={() => handlePress(index)}
-					style={[styles.option, isSelected && styles.selected]}>
+					style={[styles.option, isSelected && styles.selected]}
+				>
 					<SharedAccountText
 						type="secondaryButtonTitle"
 						numberOfLines={1}
-						style={[styles.text, {color: isSelected ? colors.primary : colors.dark}]}>
+						style={[styles.text, { color: isSelected ? colors.primary : colors.dark }]}
+					>
 						{item}
 					</SharedAccountText>
 				</TouchableOpacity>
 			);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[selected],
+		[selected]
 	);
 
 	return (

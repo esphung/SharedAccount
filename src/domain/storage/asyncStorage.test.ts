@@ -10,7 +10,7 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
 
 describe("asyncStorage", () => {
 	const key = "test-key";
-	const value = {foo: "bar"};
+	const value = { foo: "bar" };
 	const stringifiedValue = JSON.stringify(value);
 
 	beforeEach(() => {

@@ -1,13 +1,13 @@
-import type {Meta, StoryObj} from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from "react-native";
 import SharedAccountButton from "./SharedAccountButton";
 
 const meta = {
 	title: "SharedAccountButton",
 	component: SharedAccountButton,
 	argTypes: {
-		onPress: {action: "pressed the button"},
+		onPress: { action: "pressed the button" },
 	},
 	args: {
 		title: "Hello world",

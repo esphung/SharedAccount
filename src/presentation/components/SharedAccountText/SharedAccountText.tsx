@@ -1,9 +1,8 @@
 import colors from "@config/themes/colors";
 import React from "react";
-
-import type {TextProps} from "react-native";
+import type { TextProps } from "react-native";
 // eslint-disable-next-line no-restricted-imports
-import {StyleSheet, Text} from "react-native";
+import { StyleSheet, Text } from "react-native";
 
 type SharedAccountTextProps = {
 	type?: keyof typeof styles;
@@ -11,7 +10,7 @@ type SharedAccountTextProps = {
 } & TextProps;
 
 export default function SharedAccountText(props: SharedAccountTextProps) {
-	const {children, style, ...rest} = props;
+	const { children, style, ...rest } = props;
 	return (
 		<Text style={StyleSheet.flatten([styles[props.type || "primary"], style])} {...rest}>
 			{children}
@@ -38,6 +37,13 @@ const styles = StyleSheet.create({
 	expenseFormLabel: {
 		fontSize: 16,
 		fontWeight: "bold",
+	},
+	// eslint-disable-next-line react-native/no-unused-styles
+	link: {
+		// blue color for links
+		color: colors.primary,
+		fontSize: 16,
+		fontWeight: "600",
 	},
 	// eslint-disable-next-line react-native/no-unused-styles
 	listHeader: {

@@ -3,17 +3,17 @@ import ArrowUpSvg from "@assets/svg/circle-arrow-up-svgrepo-com.svg";
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
-import type {Transaction} from "@data/models/types/Transaction";
-import type {User} from "@data/models/types/User";
+import type { Transaction } from "@data/models/types/Transaction";
 import MoneyFunctions from "@utils/MoneyFunctions";
-import {DateTime} from "luxon";
-import React, {useMemo} from "react";
-import {Image, StyleSheet, TouchableOpacity, View} from "react-native";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
+import { DateTime } from "luxon";
+import React, { useMemo } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type TransactionListItemProps = {
 	testID?: string;
 	item: Transaction;
-	user?: User;
+	user: { avatar: string; id: `usr_${string}` };
 	onPress: (id: Transaction["id"]) => void;
 	itemHeight: number;
 	isListReady?: boolean;
@@ -26,7 +26,6 @@ const AVATAR_RADIUS = AVATAR_SIZE / 2;
 const DEFAULT_AVATAR = "https://picsum.photos/200/300";
 
 export default function TransactionListItem({
-	testID,
 	item,
 	user,
 	onPress,
@@ -34,15 +33,21 @@ export default function TransactionListItem({
 	isListReady = true,
 }: TransactionListItemProps) {
 	const isCredit = useMemo(() => item.type === "credit", [item.type]);
-	const formattedAmount = useMemo(() => MoneyFunctions.formatMoney(item.amount, 2), [item.amount]);
+	const formattedAmount = useMemo(
+		() => MoneyFunctions.formatMoney(item.amount, 2),
+		[item.amount]
+	);
 	const categoryValue = useMemo(() => item.category, [item.category]);
 	const avatarUri = useMemo(() => user?.avatar || DEFAULT_AVATAR, [user?.avatar]);
-	const transactionDate = useMemo(() => DateTime.fromJSDate(item.date).toFormat("MMM d, t"), [item.date]);
+	const transactionDate = useMemo(
+		() => DateTime.fromJSDate(item.date).toFormat("MMM d, t"),
+		[item.date]
+	);
 	const itemName = useMemo(() => item.name, [item.name]);
 
 	if (!isListReady) {
 		return (
-			<View style={[styles.placeholderContainer, {height: itemHeight}]}>
+			<View style={[styles.placeholderContainer, { height: itemHeight }]}>
 				<SkeletonLoader width="60%" height={18} style={styles.skeletonTitle} />
 				<SkeletonLoader width="100%" height={36} style={styles.skeletonSubtitle} />
 			</View>
@@ -51,31 +56,36 @@ export default function TransactionListItem({
 
 	return (
 		<TouchableOpacity
-			testID={testID || "transaction-list-item"}
-			accessibilityLabel={testID || "transaction-list-item"}
-			accessibilityRole="button"
-			accessibilityState={{selected: false}}
-			style={[styles.container, {height: itemHeight}]}
+			accessibilityState={{ selected: false }}
+			{...generateTestIDs("transaction-list-item", "button")}
+			style={[styles.container, { height: itemHeight }]}
 			onPress={() => onPress(item.id)}
-			activeOpacity={0.7}>
+			activeOpacity={0.7}
+		>
 			<View style={styles.leftContainer}>
 				<View style={styles.avatarContainer}>
 					<SkeletonLoader
-						testID="avatar-skeleton-placeholder"
+						{...generateTestIDs("avatar-skeleton-placeholder")}
 						width={AVATAR_SIZE}
 						height={AVATAR_SIZE}
 						borderRadius={AVATAR_RADIUS}
 						style={styles.skeleton}
 					/>
-					<Image testID="avatar-image" source={{uri: avatarUri}} style={styles.avatar} />
+					<Image
+						{...generateTestIDs("avatar-image", "image")}
+						source={{ uri: avatarUri }}
+						style={styles.avatar}
+					/>
 				</View>
 
 				<View>
 					{formattedAmount ? (
-						<SharedAccountText type="listItemTitle">{formattedAmount}</SharedAccountText>
+						<SharedAccountText type="listItemTitle">
+							{formattedAmount}
+						</SharedAccountText>
 					) : (
 						<SkeletonLoader
-							testID="transaction-name-skeleton-placeholder"
+							{...generateTestIDs("transaction-name-skeleton-placeholder")}
 							width="100%"
 							style={styles.subtitleSkeleton}
 						/>
@@ -83,20 +93,31 @@ export default function TransactionListItem({
 					<SharedAccountText>
 						{categoryValue ? (
 							<>
-								<SharedAccountText numberOfLines={1}>{categoryValue}</SharedAccountText>
+								<SharedAccountText numberOfLines={1}>
+									{categoryValue}
+								</SharedAccountText>
 								{itemName && (
 									<SharedAccountText>
-										<SharedAccountText numberOfLines={1} type="listItemSubtitle">
+										<SharedAccountText
+											numberOfLines={1}
+											type="listItemSubtitle"
+										>
 											{" | "}
 										</SharedAccountText>
-										<SharedAccountText numberOfLines={1} type="listItemSubtitle">
+										<SharedAccountText
+											numberOfLines={1}
+											type="listItemSubtitle"
+										>
 											{itemName}
 										</SharedAccountText>
 									</SharedAccountText>
 								)}
 							</>
 						) : (
-							<SkeletonLoader testID="transaction-category-skeleton-placeholder" width="90%" />
+							<SkeletonLoader
+								testID="transaction-category-skeleton-placeholder"
+								width="90%"
+							/>
 						)}
 					</SharedAccountText>
 				</View>
@@ -112,14 +133,14 @@ export default function TransactionListItem({
 					<ArrowUpSvg
 						width={ICON_SIZE}
 						height={ICON_SIZE}
-						testID="arrow-up-svg"
+						{...generateTestIDs("arrow-up-svg", "image")}
 						fill={colors.green}
 					/>
 				) : (
 					<ArrowDownSvg
+						{...generateTestIDs("arrow-down-svg", "image")}
 						width={ICON_SIZE}
 						height={ICON_SIZE}
-						testID="arrow-down-svg"
 						fill={colors.red}
 					/>
 				)}

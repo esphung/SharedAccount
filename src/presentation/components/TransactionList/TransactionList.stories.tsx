@@ -1,22 +1,30 @@
 import TransactionList from "@components/TransactionList/TransactionList";
 import LocalDatabaseBuilder from "@data/models/builders/LocalDatabaseBuilder";
-import {groupTransactionsByDate} from "@screens/TransactionsScreen/TransactionsScreen";
+import { groupTransactionsByDate } from "@screens/TransactionsScreen/TransactionsScreen";
 
-import type {Meta, StoryObj} from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import {StyleSheet, View} from "react-native";
-import type {Transaction} from "types/Transaction";
+import { StyleSheet, View } from "react-native";
+import type { Transaction } from "types/Transaction";
 
 const mockLocalDatabase = new LocalDatabaseBuilder().build();
-const {transactions, users} = mockLocalDatabase;
+const { transactions } = mockLocalDatabase;
 
 const expenses = transactions.filter(
-	(transaction): transaction is Transaction<"expense"> => transaction.type === "expense",
+	(transaction): transaction is Transaction<"expense"> => transaction.type === "expense"
 );
 const credits = transactions.filter(
-	(transaction): transaction is Transaction<"credit"> => transaction.type === "credit",
+	(transaction): transaction is Transaction<"credit"> => transaction.type === "credit"
 );
 const data = groupTransactionsByDate(expenses, credits);
+
+const mockUsers: { avatar: string; id: `usr_${string}` }[] = Array.from(
+	{ length: 10 },
+	(_, index) => ({
+		id: `usr_${index + 1}`,
+		avatar: `https://picsum.photos/200/300?random=${index + 1}`,
+	})
+);
 
 const meta = {
 	title: "TransactionList",
@@ -46,10 +54,10 @@ const meta = {
 	},
 	args: {
 		data,
-		users,
 		onPress: () => {},
 		isListReady: true,
 		onContentSizeChange: () => {},
+		users: mockUsers,
 	},
 	decorators: [
 		(Story: React.FC) => (
@@ -71,7 +79,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		data,
-		users,
+		users: mockUsers,
 		onPress: () => {},
 		isListReady: true,
 		onContentSizeChange: () => {},

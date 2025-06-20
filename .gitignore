@@ -83,3 +83,6 @@ fastlane/.env
 default.realm.*
 default.realm
 default.realm.management/
+
+# Environment files
+.env

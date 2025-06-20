@@ -1,38 +1,39 @@
-import type {DataModelAdapter} from "@data/types/DataModelAdapter";
-import type {Account} from "types/Account";
-import TransactionAdapter from "./TransactionAdapter";
+import type { Account } from "types/Account";
 
-type LocalAccount = {toJSON(): object};
+type LocalAccount = { toJSON(): Account } | Account;
 
-type IAccountAdapter = DataModelAdapter<Account, LocalAccount, Account>;
-
-const AccountAdapter: IAccountAdapter = {
-	localToState(local) {
-		const json = local.toJSON ? local.toJSON() : local;
-		const parsed = JSON.parse(JSON.stringify(json));
-		const transactions = [...(parsed.transactions || [])].map(TransactionAdapter.localToState);
+const AccountAdapter = {
+	localToState(local: LocalAccount): Account {
+		const json = "toJSON" in local ? local.toJSON() : local;
 		return {
-			...parsed,
-			startingBalance: Number(parsed.startingBalance) || 0,
-			transactions,
-			version: Number(parsed.version),
-			name: parsed.name || "",
+			...json,
+			startingBalance: Number(json.startingBalance),
+			version: Number(json.version),
+			name: json.name,
 		};
 	},
-	stateToRemote(state) {
+	stateToRemote(state: Account): Partial<Account> {
 		return {
 			...state,
-			startingBalance: Number(state.startingBalance) || 0,
+			startingBalance: Number(state.startingBalance),
 			version: Number(state.version),
-			name: state.name || "",
+			name: state.name,
 		};
 	},
-	remoteToState(remote) {
+	remoteToState(remote: Account): Account {
 		return {
 			...remote,
-			startingBalance: Number(remote.startingBalance) || 0,
+			startingBalance: Number(remote.startingBalance),
 			version: Number(remote.version),
-			name: remote.name || "",
+			name: remote.name,
+		};
+	},
+	stateToLocal(state: Account): LocalAccount {
+		return {
+			...state,
+			startingBalance: Number(state.startingBalance),
+			version: Number(state.version),
+			name: state.name,
 		};
 	},
 };

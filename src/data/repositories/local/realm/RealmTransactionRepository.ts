@@ -1,16 +1,21 @@
-import {realmSchema, realmSchemaVersion} from "@config/realmSchema";
+import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
 import TransactionAdapter from "@data/adapters/TransactionAdapter";
 import type RealmTransaction from "@data/models/realm/RealmTransaction";
-import type {Transaction} from "@data/models/types/Transaction";
-import type {RealmSubscription} from "@data/repositories/realm/types/RealmSubscription";
-import type {DataModelRepository} from "@data/types/DataModelRepository";
-import Realm, {UpdateMode} from "realm";
+import type { Transaction } from "@data/models/types/Transaction";
+import AbstractLocalRepository from "@data/repositories/local/AbstractLocalRepository";
+import type { RealmSubscription } from "@data/repositories/local/realm/types/RealmSubscription";
+import type { DataModelRepository } from "@data/types/DataModelRepository";
+import Realm, { UpdateMode } from "realm";
 
-export default class RealmTransactionRepository implements DataModelRepository<Transaction> {
+export default class RealmTransactionRepository
+	extends AbstractLocalRepository<Transaction>
+	implements DataModelRepository<Transaction, "local">
+{
 	private realm: Realm;
 	private subscription: RealmSubscription<RealmTransaction> | null = null;
 
 	constructor() {
+		super();
 		this.realm = new Realm({
 			schema: realmSchema,
 			schemaVersion: realmSchemaVersion,
@@ -45,7 +50,6 @@ export default class RealmTransactionRepository implements DataModelRepository<T
 	async getById(id: string): Promise<Transaction | null> {
 		const realmObj = this.realm.objectForPrimaryKey<RealmTransaction>("Transaction", id);
 		if (!realmObj) {
-			console.warn(`[RealmTransactionRepository] Transaction not found: ${id}`);
 			return null;
 		}
 		const mapped: Transaction = TransactionAdapter.localToState(realmObj);
@@ -91,9 +95,17 @@ export default class RealmTransactionRepository implements DataModelRepository<T
 						...expense,
 						syncStatus: "synced",
 					},
-					UpdateMode.All,
+					UpdateMode.All
 				);
 			}
 		});
+	}
+
+	getType(): "local" {
+		return "local";
+	}
+
+	getName(): string {
+		return "RealmTransactionRepository";
 	}
 }

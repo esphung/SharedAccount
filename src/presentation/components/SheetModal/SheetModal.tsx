@@ -1,7 +1,8 @@
+import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React from "react";
-
-import type {ModalProps} from "react-native";
-import {Button, Modal, StyleSheet, View} from "react-native";
+import type { ModalProps } from "react-native";
+import { Modal, StyleSheet, View } from "react-native";
 
 const SheetModal = (
 	props: {
@@ -11,7 +12,7 @@ const SheetModal = (
 		onDismiss?: () => void;
 		testID?: string;
 		nonDismissable?: boolean;
-	} & ModalProps,
+	} & ModalProps
 ) => {
 	const {
 		testID,
@@ -25,7 +26,7 @@ const SheetModal = (
 	} = props;
 	return (
 		<Modal
-			testID={testID}
+			{...generateTestIDs(testID || "sheet-modal")}
 			animationType="slide"
 			visible={modalVisible}
 			onRequestClose={() => {
@@ -42,11 +43,21 @@ const SheetModal = (
 				onRequestClose: () => {},
 				hardwareAccelerated: true,
 			})}
-			{...rest}>
+			{...rest}
+		>
 			{/* Sheet Header */}
 			<View>
 				<View style={styles.headerContainer}>
-					{!nonDismissable && <Button title="Close" onPress={() => setModalVisible(false)} />}
+					{!nonDismissable && (
+						// <Button title="Close" onPress={() => setModalVisible(false)} />
+						<SharedAccountText
+							type="link"
+							onPress={() => setModalVisible(false)}
+							style={styles.closeButtonPadding}
+						>
+							Close
+						</SharedAccountText>
+					)}
 				</View>
 			</View>
 			{children}
@@ -55,6 +66,10 @@ const SheetModal = (
 };
 
 const styles = StyleSheet.create({
+	closeButtonPadding: {
+		paddingLeft: 12,
+		paddingTop: 16,
+	},
 	headerContainer: {
 		flexDirection: "row",
 		justifyContent: "flex-start",

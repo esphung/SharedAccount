@@ -1,18 +1,14 @@
 {
 	"arrowParens": "always",
-	"bracketSameLine": true,
-	"bracketSpacing": false,
-	"singleQuote": false,
-	"trailingComma": "all",
-	"tabWidth": 4,
-	"semi": true,
-	"useTabs": true,
-	"printWidth": 110,
+	"bracketSpacing": true,
 	"endOfLine": "lf",
-	"jsxBracketSameLine": true,
 	"jsxSingleQuote": false,
-	"quoteProps": "preserve",
-	"proseWrap": "preserve",
-	"singleAttributePerLine": false,
-	"objectWrap": "preserve"
+	"printWidth": 100,
+	"quoteProps": "as-needed",
+	"semi": true,
+	"singleQuote": false,
+	"tabWidth": 4,
+	"trailingComma": "es5",
+	"useTabs": true,
+	"proseWrap": "preserve"
 }

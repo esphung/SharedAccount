@@ -6,10 +6,10 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SharedAccountTextInput from "@components/SharedAccountTextInput/SharedAccountTextInput";
 import AccountBuilder from "@data/models/builders/AccountBuilder";
 import useForm from "@presentation/hooks/useForm";
-import React, {useCallback, useMemo} from "react";
-import type {TextInput} from "react-native";
-import {Button, StyleSheet, View} from "react-native";
-import type {Account} from "types/Account";
+import React, { useCallback, useMemo } from "react";
+import type { TextInput } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
+import type { Account } from "types/Account";
 
 type FormState = Pick<Account, "name" | "startingBalance">;
 type FieldKey = keyof FormState;
@@ -28,8 +28,8 @@ type FormInputField<T extends FieldKey = FieldKey> = {
 	animate?: boolean;
 };
 
-const AccountForm = ({onSubmit}: AccountFormProps) => {
-	const {values, errors, handleChange, validate, resetForm, focusNextField, registerInput} =
+const AccountForm = ({ onSubmit }: AccountFormProps) => {
+	const { values, errors, handleChange, validate, resetForm, focusNextField, registerInput } =
 		useForm<FormState>({
 			name: "",
 			startingBalance: 0,
@@ -57,7 +57,6 @@ const AccountForm = ({onSubmit}: AccountFormProps) => {
 		const newAccount = new AccountBuilder()
 			.withName(randomName)
 			.withStartingBalance(randomAmount)
-			.withTransactions([])
 			.build();
 		handleChange("startingBalance", newAccount.startingBalance);
 		handleChange("name", newAccount.name);
@@ -75,7 +74,7 @@ const AccountForm = ({onSubmit}: AccountFormProps) => {
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[values.name],
+		[values.name]
 	);
 
 	const inputListData: FormInputField[] = useMemo(
@@ -97,12 +96,12 @@ const AccountForm = ({onSubmit}: AccountFormProps) => {
 			},
 		],
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[errors.startingBalance, errors.name, values.name, values.startingBalance],
+		[errors.startingBalance, errors.name, values.name, values.startingBalance]
 	);
 
 	const renderInput = useCallback(
-		({item}: {item: FormInputField}) => {
-			const {error, label, key, value, placeholder, ref} = item;
+		({ item }: { item: FormInputField }) => {
+			const { error, label, key, value, placeholder, ref } = item;
 
 			let view: React.ReactNode = null;
 
@@ -137,26 +136,36 @@ const AccountForm = ({onSubmit}: AccountFormProps) => {
 			return (
 				<FadeInView key={`${key}-${item.label}`} initialValue={0} animate>
 					<View key={key}>
-						{label && <SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>}
+						{label && (
+							<SharedAccountText type="expenseFormLabel">{label}</SharedAccountText>
+						)}
 						{view}
 						<View style={styles.spacer} />
-						{error && <SharedAccountText type="expenseFormError">{error}</SharedAccountText>}
+						{error && (
+							<SharedAccountText type="expenseFormError">{error}</SharedAccountText>
+						)}
 					</View>
 				</FadeInView>
 			);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[values.name, values.startingBalance],
+		[values.name, values.startingBalance]
 	);
 
 	return (
 		<AwareScrollView contentContainerStyle={styles.fill}>
 			<View style={styles.northPanel}>
-				<View style={styles.container}>{inputListData.map((item) => renderInput({item}))}</View>
+				<View style={styles.container}>
+					{inputListData.map((item) => renderInput({ item }))}
+				</View>
 			</View>
 			<View style={styles.southPanel}>
 				<View style={styles.submitButtonContainer}>
-					<SharedAccountButton disabled={!values.name} title="Save Account" onPress={handleSave} />
+					<SharedAccountButton
+						disabled={!values.name}
+						title="Save Account"
+						onPress={handleSave}
+					/>
 					{__DEV__ && (
 						<>
 							<Button title="Fill Inputs" onPress={handleDebugFill} />

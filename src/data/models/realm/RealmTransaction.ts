@@ -1,5 +1,5 @@
-import type {Transaction} from "@data/models/types/Transaction";
-import {Realm} from "@realm/react";
+import type { Transaction } from "@data/models/types/Transaction";
+import { Realm } from "@realm/react";
 
 export default class RealmTransaction extends Realm.Object implements Transaction {
 	id: `txn_${string}` = `txn_${Math.random().toString(36).substr(2, 9)}`;
@@ -11,6 +11,7 @@ export default class RealmTransaction extends Realm.Object implements Transactio
 	description?: string;
 	date: Date = new Date();
 	type: "credit" | "expense" = "expense";
+	version: number = 0;
 
 	static schema = {
 		name: "Transaction",
@@ -25,6 +26,7 @@ export default class RealmTransaction extends Realm.Object implements Transactio
 			description: "string?",
 			date: "date",
 			type: "string",
+			version: "int",
 		},
 	};
 }
