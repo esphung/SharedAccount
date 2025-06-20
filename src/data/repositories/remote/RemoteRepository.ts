@@ -8,6 +8,7 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 		remoteToState: (remote: T) => T;
 		stateToRemote: (state: T) => Partial<T>;
 	};
+	private getToken: () => string | null; // Function to retrieve the token for authentication
 
 	constructor(
 		apiClient: ApiClient<Partial<T>, T>,
@@ -15,16 +16,27 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 		adapter: {
 			remoteToState: (remote: T) => T;
 			stateToRemote: (state: T) => Partial<T>;
-		}
+		},
+		getToken: () => string | null // Optional token retrieval function for authentication
 	) {
 		this.apiClient = apiClient;
 		this.route = route;
 		this.adapter = adapter;
+		this.getToken = getToken;
+	}
+
+	private getAuthHeaders(): Record<string, string> {
+		const token = this.getToken();
+		return token ? { Authorization: `Bearer ${token}` } : {};
 	}
 
 	async getAll(): Promise<T[]> {
 		try {
-			const { data: responseData } = await this.apiClient.get(this.route);
+			const headers = this.getAuthHeaders();
+			const { data: responseData } = await this.apiClient.get(
+				this.route,
+				headers // ✅ Pass headers directly, not wrapped in object
+			);
 			return responseData.data.map((item: T) => this.adapter.remoteToState(item));
 		} catch (error) {
 			console.error("[RemoteAccountRepository] Error fetching items:", error);
@@ -34,7 +46,11 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 
 	async getById(id: string): Promise<T | null> {
 		try {
-			const { data: responseData } = await this.apiClient.get(`${this.route}/${id}`);
+			const headers = this.getAuthHeaders();
+			const { data: responseData } = await this.apiClient.get(
+				`${this.route}/${id}`,
+				headers // ✅ Fixed this too
+			);
 			return this.adapter.remoteToState(responseData.data?.[0]) || null;
 		} catch (error) {
 			console.warn(`[RemoteAccountRepository] Item not found: ${id}`);
@@ -44,26 +60,37 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 
 	async add(item: T): Promise<void> {
 		try {
-			await this.apiClient.post(this.route, this.adapter.stateToRemote(item));
+			const headers = this.getAuthHeaders();
+			const payload = this.adapter.stateToRemote(item);
+			await this.apiClient.post(this.route, payload, headers); // ✅ Fixed
 		} catch (error) {
 			console.error("[RemoteAccountRepository] Error adding item:", error);
-			throw error; // Re-throw to handle it in the calling context
+			throw error;
 		}
 	}
 
 	async update(item: T): Promise<void> {
 		try {
+			const headers = this.getAuthHeaders();
+			const payload = this.adapter.stateToRemote(item);
 			await this.apiClient.put(
 				`${this.route}/${(item as { id: string }).id}`,
-				this.adapter.stateToRemote(item)
-			);
+				payload,
+				headers
+			); // ✅ Fixed
 		} catch (error) {
 			console.error("[RemoteAccountRepository] Error updating item:", error);
-			throw error; // Re-throw to handle it in the calling context
+			throw error;
 		}
 	}
 
 	async delete(id: string): Promise<void> {
-		await this.apiClient.delete(`${this.route}/${id}`);
+		try {
+			const headers = this.getAuthHeaders();
+			await this.apiClient.delete(`${this.route}/${id}`, headers); // ✅ Fixed
+		} catch (error) {
+			console.error("[RemoteAccountRepository] Error deleting item:", error);
+			throw error;
+		}
 	}
 }

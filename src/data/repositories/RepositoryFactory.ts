@@ -12,13 +12,25 @@ export default class RepositoryFactory {
 	static createTransactionRepository(): DataModelRepository<Transaction, "local"> {
 		return new RealmTransactionRepository();
 	}
+
 	static createAccountRepository(): DataModelRepository<Account, "local"> {
 		return new RealmAccountRepository();
 	}
-	static createRemoteAccountRepository(): DataModelRepository<Account, "remote"> {
-		return new RemoteRepository(remoteAccountApi, "/accounts", AccountAdapter);
+
+	static createRemoteAccountRepository(
+		getToken: () => string | null
+	): DataModelRepository<Account, "remote"> {
+		return new RemoteRepository(remoteAccountApi, "/accounts", AccountAdapter, getToken);
 	}
-	static createRemoteTransactionRepository(): DataModelRepository<Transaction, "remote"> {
-		return new RemoteRepository(remoteTransactionsApi, "/transactions", TransactionAdapter);
+
+	static createRemoteTransactionRepository(
+		getToken: () => string | null
+	): DataModelRepository<Transaction, "remote"> {
+		return new RemoteRepository(
+			remoteTransactionsApi,
+			"/transactions",
+			TransactionAdapter,
+			getToken
+		);
 	}
 }

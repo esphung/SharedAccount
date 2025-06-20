@@ -2,13 +2,23 @@ import RepositoryFactory from "./RepositoryFactory";
 import RealmAccountRepository from "@data/repositories/local/realm/RealmAccountRepository";
 import RealmTransactionRepository from "@data/repositories/local/realm/RealmTransactionRepository";
 import RemoteRepository from "@data/repositories/remote/RemoteRepository";
+import { remoteAccountApi, remoteTransactionsApi } from "@data/api/backend";
 import AccountAdapter from "@data/adapters/AccountAdapter";
 import TransactionAdapter from "@data/adapters/TransactionAdapter";
-import { remoteAccountApi, remoteTransactionsApi } from "@data/api/backend";
 
 jest.mock("@data/repositories/local/realm/RealmAccountRepository");
 jest.mock("@data/repositories/local/realm/RealmTransactionRepository");
 jest.mock("@data/repositories/remote/RemoteRepository");
+
+// mock zustand store
+jest.mock("@stores/zustand/useStore", () => ({
+	getState: jest.fn(() => ({
+		authentication: { token: "test_token" },
+	})),
+	setState: jest.fn(),
+	subscribe: jest.fn(),
+	destroy: jest.fn(),
+}));
 
 jest.mock("realm", () => ({
 	__esModule: true,
@@ -101,6 +111,8 @@ jest.mock("@realm/react", () => ({
 	RealmProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+const mockGetToken = jest.fn(() => "test_token");
+
 describe("RepositoryFactory", () => {
 	afterEach(() => {
 		jest.clearAllMocks();
@@ -117,20 +129,22 @@ describe("RepositoryFactory", () => {
 	});
 
 	it("should create a remote account repository with correct params", () => {
-		RepositoryFactory.createRemoteAccountRepository();
+		RepositoryFactory.createRemoteAccountRepository(mockGetToken);
 		expect(RemoteRepository).toHaveBeenCalledWith(
 			remoteAccountApi,
 			"/accounts",
-			AccountAdapter
+			AccountAdapter,
+			mockGetToken
 		);
 	});
 
 	it("should create a remote transaction repository with correct params", () => {
-		RepositoryFactory.createRemoteTransactionRepository();
+		RepositoryFactory.createRemoteTransactionRepository(mockGetToken);
 		expect(RemoteRepository).toHaveBeenCalledWith(
 			remoteTransactionsApi,
 			"/transactions",
-			TransactionAdapter
+			TransactionAdapter,
+			mockGetToken
 		);
 	});
 });

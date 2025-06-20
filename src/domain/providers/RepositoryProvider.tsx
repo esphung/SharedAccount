@@ -1,14 +1,28 @@
 import RepositoryFactory from "@data/repositories/RepositoryFactory";
 import type { DataModelRepository } from "@data/types/DataModelRepository";
-import React, { createContext, useContext } from "react";
+import { useStore } from "@stores/zustand/useStore";
+import React, { createContext, useCallback, useContext } from "react";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
 const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+	const getTokenCallback = useCallback(() => {
+		// Always get the current token from store, not the captured one
+		const currentToken = useStore.getState().authentication.token;
+		if (!currentToken) {
+			console.warn("[RepositoryProvider] No token found, returning null");
+			return null;
+		}
+		return currentToken;
+	}, []); // Empty dependency array since we're always getting fresh state
+
+	// Create repositories (can be outside useMemo since getTokenCallback is stable)
 	const localTransactionRepo = RepositoryFactory.createTransactionRepository();
 	const localAccountRepo = RepositoryFactory.createAccountRepository();
-	const remoteAccountRepo = RepositoryFactory.createRemoteAccountRepository();
-	const remoteTransactionRepo = RepositoryFactory.createRemoteTransactionRepository();
+	const remoteAccountRepo = RepositoryFactory.createRemoteAccountRepository(getTokenCallback);
+	const remoteTransactionRepo =
+		RepositoryFactory.createRemoteTransactionRepository(getTokenCallback);
+
 	return (
 		<RepositoryContext.Provider
 			value={{

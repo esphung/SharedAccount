@@ -21,7 +21,12 @@ describe("RemoteAccountRepository constructor", () => {
 	};
 
 	it("should initialize with provided apiClient, route, and adapter", () => {
-		const repo = new RemoteAccountRepository<TestModel>(mockApiClient, route, adapter);
+		const repo = new RemoteAccountRepository<TestModel>(
+			mockApiClient,
+			route,
+			adapter,
+			() => "mock-token"
+		);
 
 		// @ts-expect-error: accessing private properties for test
 		expect(repo.apiClient).toBe(mockApiClient);
