@@ -1,9 +1,9 @@
-import type { BaseDataModelRepository } from "@data/types/DataModelRepository";
+import type { DataModelRepository } from "@data/types/DataModelRepository";
 
 /**
- * Compares two account objects.
- * @param a The first account to compare.
- * @param b The second account to compare.
+ * Compares two item objects.
+ * @param a The first item to compare.
+ * @param b The second item to compare.
  * @returns A negative number if a < b, a positive number if a > b, and 0 if they are equal.
  */
 const compareVersions = <T extends { id: string; version: number }>(a: T, b: T): number => {
@@ -28,8 +28,8 @@ const deduplicateItems = <T extends { id: string; version: number }>(items: T[])
 };
 
 /**
- * Synchronizes two lists of accounts by updating, adding, or merging as needed.
- * Returns promises that resolve to the merged list of accounts.
+ * Synchronizes two lists of items by updating, adding, or merging as needed.
+ * Returns promises that resolve to the merged list of items.
  */
 export const mergeRecords = async <T extends { id: string; version: number }>({
 	local: { list: localItems, update: localUpdate, add: localAdd },
@@ -37,20 +37,20 @@ export const mergeRecords = async <T extends { id: string; version: number }>({
 }: {
 	local: {
 		list: T[];
-		update: BaseDataModelRepository<T>["update"];
-		add: BaseDataModelRepository<T>["add"];
+		update: DataModelRepository<T, "local">["update"];
+		add: DataModelRepository<T, "local">["add"];
 	};
 	remote: {
 		list: T[];
-		update: BaseDataModelRepository<T>["update"];
-		add: BaseDataModelRepository<T>["add"];
+		update: DataModelRepository<T, "remote">["update"];
+		add: DataModelRepository<T, "remote">["add"];
 	};
 }): Promise<T[]> => {
 	if (!localItems || !remoteItems) {
 		throw new Error("Both local and remote item lists must be provided.");
 	}
 
-	// Deduplicate accounts to ensure no duplicates exist in either list
+	// Deduplicate items to ensure no duplicates exist in either list
 	const localMap = new Map(deduplicateItems(localItems).map((acc) => [acc.id, acc]));
 	const remoteMap = new Map(deduplicateItems(remoteItems).map((acc) => [acc.id, acc]));
 	const merged: T[] = [];
@@ -62,24 +62,44 @@ export const mergeRecords = async <T extends { id: string; version: number }>({
 		if (localAcc) {
 			const cmp = compareVersions<T>(localAcc, remoteAcc);
 			if (cmp < 0) {
-				promises.push(localUpdate(remoteAcc));
+				promises.push(
+					localUpdate(remoteAcc).catch((error) => {
+						console.error(`[mergeRecords] Error updating remote item ${id}:`, error);
+					})
+				);
 				merged.push(remoteAcc);
 			} else if (cmp > 0) {
-				promises.push(remoteUpdate(localAcc));
+				promises.push(
+					remoteUpdate(localAcc).catch((error) => {
+						console.error(`[mergeRecords] Error updating local item ${id}:`, error);
+					})
+				);
 				merged.push(localAcc);
 			} else {
 				merged.push(localAcc);
 			}
 			localMap.delete(id);
 		} else {
-			promises.push(localAdd(remoteAcc));
+			promises.push(
+				localAdd(remoteAcc).catch((error) => {
+					console.error(`[mergeRecords] Error adding remote item ${id}:`, error);
+				})
+			);
 			merged.push(remoteAcc);
 		}
 	}
 
 	// Process remaining local items that are not in remote
 	for (const localAcc of localMap.values()) {
-		promises.push(remoteAdd(localAcc));
+		promises.push(
+			remoteAdd(localAcc).catch((error) => {
+				console.error("[mergeRecords] :", {
+					item: localAcc,
+					error,
+				});
+				console.error(`[mergeRecords] Error adding local item ${localAcc.id}:`, error);
+			})
+		);
 		merged.push(localAcc);
 	}
 

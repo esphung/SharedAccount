@@ -43,14 +43,24 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 	}
 
 	async add(item: T): Promise<void> {
-		await this.apiClient.post(this.route, this.adapter.stateToRemote(item));
+		try {
+			await this.apiClient.post(this.route, this.adapter.stateToRemote(item));
+		} catch (error) {
+			console.error("[RemoteAccountRepository] Error adding item:", error);
+			throw error; // Re-throw to handle it in the calling context
+		}
 	}
 
 	async update(item: T): Promise<void> {
-		await this.apiClient.put(
-			`${this.route}/${(item as unknown as { id: string }).id}`,
-			this.adapter.stateToRemote(item)
-		);
+		try {
+			await this.apiClient.put(
+				`${this.route}/${(item as { id: string }).id}`,
+				this.adapter.stateToRemote(item)
+			);
+		} catch (error) {
+			console.error("[RemoteAccountRepository] Error updating item:", error);
+			throw error; // Re-throw to handle it in the calling context
+		}
 	}
 
 	async delete(id: string): Promise<void> {

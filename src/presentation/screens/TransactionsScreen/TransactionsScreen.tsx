@@ -116,7 +116,7 @@ export default function TransactionsScreen({
 	navigation,
 }: BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>) {
 	// context
-	const { state: transactionsState } = useTransactionsContext();
+	const { state: transactionsState, deleteItem: deleteTransaction } = useTransactionsContext();
 	const { currentAccount } = useAccountsContext();
 
 	// state
@@ -155,16 +155,28 @@ export default function TransactionsScreen({
 	}, [sectionsData]);
 
 	const handleDeleteTransaction = useCallback(
-		(_txnId: Transaction["id"]) =>
+		(txnId: Transaction["id"]) =>
 			showAsyncAlertPrompt({
 				title: "Delete Transaction",
 				message: "Are you sure you want to delete this transaction?",
 				cancelable: true,
 			}).then((shouldDelete) => {
+				// if (shouldDelete) {
+				// 	throw new Error("Delete transaction not implemented yet");
+				// }
 				if (shouldDelete) {
-					throw new Error("Delete transaction not implemented yet");
+					// Implement the delete transaction logic here
+					deleteTransaction(txnId)
+						.then(() => {
+							Alert.alert("Transaction deleted successfully");
+						})
+						.catch((error) => {
+							// Handle any errors that occur during deletion
+							console.error("Error deleting transaction:", error);
+						});
 				}
 			}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
 

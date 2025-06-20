@@ -40,13 +40,29 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		const mergedAccounts = await mergeRecords<Account>({
 			local: {
 				list: local,
-				update: localAccountRepo.update,
-				add: localAccountRepo.add,
+				add: async (item: Account) => {
+					return localAccountRepo.add(item).catch((error) => {
+						console.error("[AccountsProvider] Error adding local account:", error);
+					});
+				},
+				update: async (item: Account) => {
+					return localAccountRepo.update(item).catch((error) => {
+						console.error("[AccountsProvider] Error updating local account:", error);
+					});
+				},
 			},
 			remote: {
 				list: remote,
-				update: remoteAccountRepo.update,
-				add: remoteAccountRepo.add,
+				update: async (item: Account) => {
+					return remoteAccountRepo.update(item).catch((error) => {
+						console.error("[AccountsProvider] Error updating remote account:", error);
+					});
+				},
+				add: async (item: Account) => {
+					return remoteAccountRepo.add(item).catch((error) => {
+						console.error("[AccountsProvider] Error adding remote account:", error);
+					});
+				},
 			},
 		});
 		if (__DEV__) {

@@ -10,10 +10,10 @@ import type { Account } from "types/Account";
 
 export default class RepositoryFactory {
 	static createTransactionRepository(): DataModelRepository<Transaction, "local"> {
-		return new RealmTransactionRepository(); // Change here if switching databases
+		return new RealmTransactionRepository();
 	}
 	static createAccountRepository(): DataModelRepository<Account, "local"> {
-		return new RealmAccountRepository(); // Change here if switching databases
+		return new RealmAccountRepository();
 	}
 	static createRemoteAccountRepository(): DataModelRepository<Account, "remote"> {
 		return new RemoteRepository(remoteAccountApi, "/accounts", AccountAdapter);

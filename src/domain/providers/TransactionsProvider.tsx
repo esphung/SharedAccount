@@ -1,8 +1,8 @@
+import { useRepository } from "@domain/providers/RepositoryProvider";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
+import { mergeRecords } from "@utils/listFunctions";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Transaction } from "types/Transaction";
-import { useRepository } from "./RepositoryProvider";
-import { mergeRecords } from "@utils/listFunctions";
 
 type TransactionsContextProps = ReturnType<UseDataSource<Transaction>>;
 
@@ -18,71 +18,6 @@ export const mergeTransactions = (local: Transaction[] = [], remote: Transaction
 	});
 };
 
-export const useTransactionSync = () => {
-	const { localTransactionRepo, remoteTransactionRepo } = useRepository();
-
-	// between local and remote repositories.
-	const syncTransactions = useCallback(async () => {
-		const [allLocalTransactions, allRemoteTransactions] = await Promise.all([
-			localTransactionRepo.getAll(),
-			remoteTransactionRepo.getAll(),
-		]);
-		const unsyncedTransactions = allLocalTransactions.filter(
-			(localTransaction) =>
-				!allRemoteTransactions.some(
-					(remoteTransaction) => remoteTransaction.id === localTransaction.id
-				)
-		);
-
-		if (unsyncedTransactions.length) {
-			await Promise.all(
-				unsyncedTransactions.map((transaction: Transaction) => {
-					return remoteTransactionRepo.add(transaction).catch((error) => {
-						console.error("[useTransactionSync] Error syncing transaction:", error);
-					});
-				})
-			);
-		}
-
-		const syncTransactionsPromises = [...allRemoteTransactions].map(
-			(remoteTransaction: Transaction) => {
-				// Do sync logic here
-				const local = allLocalTransactions.find(
-					(localTransaction) => localTransaction.id === remoteTransaction.id
-				);
-				if (!local) {
-					// If the local transaction does not exist, return the remote transaction
-					return localTransactionRepo
-						.add(remoteTransaction)
-						.then(() => remoteTransaction);
-				} else if (local.version < remoteTransaction.version) {
-					// If the local transaction exists but is outdated, update it with remote data
-					return localTransactionRepo
-						.update(remoteTransaction)
-						.then(() => remoteTransaction);
-				} else if (local.version > remoteTransaction.version) {
-					return remoteTransactionRepo.update(local).then(() => local);
-				}
-				// If the local transaction exists, return the local transaction
-				return local;
-			}
-		);
-
-		const syncedTransactions = await Promise.all(syncTransactionsPromises);
-		if (__DEV__) {
-			console.info("[useTransactionSync] Synced transactions:", syncedTransactions?.length, {
-				remote: allRemoteTransactions.length,
-				local: allLocalTransactions.length,
-				merged: syncedTransactions.length,
-			});
-		}
-		return syncedTransactions;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	return { syncTransactions };
-};
-
 export const TransactionsProvider = ({ children }: { children: React.ReactNode }) => {
 	// repositories
 	const { localTransactionRepo, remoteTransactionRepo } = useRepository();
@@ -96,13 +31,41 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 		const mergedTransactions = await mergeRecords<Transaction>({
 			local: {
 				list: local,
-				update: localTransactionRepo.update,
-				add: localTransactionRepo.add,
+				update: async (item: Transaction) => {
+					return localTransactionRepo.update(item).catch((error) => {
+						console.error(
+							"[TransactionsProvider] Error updating local transaction:",
+							error
+						);
+					});
+				},
+				add: async (item: Transaction) => {
+					return localTransactionRepo.add(item).catch((error) => {
+						console.error(
+							"[TransactionsProvider] Error adding local transaction:",
+							error
+						);
+					});
+				},
 			},
 			remote: {
 				list: remote,
-				update: remoteTransactionRepo.update,
-				add: remoteTransactionRepo.add,
+				update: async (item: Transaction) => {
+					return remoteTransactionRepo.update(item).catch((error) => {
+						console.error(
+							"[TransactionsProvider] Error updating remote transaction:",
+							error
+						);
+					});
+				},
+				add: async (item: Transaction) => {
+					return remoteTransactionRepo.add(item).catch((error) => {
+						console.error(
+							"[TransactionsProvider] Error adding remote transaction:",
+							error
+						);
+					});
+				},
 			},
 		});
 		if (__DEV__) {
@@ -135,9 +98,9 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 	}, []);
 
 	const addItem = useCallback(
-		async (params: Partial<Transaction> = {}) => {
+		async (params: Partial<Transaction>): Promise<void> => {
 			const {
-				id,
+				id = `txn_${new Date().getTime()}`,
 				amount = 0,
 				description = "",
 				version = 0,
@@ -168,7 +131,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 				console.error("[TransactionsProvider] Error adding transaction:", error);
 			});
 			// Then add to local repository
-			return localTransactionRepo.add(newTransaction).catch((error) => {
+			await localTransactionRepo.add(newTransaction).catch((error) => {
 				console.error("[TransactionsProvider] Error adding transaction:", error);
 			});
 		},
@@ -200,7 +163,6 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 	// Fetch initial transactions when the provider mounts
 	useEffect(() => {
 		fetchItems()
-			// .then(setTransactions)
 			.then(setTransactions)
 			.catch((error) => {
 				console.error("[TransactionsProvider] Error fetching transactions:", error);

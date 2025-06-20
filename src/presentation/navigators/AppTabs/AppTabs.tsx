@@ -78,12 +78,25 @@ const AppTabs = () => {
 	// callbacks
 	const handleCreateTransaction = useCallback(
 		async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
+			const userId = "usr_default"; // Replace with actual user ID logic
 			if (!currentAccount?.id) {
 				console.warn("[TransactionsScreen] No current account");
 				return;
 			}
+			if (!userId) {
+				console.warn("[TransactionsScreen] No user ID");
+				return;
+			}
 			try {
-				await addTransaction(params)
+				const paramsWithDefaults: Partial<Transaction> & {
+					sharedAccountId: string;
+					userId: string;
+				} = {
+					...params,
+					sharedAccountId: currentAccount.id,
+					userId,
+				};
+				await addTransaction(paramsWithDefaults)
 					.then(() => {
 						Alert.alert("Transaction added successfully");
 						closeTransactionModal();
