@@ -60,7 +60,7 @@ describe("TransactionListItem", () => {
 		const { getByTestId } = render(
 			<TransactionListItem
 				item={mockTransaction}
-				user={undefined}
+				user={{ ...mockUser, avatar: "" }}
 				onPress={mockOnPress}
 				itemHeight={60}
 				isListReady={true}

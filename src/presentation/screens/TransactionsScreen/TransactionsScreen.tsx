@@ -112,6 +112,12 @@ const scrollToTop = (
 	}
 };
 
+// TODO: Replace with actual user data fetching logic
+const users: { avatar: string; id: `usr_${string}` }[] = [
+	{ avatar: "https://picsum.photos/200/300", id: "usr_1" },
+	{ avatar: "https://picsum.photos/200/300", id: "usr_2" },
+];
+
 export default function TransactionsScreen({
 	navigation,
 }: BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>) {
@@ -196,6 +202,7 @@ export default function TransactionsScreen({
 				onPress={handleDeleteTransaction}
 				onContentSizeChange={() => scrollToTop(sectionsData, listRef)}
 				isListReady={isListReady}
+				users={users}
 			/>
 		</SharedAccountScreen>
 	);

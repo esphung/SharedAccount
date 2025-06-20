@@ -28,6 +28,14 @@ const AccountAdapter = {
 			name: remote.name,
 		};
 	},
+	stateToLocal(state: Account): LocalAccount {
+		return {
+			...state,
+			startingBalance: Number(state.startingBalance),
+			version: Number(state.version),
+			name: state.name,
+		};
+	},
 };
 
 export default AccountAdapter;

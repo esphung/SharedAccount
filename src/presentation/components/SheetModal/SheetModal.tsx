@@ -1,4 +1,5 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React from "react";
 import type { ModalProps } from "react-native";
 import { Modal, StyleSheet, View } from "react-native";
@@ -25,7 +26,7 @@ const SheetModal = (
 	} = props;
 	return (
 		<Modal
-			testID={testID}
+			{...generateTestIDs(testID || "sheet-modal")}
 			animationType="slide"
 			visible={modalVisible}
 			onRequestClose={() => {

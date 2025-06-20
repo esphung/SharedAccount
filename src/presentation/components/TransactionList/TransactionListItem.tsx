@@ -4,8 +4,8 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
-import type { User } from "@data/models/types/User";
 import MoneyFunctions from "@utils/MoneyFunctions";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import { DateTime } from "luxon";
 import React, { useMemo } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -13,7 +13,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 type TransactionListItemProps = {
 	testID?: string;
 	item: Transaction;
-	user?: User;
+	user: { avatar: string; id: `usr_${string}` };
 	onPress: (id: Transaction["id"]) => void;
 	itemHeight: number;
 	isListReady?: boolean;
@@ -26,7 +26,6 @@ const AVATAR_RADIUS = AVATAR_SIZE / 2;
 const DEFAULT_AVATAR = "https://picsum.photos/200/300";
 
 export default function TransactionListItem({
-	testID,
 	item,
 	user,
 	onPress,
@@ -57,10 +56,8 @@ export default function TransactionListItem({
 
 	return (
 		<TouchableOpacity
-			testID={testID || "transaction-list-item"}
-			accessibilityLabel={testID || "transaction-list-item"}
-			accessibilityRole="button"
 			accessibilityState={{ selected: false }}
+			{...generateTestIDs("transaction-list-item", "button")}
 			style={[styles.container, { height: itemHeight }]}
 			onPress={() => onPress(item.id)}
 			activeOpacity={0.7}
@@ -68,14 +65,14 @@ export default function TransactionListItem({
 			<View style={styles.leftContainer}>
 				<View style={styles.avatarContainer}>
 					<SkeletonLoader
-						testID="avatar-skeleton-placeholder"
+						{...generateTestIDs("avatar-skeleton-placeholder")}
 						width={AVATAR_SIZE}
 						height={AVATAR_SIZE}
 						borderRadius={AVATAR_RADIUS}
 						style={styles.skeleton}
 					/>
 					<Image
-						testID="avatar-image"
+						{...generateTestIDs("avatar-image", "image")}
 						source={{ uri: avatarUri }}
 						style={styles.avatar}
 					/>
@@ -88,7 +85,7 @@ export default function TransactionListItem({
 						</SharedAccountText>
 					) : (
 						<SkeletonLoader
-							testID="transaction-name-skeleton-placeholder"
+							{...generateTestIDs("transaction-name-skeleton-placeholder")}
 							width="100%"
 							style={styles.subtitleSkeleton}
 						/>
@@ -136,14 +133,14 @@ export default function TransactionListItem({
 					<ArrowUpSvg
 						width={ICON_SIZE}
 						height={ICON_SIZE}
-						testID="arrow-up-svg"
+						{...generateTestIDs("arrow-up-svg", "image")}
 						fill={colors.green}
 					/>
 				) : (
 					<ArrowDownSvg
+						{...generateTestIDs("arrow-down-svg", "image")}
 						width={ICON_SIZE}
 						height={ICON_SIZE}
-						testID="arrow-down-svg"
 						fill={colors.red}
 					/>
 				)}

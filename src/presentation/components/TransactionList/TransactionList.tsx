@@ -2,7 +2,6 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
 import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
-import type { User } from "@data/models/types/User";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React, { forwardRef, useCallback } from "react";
 import { SectionList, StyleSheet } from "react-native";
@@ -10,7 +9,7 @@ import { SectionList, StyleSheet } from "react-native";
 const ITEM_HEIGHT = 100; // List item height
 
 type TransactionListProps = {
-	users?: User[];
+	users: { avatar: string; id: `usr_${string}` }[];
 	onPress: (id: Transaction["id"]) => void;
 	data: {
 		title: string;
@@ -20,7 +19,7 @@ type TransactionListProps = {
 	isListReady: boolean;
 };
 
-const getUserById = (userId: string, users: User[] = []) =>
+const getUserById = (userId: string, users: { avatar: string; id: `usr_${string}` }[] = []) =>
 	users.find((user) => user.id === userId);
 
 // Main Component
@@ -29,7 +28,10 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 
 	const renderItemCallback = useCallback(
 		({ item }: { item: Transaction }) => {
-			const user = getUserById(item.userId, users);
+			const user = getUserById(item.userId, users) || {
+				avatar: "https://picsum.photos/200/300",
+				id: "usr_default",
+			};
 			return (
 				<TransactionListItem
 					testID={`transaction-list-item-${item.id}`}

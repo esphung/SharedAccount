@@ -194,7 +194,9 @@ const AppTabs = () => {
 			>
 				<Tab.Screen name={AppTabsScreens.Transactions} component={TransactionsScreen} />
 			</Tab.Navigator>
-			<View style={styles.buttonBar}>{btnList.map(mapBtnFromList)}</View>
+			<View {...generateTestIDs("add-account-button-view")} style={styles.buttonBar}>
+				{btnList.map(mapBtnFromList)}
+			</View>
 			{addExpenseSheet}
 			{addAccountSheet}
 		</>

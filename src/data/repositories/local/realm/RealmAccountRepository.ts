@@ -2,15 +2,20 @@ import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
 import AccountAdapter from "@data/adapters/AccountAdapter";
 import type RealmAccount from "@data/models/realm/RealmAccount";
 import type { Account } from "@data/models/types/Account";
-import type { RealmSubscription } from "@data/repositories/realm/types/RealmSubscription";
+import AbstractLocalRepository from "@data/repositories/local/AbstractLocalRepository";
+import type { RealmSubscription } from "@data/repositories/local/realm/types/RealmSubscription";
 import type { DataModelRepository } from "@data/types/DataModelRepository";
 import Realm, { UpdateMode } from "realm";
 
-export default class RealmAccountRepository implements DataModelRepository<Account, "local"> {
+export default class RealmAccountRepository
+	extends AbstractLocalRepository<Account>
+	implements DataModelRepository<Account, "local">
+{
 	private realm: Realm;
 	private subscription: RealmSubscription<RealmAccount> | null = null;
 
 	constructor() {
+		super();
 		this.realm = new Realm({
 			schema: realmSchema,
 			schemaVersion: realmSchemaVersion,
@@ -45,7 +50,6 @@ export default class RealmAccountRepository implements DataModelRepository<Accou
 	async getById(id: string): Promise<Account | null> {
 		const realmObj = this.realm.objectForPrimaryKey<RealmAccount>("Account", id);
 		if (!realmObj) {
-			console.warn(`[RealmAccountRepository] Account not found: ${id}`);
 			return null;
 		}
 		const mapped: Account = AccountAdapter.localToState(realmObj);
@@ -54,13 +58,21 @@ export default class RealmAccountRepository implements DataModelRepository<Accou
 
 	async add(account: Account): Promise<void> {
 		this.realm.write(() => {
-			this.realm.create<RealmAccount>("Account", account);
+			this.realm.create<RealmAccount>(
+				"Account",
+				AccountAdapter.stateToLocal(account),
+				UpdateMode.Never
+			);
 		});
 	}
 
 	async update(account: Account): Promise<void> {
 		this.realm.write(() => {
-			this.realm.create<RealmAccount>("Account", account, UpdateMode.All);
+			this.realm.create<RealmAccount>(
+				"Account",
+				AccountAdapter.stateToLocal(account),
+				UpdateMode.All
+			);
 		});
 	}
 
@@ -77,8 +89,7 @@ export default class RealmAccountRepository implements DataModelRepository<Accou
 		const realmObjs = this.realm
 			.objects<RealmAccount>("Account")
 			.filtered("syncStatus != 'synced'");
-		const mapped = realmObjs.map(AccountAdapter.localToState);
-		return mapped;
+		return realmObjs.map(AccountAdapter.localToState);
 	}
 
 	async markAsSynced(id: string): Promise<void> {
@@ -95,5 +106,13 @@ export default class RealmAccountRepository implements DataModelRepository<Accou
 				);
 			}
 		});
+	}
+
+	getType(): "local" {
+		return "local";
+	}
+
+	getName(): string {
+		return "RealmAccountRepository";
 	}
 }

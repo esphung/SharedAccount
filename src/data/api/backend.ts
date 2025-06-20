@@ -4,8 +4,8 @@ import axios from "axios";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
-const BASE_URL = "http://localhost:3000/"; // Change this to your actual API base URL
-// const BASE_URL = "https://calisthenics-fitness-server-05fab1519d7f.herokuapp.com/";
+// const BASE_URL = "http://localhost:3000/"; // Change this to your actual API base URL
+const BASE_URL = "https://calisthenics-fitness-server-05fab1519d7f.herokuapp.com/";
 
 const ApiClientFactory = <T extends { id: string; version: number }>(): ApiClient<
 	Partial<T>,
