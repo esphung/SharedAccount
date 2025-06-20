@@ -1423,7 +1423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:>=7, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.25.0":
+"@babel/runtime@npm:>=7, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.25.0":
   version: 7.27.6
   resolution: "@babel/runtime@npm:7.27.6"
   checksum: 10/cc957a12ba3781241b83d528eb69ddeb86ca5ac43179a825e83aa81263a6b3eb88c57bed8a937cdeacfc3192e07ec24c73acdfea4507d0c0428c8e23d6322bfe
@@ -3869,6 +3869,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/react-hooks@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "@testing-library/react-hooks@npm:8.0.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+    react-error-boundary: "npm:^3.1.0"
+  peerDependencies:
+    "@types/react": ^16.9.0 || ^17.0.0
+    react: ^16.9.0 || ^17.0.0
+    react-dom: ^16.9.0 || ^17.0.0
+    react-test-renderer: ^16.9.0 || ^17.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react-dom:
+      optional: true
+    react-test-renderer:
+      optional: true
+  checksum: 10/f7b69373feebe99bc7d60595822cc5c00a1a5a4801bc4f99b597256a5c1d23c45a51f359051dd8a7bdffcc23b26f324c582e9433c25804934fd351a886812790
+  languageName: node
+  linkType: hard
+
 "@testing-library/react-native@npm:^13.2.0":
   version: 13.2.0
   resolution: "@testing-library/react-native@npm:13.2.0"
@@ -4364,6 +4386,7 @@ __metadata:
     "@realm/react": "npm:^0.11.0"
     "@storybook/addon-ondevice-controls": "npm:^8.6.1"
     "@storybook/react-native": "npm:^8.6.1"
+    "@testing-library/react-hooks": "npm:^8.0.1"
     "@testing-library/react-native": "npm:^13.2.0"
     "@types/jest": "npm:^29.5.13"
     "@types/luxon": "npm:^3"
@@ -11553,6 +11576,17 @@ __metadata:
   peerDependencies:
     react: ^19.0.0
   checksum: 10/aa64a2f1991042f516260e8b0eca0ae777b6c8f1aa2b5ae096e80bbb6ac9b005aef2bca697969841d34f7e1819556263476bdfea36c35092e8d9aefde3de2d9a
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:^3.1.0":
+  version: 3.1.4
+  resolution: "react-error-boundary@npm:3.1.4"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+  peerDependencies:
+    react: ">=16.13.1"
+  checksum: 10/7418637bf352b88f35ff3798e6faa094ee046df9d422fc08f54c017892c3c0738dac661ba3d64d97209464e7a60e7fbbeffdbeaee5edc38f3aaf5f1f4a8bf610
   languageName: node
   linkType: hard
 

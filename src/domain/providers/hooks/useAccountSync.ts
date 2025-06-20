@@ -49,13 +49,10 @@ const useAccountSync = () => {
 
 		if (__DEV__) {
 			// eslint-disable-next-line no-console
-			console.debug(
-				"[useAccountSync] Syncing accounts: ",
-				"Local Accounts: ",
-				allLocalAccounts.length,
-				"Remote Accounts: ",
-				allRemoteAccounts.length
-			);
+			console.debug("[useAccountSync] Synced accounts:", syncedAccounts?.length, {
+				remote: allRemoteAccounts.length,
+				local: allLocalAccounts.length,
+			});
 		}
 		return syncedAccounts;
 	}, [localAccountRepo, remoteAccountRepo]);

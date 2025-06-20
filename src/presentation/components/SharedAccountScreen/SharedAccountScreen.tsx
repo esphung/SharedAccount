@@ -2,9 +2,7 @@ import React from "react";
 import type { ViewProps } from "react-native";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-type SharedAccountScreenProps = {
-	children?: React.ReactNode;
-} & ViewProps;
+type SharedAccountScreenProps = ViewProps & { children: React.ReactNode };
 
 export default function SharedAccountScreen(props: SharedAccountScreenProps) {
 	const { children, style, ...rest } = props;

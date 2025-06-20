@@ -33,11 +33,23 @@ jest.mock("@domain/providers/AccountsProvider", () => ({
 		addItem: () => Promise.resolve(),
 		startListening: () => () => {},
 		currentAccount: undefined,
-		addTransaction: () => Promise.resolve(),
-		deleteTransaction: () => Promise.resolve(),
 		selectCurrentAccount: (_accountId: string) => {},
 	})),
 	AccountsContext: {
+		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	},
+}));
+
+jest.mock("@domain/providers/TransactionsProvider", () => ({
+	__esModule: true,
+	useTransactionsContext: jest.fn(() => ({
+		state: [],
+		fetchItems: () => Promise.resolve([]),
+		deleteItem: () => Promise.resolve(),
+		addItem: () => Promise.resolve(),
+		startListening: () => () => {},
+	})),
+	TransactionsContext: {
 		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 	},
 }));
@@ -57,7 +69,6 @@ describe("AppTabs Navigator", () => {
 
 	it("sets the initial route to TransactionsScreen", () => {
 		renderWithProviders();
-
 		expect(screen.queryByText("Transactions")).toBeDefined();
 	});
 });

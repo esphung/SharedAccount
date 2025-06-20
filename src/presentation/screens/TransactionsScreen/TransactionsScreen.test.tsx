@@ -1,3 +1,4 @@
+import AccountBuilder from "@data/models/builders/AccountBuilder";
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import { AppTabsScreens } from "@navigators/AppTabs/AppTabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -25,21 +26,53 @@ jest.mock("@domain/providers/SheetModalProvider", () => ({
 	})),
 }));
 
+const mockTransaction = new TransactionBuilder()
+	.withId("txn_1")
+	.withDate(new Date("2023-01-01"))
+	.withCategory("Food")
+	.withName("Hello World")
+	.withDescription("Weekly groceries")
+	.withSharedAccountId("acct_1234567890")
+	.withAmount(100)
+	.withType("expense")
+	.build();
+
+jest.mock("@domain/providers/TransactionsProvider", () => ({
+	__esModule: true,
+	useTransactionsContext: jest.fn(() => ({
+		state: [mockTransaction],
+		fetchItems: () => Promise.resolve([]),
+		deleteItem: () => Promise.resolve(),
+		addItem: () => Promise.resolve(),
+		startListening: () => () => {},
+	})),
+	TransactionsContext: {
+		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+	},
+}));
+
 jest.mock(
 	"@domain/providers/RepositoryProvider",
 	() =>
 		({ children }: { children: React.ReactNode }) => <>{children}</>
 );
 
+const mockAccount = new AccountBuilder()
+	.withId("acct_1234567890")
+	.withName("Test Account")
+	.withStartingBalance(1000)
+	.withVersion(1)
+	.build();
+
 jest.mock("@domain/providers/AccountsProvider", () => ({
 	__esModule: true,
 	useAccountsContext: jest.fn(() => ({
-		state: [],
+		state: [mockAccount],
 		fetchItems: () => Promise.resolve([]),
 		deleteItem: () => Promise.resolve(),
 		addItem: () => Promise.resolve(),
 		startListening: () => () => {},
-		currentAccount: undefined,
+		currentAccount: mockAccount,
 		addTransaction: () => Promise.resolve(),
 		deleteTransaction: () => Promise.resolve(),
 		selectCurrentAccount: (_accountId: string) => {},

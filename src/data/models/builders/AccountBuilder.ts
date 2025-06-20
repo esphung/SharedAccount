@@ -29,6 +29,11 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 		return this;
 	}
 
+	withVersion(version: number): AccountBuilder {
+		this.instance.version = version;
+		return this;
+	}
+
 	build(): Account {
 		return this.instance;
 	}

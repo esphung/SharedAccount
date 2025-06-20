@@ -36,8 +36,8 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	// Delete a account
 	const deleteItem = useCallback(async (id: string) => {
 		setAccounts((prevState: Account[]) => prevState.filter((item) => item.id !== id));
-		await remoteAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
-		return localAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
+		await localAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
+		return remoteAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -90,22 +90,8 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			.catch(handleCatchError("AccountsProvider"));
 	}, []);
 
-	// Return the accounts and functions to interact with them
-	const memoizedValue = useMemo(
-		() => ({
-			state: accounts,
-			fetchItems,
-			deleteItem,
-			addItem,
-			startListening,
-			currentAccount,
-			selectCurrentAccount,
-		}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[accounts, currentAccount]
-	);
-
-	// side effects
+	/* Side Effects */
+	// Use storage to set the current account when accounts are fetched
 	useEffect(() => {
 		if (!accounts?.length) {
 			return;
@@ -116,13 +102,14 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 					(acct: Account | undefined) => acct?.id === accountId
 				);
 				if (account) {
-					memoizedValue?.selectCurrentAccount(account);
+					contextValue?.selectCurrentAccount(account);
 				}
 			}
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accounts]);
 
+	// Subscribe to live updates
 	useEffect(
 		() => {
 			const unsub = startListening();
@@ -134,6 +121,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		[]
 	);
 
+	// Fetch accounts when the provider mounts
 	useEffect(
 		() => {
 			fetchItems().then((fetchedAccounts) => {
@@ -150,7 +138,22 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		[]
 	);
 
-	return <AccountsContext.Provider value={memoizedValue}>{children}</AccountsContext.Provider>;
+	// Return the accounts and functions to interact with them
+	const contextValue = useMemo(
+		() => ({
+			state: accounts,
+			fetchItems,
+			deleteItem,
+			addItem,
+			startListening,
+			currentAccount,
+			selectCurrentAccount,
+		}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[accounts, currentAccount]
+	);
+
+	return <AccountsContext.Provider value={contextValue}>{children}</AccountsContext.Provider>;
 };
 
 // Custom hook for consuming the context

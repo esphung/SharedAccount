@@ -1,6 +1,5 @@
 import TransactionBuilder from "@data/models/builders/TransactionBuilder";
 import TransactionAdapter from "./TransactionAdapter";
-import type { Transaction } from "@data/models/types/Transaction";
 
 describe("TransactionAdapter", () => {
 	const baseTransaction = new TransactionBuilder()
@@ -10,6 +9,7 @@ describe("TransactionAdapter", () => {
 		.withDescription("Test Transaction")
 		.withCategory("Test Category")
 		.withSharedAccountId("acct_123")
+		.withVersion(1)
 		.build();
 
 	describe("localToState", () => {
@@ -35,7 +35,7 @@ describe("TransactionAdapter", () => {
 				amount: Number(baseTransaction.amount),
 			});
 			expect(result.date).toBeInstanceOf(Date);
-			expect(typeof result.amount).toBe("number");
+			expect(typeof result.amount).toStrictEqual("number");
 		});
 	});
 
@@ -45,9 +45,10 @@ describe("TransactionAdapter", () => {
 				...baseTransaction,
 				date: new Date(baseTransaction.date),
 				amount: 100.5,
+				version: 1,
 			};
-			const result = TransactionAdapter.stateToRemote(state as Transaction);
-			expect(result).toBe(state);
+			const result = TransactionAdapter.stateToRemote(state);
+			expect(result).toStrictEqual(state);
 		});
 	});
 
@@ -55,7 +56,7 @@ describe("TransactionAdapter", () => {
 		it("should return the remote transaction as is", () => {
 			const remote = { ...baseTransaction };
 			const result = TransactionAdapter.remoteToState(remote);
-			expect(result).toBe(remote);
+			expect(result).toStrictEqual(remote);
 		});
 	});
 });

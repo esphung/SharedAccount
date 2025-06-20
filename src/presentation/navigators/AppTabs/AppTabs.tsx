@@ -5,6 +5,7 @@ import CircleButton from "@components/CircleButton/CircleButton";
 import colors from "@config/themes/colors";
 import { useAccountsContext } from "@domain/providers/AccountsProvider";
 import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
+import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
 import styles from "@navigators/AppTabs/AppTabs.style";
 import { handleCatchError } from "@presentation/utilities";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
@@ -55,12 +56,7 @@ const mapBtnFromList = (
 	</CircleButton>
 );
 
-const addTransaction = async (
-	_params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">,
-	_accountId: string
-) => {
-	throw new Error("[AppTabs] addTransaction is not implemented yet");
-};
+const Tab = createBottomTabNavigator<AppTabsParamList>();
 
 const AppTabs = () => {
 	// refs
@@ -77,32 +73,9 @@ const AppTabs = () => {
 	} = useSheetModalContext();
 
 	const { addItem: addAccount, currentAccount } = useAccountsContext();
-
-	// memoized values
-	const Tab = useMemo(() => createBottomTabNavigator<AppTabsParamList>(), []);
+	const { addItem: addTransaction } = useTransactionsContext();
 
 	// callbacks
-	const handleSetTransactionModalVisible = useCallback(
-		(shouldShow: boolean) => {
-			if (!shouldShow) {
-				closeTransactionModal();
-			} else {
-				openTransactionModal();
-			}
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
-
-	const handleSetAccountModalVisible = useCallback((shouldShow: boolean) => {
-		if (!shouldShow) {
-			closeAccountModal();
-		} else {
-			openAccountModal();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	const handleCreateTransaction = useCallback(
 		async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
 			if (!currentAccount?.id) {
@@ -110,8 +83,11 @@ const AppTabs = () => {
 				return;
 			}
 			try {
-				await addTransaction(params, currentAccount?.id)
-					.then(() => closeTransactionModal())
+				await addTransaction(params)
+					.then(() => {
+						Alert.alert("Transaction added successfully");
+						closeTransactionModal();
+					})
 					.catch(handleCatchError("addTransaction"));
 			} catch (error) {
 				console.error("[TransactionsScreen] Error adding transaction:", error);
@@ -126,7 +102,13 @@ const AppTabs = () => {
 			<AddExpenseSheet
 				listRef={listRef}
 				modalVisible={transactionModalVisible}
-				setModalVisible={handleSetTransactionModalVisible}
+				setModalVisible={(shouldShow: boolean) => {
+					if (!shouldShow) {
+						closeTransactionModal();
+					} else {
+						openTransactionModal();
+					}
+				}}
 				onSubmit={handleCreateTransaction}
 			/>
 		),
@@ -151,7 +133,13 @@ const AppTabs = () => {
 		() => (
 			<AddAccountSheet
 				modalVisible={accountModalVisible}
-				setModalVisible={handleSetAccountModalVisible}
+				setModalVisible={(shouldShow: boolean) => {
+					if (!shouldShow) {
+						closeAccountModal();
+					} else {
+						openAccountModal();
+					}
+				}}
 				onSubmit={handleCreateAccount}
 				nonDismissable
 			/>

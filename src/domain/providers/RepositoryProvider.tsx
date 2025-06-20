@@ -1,15 +1,10 @@
 import RepositoryFactory from "@data/repositories/RepositoryFactory";
 import type { DataModelRepository } from "@data/types/DataModelRepository";
-import type { PropsWithChildren } from "react";
 import React, { createContext, useContext } from "react";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
-type Props = PropsWithChildren<{
-	// add props here
-}>;
-
-const RepositoryProvider: React.FC<Props> = ({ children }) => {
+const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const localTransactionRepo = RepositoryFactory.createTransactionRepository();
 	const localAccountRepo = RepositoryFactory.createAccountRepository();
 	const remoteAccountRepo = RepositoryFactory.createRemoteAccountRepository();

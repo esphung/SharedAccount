@@ -11,6 +11,7 @@ export default class RealmTransaction extends Realm.Object implements Transactio
 	description?: string;
 	date: Date = new Date();
 	type: "credit" | "expense" = "expense";
+	version: number = 0;
 
 	static schema = {
 		name: "Transaction",
@@ -25,6 +26,7 @@ export default class RealmTransaction extends Realm.Object implements Transactio
 			description: "string?",
 			date: "date",
 			type: "string",
+			version: "int",
 		},
 	};
 }

@@ -12,6 +12,7 @@ describe("TransactionListItem", () => {
 		sharedAccountId: "acct_1" as const,
 		name: "Transaction 1",
 		type: "credit" as const,
+		version: 1,
 	};
 
 	const mockUser = {

@@ -2,6 +2,7 @@ import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
 import { useAccountsContext } from "@domain/providers/AccountsProvider";
+import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -10,10 +11,8 @@ import { DateTime } from "luxon";
 import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AlertButton, SectionList } from "react-native";
-import { Alert, Button } from "react-native";
+import { Alert } from "react-native";
 import type { Transaction } from "types/Transaction";
-
-type ScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>;
 
 export const isExpenseTransaction = (
 	transaction: Transaction
@@ -113,24 +112,36 @@ const scrollToTop = (
 	}
 };
 
-export default function TransactionsScreen({ navigation }: ScreenProps) {
+export default function TransactionsScreen({
+	navigation,
+}: BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>) {
+	// context
+	const { state: transactionsState } = useTransactionsContext();
+	const { currentAccount } = useAccountsContext();
+
 	// state
 	const [isListReady, setIsListReady] = useState(false);
 
 	// refs
 	const listRef = useRef<SectionList<Transaction>>(null);
 
-	// hooks
-	const { currentAccount, deleteItem: removeAccount } = useAccountsContext();
-
 	// TODO: Replace with actual transactions fetching logic
-	const transactions: Transaction[] = useMemo(() => [], []);
+	const accountTransactions: Transaction[] = useMemo(() => {
+		if (!currentAccount) {
+			return [];
+		}
+		// Filter transactions for the current shared account
+		if (!transactionsState || !Array.isArray(transactionsState) || !transactionsState.length) {
+			return [];
+		}
+		return transactionsState.filter((txn) => txn.sharedAccountId === currentAccount?.id);
+	}, [currentAccount, transactionsState]);
 
 	const sectionsData = useMemo(() => {
-		const expenses = transactions.filter(isExpenseTransaction);
-		const credits = transactions.filter(isCreditTransaction);
+		const expenses = accountTransactions.filter(isExpenseTransaction);
+		const credits = accountTransactions.filter(isCreditTransaction);
 		return groupTransactionsByDate(expenses, credits);
-	}, [transactions]);
+	}, [accountTransactions]);
 
 	useEffect(() => {
 		const onFocus = async () => {
@@ -161,23 +172,11 @@ export default function TransactionsScreen({ navigation }: ScreenProps) {
 		if (!currentAccount) {
 			return "No account";
 		}
-		return `Balance: ${calculateTotal({ transactions: [], startingBalance: currentAccount.startingBalance })}`;
-	}, [currentAccount]);
+		return `Balance: ${calculateTotal({ transactions: accountTransactions, startingBalance: currentAccount.startingBalance })}`;
+	}, [accountTransactions, currentAccount]);
 
 	return (
 		<SharedAccountScreen {...generateTestIDs("transactions-screen")}>
-			{__DEV__ && (
-				<Button
-					title="Remove Account"
-					onPress={() => {
-						removeAccount(currentAccount?.id as `acct_${string}`).catch((error) =>
-							console.error("[TransactionsScreen] Error removing account:", error)
-						);
-					}}
-					disabled={!currentAccount}
-					{...generateTestIDs("remove-account-button")}
-				/>
-			)}
 			<ScreenTitle title="Transactions" subtitle={screenTitleBalance} />
 			<TransactionList
 				ref={listRef}
