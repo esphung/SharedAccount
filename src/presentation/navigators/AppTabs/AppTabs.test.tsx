@@ -44,7 +44,6 @@ jest.mock("@domain/providers/AccountsProvider", () => ({
 	__esModule: true,
 	useAccountsContext: jest.fn(() => ({
 		state: [],
-		currentAccount: undefined,
 		selectCurrentAccount: jest.fn(),
 		addItem: jest.fn(),
 		deleteItem: jest.fn(),
@@ -130,7 +129,6 @@ describe("AppTabs Navigator", () => {
 		// Mock the current account to simulate no existing account
 		(useAccountsContext as jest.Mock).mockReturnValue({
 			state: [],
-			currentAccount: undefined,
 			selectCurrentAccount: jest.fn(),
 			addItem: jest.fn(),
 			deleteItem: jest.fn(),

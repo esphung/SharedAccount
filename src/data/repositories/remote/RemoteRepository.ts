@@ -39,7 +39,7 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 			);
 			return responseData.data.map((item: T) => this.adapter.remoteToState(item));
 		} catch (error) {
-			console.error("[RemoteAccountRepository] Error fetching items:", error);
+			console.error("[RemoteRepository] Error fetching items:", error);
 			return [];
 		}
 	}
@@ -53,7 +53,7 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 			);
 			return this.adapter.remoteToState(responseData.data?.[0]) || null;
 		} catch (error) {
-			console.warn(`[RemoteAccountRepository] Item not found: ${id}`);
+			console.warn(`[RemoteRepository] Item not found: ${id}`);
 			return null;
 		}
 	}

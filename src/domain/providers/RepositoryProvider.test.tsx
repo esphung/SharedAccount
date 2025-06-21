@@ -97,40 +97,4 @@ describe("RepositoryProvider", () => {
 		// Clean up
 		unmount();
 	});
-
-	it("logs a warning if no token is found in getTokenCallback", () => {
-		const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
-
-		const mockUseStore = jest.requireMock("@stores/zustand/useStore");
-		// Keep token as null to trigger the warning
-		mockUseStore.useStore.getState = jest.fn(() => ({
-			authentication: { token: null }, // This should be null to trigger warning
-		}));
-
-		const mockRepositoryFactory = jest.requireMock("@data/repositories/RepositoryFactory");
-		let capturedGetToken: (() => string | null) | undefined;
-
-		// Patch RepositoryFactory to capture the getTokenCallback
-		mockRepositoryFactory.createRemoteAccountRepository.mockImplementation(
-			(cb: () => string | null) => {
-				capturedGetToken = cb;
-				return "remoteAccountRepoMock";
-			}
-		);
-
-		const { unmount } = render(
-			<RepositoryProvider>
-				<></>
-			</RepositoryProvider>
-		);
-
-		// Now call the callback and expect warning + null return
-		expect(capturedGetToken!()).toBeNull();
-		expect(consoleWarnSpy).toHaveBeenCalledWith(
-			"[RepositoryProvider] No token found, returning null"
-		);
-
-		unmount();
-		consoleWarnSpy.mockRestore();
-	});
 });

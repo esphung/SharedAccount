@@ -1,39 +1,30 @@
 import { useRepository } from "@domain/providers/RepositoryProvider";
-import userDefaultsStorage from "@domain/storage/userDefaultsStorage";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
-import { handleCatchError } from "@presentation/utilities";
+import type { BoundState } from "@stores/zustand/useStore";
+import { useStore } from "@stores/zustand/useStore";
 import { mergeRecords } from "@utils/listFunctions";
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Account } from "types/Account";
+import { mergeAccounts } from "./AccountsProvider.helpers";
 
-type IAccountContext = (ReturnType<UseDataSource<Account>> & AccountContextOptions) | undefined;
-
-type AccountContextOptions = {
-	currentAccount?: Account;
-	selectCurrentAccount: (account: Account) => void;
-};
+type IAccountContext = ReturnType<UseDataSource<Account>> | undefined;
 
 const AccountsContext = createContext<IAccountContext>(undefined);
 
-export const mergeAccounts = (local: Account[] = [], remote: Account[] = []) => {
-	return local.map((localAccount) => {
-		const remoteAccount = remote.find((acct) => acct.id === localAccount.id);
-		if (remoteAccount) {
-			return { ...localAccount, ...remoteAccount };
-		}
-		return localAccount;
-	});
-};
+const selectSetAccountSlice = (state: BoundState) => state.account;
 
 export const AccountsProvider = ({ children }: { children: ReactNode }) => {
-	// repositories
+	/* Repositories */
 	const { localAccountRepo, remoteAccountRepo } = useRepository();
 
-	// state
+	/* State */
 	const [accounts, setAccounts] = useState<Account[]>([]);
-	const [currentAccount, setCurrentAccount] = useState<Account>();
+	const { setAccount: setCurrentAccount, account: selectedAccount } =
+		useStore(selectSetAccountSlice);
 
+	/* Callbacks */
+	// Fetch accounts from both local and remote repositories, merging them
 	const fetchItems = useCallback(async () => {
 		const local = await localAccountRepo.getAll();
 		const remote = await remoteAccountRepo.getAll();
@@ -66,7 +57,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			},
 		});
 		if (__DEV__) {
-			console.info("[AccountsProvider] Fetched accounts:", mergedAccounts?.length, {
+			console.info("[AccountsProvider] Fetched accounts:", mergedAccounts.length, {
 				remote: remote.length,
 				local: local.length,
 				merged: mergedAccounts.length,
@@ -76,18 +67,22 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Delete a account
+	// Delete an account
 	const deleteItem = useCallback(async (id: string) => {
 		setAccounts((prevState: Account[]) => prevState.filter((item) => item.id !== id));
-		await localAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
-		return remoteAccountRepo.delete(id).catch(handleCatchError("AccountsProvider:deleteItem"));
+		await localAccountRepo.delete(id).catch((error) => {
+			console.error("[AccountsProvider] Error deleting local account:", error);
+		});
+		return remoteAccountRepo.delete(id).catch((error) => {
+			console.error("[AccountsProvider] Error deleting remote account:", error);
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Add a account
+	// Add an account
 	const addItem = useCallback(
 		async (params: Partial<Account>) => {
-			const { startingBalance = 0, name = "New Account", version = 1 } = params;
+			const { startingBalance = 0, name = "New Account", version = 0 } = params;
 			const acctId = params.id || `acct_${new Date().getTime()}`;
 			const newAccount: Account = {
 				id: acctId,
@@ -97,12 +92,12 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			};
 			setAccounts((prevState: Account[]) => [...prevState, newAccount]);
 
-			await remoteAccountRepo
-				.add(newAccount)
-				.catch(handleCatchError("AccountsProvider:remoteAdd"));
-			return localAccountRepo
-				.add(newAccount)
-				.catch(handleCatchError("AccountsProvider:localAdd"));
+			await remoteAccountRepo.add(newAccount).catch((error) => {
+				console.error("[AccountsProvider] Error adding remote account:", error);
+			});
+			return localAccountRepo.add(newAccount).catch((error) => {
+				console.error("[AccountsProvider] Error adding local account:", error);
+			});
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
@@ -126,31 +121,25 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const selectCurrentAccount = useCallback((account: Account) => {
-		setCurrentAccount(account);
-		userDefaultsStorage
-			.saveItem("account", account.id)
-			.catch(handleCatchError("AccountsProvider"));
+	/* Side Effects */
+	// Fetch accounts when the component mounts
+	useEffect(() => {
+		fetchItems()
+			.then(setAccounts)
+			.catch((error) => {
+				console.error("[AccountsProvider] Error fetching accounts:", error);
+			});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	/* Side Effects */
-	// Use storage to set the current account when accounts are fetched
+	// Set the current account if it is not already set
 	useEffect(() => {
-		if (!accounts?.length) {
-			return;
+		if (!selectedAccount && accounts.length > 0) {
+			const [firstAccount] = accounts;
+			setCurrentAccount(firstAccount);
 		}
-		userDefaultsStorage.getItem("account").then((accountId) => {
-			if (accountId) {
-				const account = accounts?.find(
-					(acct: Account | undefined) => acct?.id === accountId
-				);
-				if (account) {
-					contextValue?.selectCurrentAccount(account);
-				}
-			}
-		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [accounts]);
+	}, [accounts, selectedAccount]);
 
 	// Subscribe to live updates
 	useEffect(
@@ -164,23 +153,6 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 		[]
 	);
 
-	// Fetch accounts when the provider mounts
-	useEffect(
-		() => {
-			fetchItems().then((fetchedAccounts) => {
-				if (fetchedAccounts.length) {
-					// If accounts are fetched, set them in state
-					setAccounts(fetchedAccounts);
-					setCurrentAccount(fetchedAccounts[0]);
-				} else {
-					console.warn("[AccountsProvider] No accounts found, consider adding one.");
-				}
-			});
-		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
-
 	// Return the accounts and functions to interact with them
 	const contextValue = useMemo(
 		() => ({
@@ -189,11 +161,10 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			deleteItem,
 			addItem,
 			startListening,
-			currentAccount,
-			selectCurrentAccount,
+			// selectCurrentAccount,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[accounts, currentAccount]
+		[accounts]
 	);
 
 	return <AccountsContext.Provider value={contextValue}>{children}</AccountsContext.Provider>;

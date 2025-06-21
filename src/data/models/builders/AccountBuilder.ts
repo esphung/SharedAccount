@@ -14,7 +14,7 @@ export default class AccountBuilder extends BaseBuilder<Account> {
 		super(result, fakerSeed);
 	}
 
-	withId(id: `acct_${string}`): AccountBuilder {
+	withId(id: string): AccountBuilder {
 		this.instance.id = id;
 		return this;
 	}

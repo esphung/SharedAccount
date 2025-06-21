@@ -1,7 +1,7 @@
 export type Transaction<T = "credit" | "expense"> = {
-	id: `txn_${string}`;
-	sharedAccountId: `acct_${string}`;
-	userId: `usr_${string}`; // who created the transaction
+	id: string;
+	sharedAccountId: string;
+	userId: string; // who created the transaction
 	amount: number; // in cents
 	name: string;
 	category: string; // e.g., "Food", "Transport", "Entertainment"

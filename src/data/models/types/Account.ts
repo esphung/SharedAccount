@@ -1,5 +1,5 @@
 export type Account = {
-	id: `acct_${string}`;
+	id: string;
 	name: string;
 	startingBalance: number;
 	version: number;

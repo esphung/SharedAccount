@@ -1,4 +1,6 @@
 import { useRepository } from "@domain/providers/RepositoryProvider";
+import { selectCurrentAccount } from "@domain/stores/zustand/selectors";
+import { useStore } from "@domain/stores/zustand/useStore";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { mergeRecords } from "@utils/listFunctions";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
@@ -24,6 +26,10 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 
 	// state
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+	// store
+	const currentUserId = useStore((state) => state.user.userId);
+	const currentAccount = useStore(selectCurrentAccount);
 
 	const fetchItems = useCallback(async () => {
 		const local = await localTransactionRepo.getAll();
@@ -98,7 +104,13 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 	}, []);
 
 	const addItem = useCallback(
-		async (params: Partial<Transaction>): Promise<void> => {
+		async (params: Partial<Omit<Transaction, "sharedAccountId" | "userId">>): Promise<void> => {
+			if (!currentUserId || !currentAccount) {
+				console.error(
+					"[TransactionsProvider] No current userId or account found to add transaction"
+				);
+				return;
+			}
 			const {
 				id = `txn_${new Date().getTime()}`,
 				amount = 0,
@@ -108,12 +120,9 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 				name = "",
 				category = "",
 				type = "expense",
-				sharedAccountId = "acct_default",
-				userId = "usr_default",
 			} = params;
-			const txnId = id || `txn_${new Date().getTime()}`;
 			const newTransaction: Transaction = {
-				id: txnId,
+				id,
 				amount,
 				description,
 				version,
@@ -121,8 +130,8 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 				name,
 				category,
 				type,
-				sharedAccountId,
-				userId,
+				sharedAccountId: currentAccount?.id,
+				userId: currentUserId,
 			};
 			setTransactions((prevState: Transaction[]) => [...prevState, newTransaction]);
 
@@ -136,7 +145,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 			});
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
+		[currentUserId, currentAccount]
 	);
 
 	// Start listening for live updates
@@ -159,7 +168,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	/* Side Effects */
+	/* Side effects */
 	// Fetch initial transactions when the provider mounts
 	useEffect(() => {
 		fetchItems()
@@ -188,7 +197,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 			startListening,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[transactions]
+		[transactions, addItem]
 	);
 
 	return (

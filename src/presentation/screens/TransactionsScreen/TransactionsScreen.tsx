@@ -1,8 +1,9 @@
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
-import { useAccountsContext } from "@domain/providers/AccountsProvider";
 import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
+import { selectCurrentAccount } from "@domain/stores/zustand/selectors";
+import { useStore } from "@domain/stores/zustand/useStore";
 import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
@@ -113,7 +114,7 @@ const scrollToTop = (
 };
 
 // TODO: Replace with actual user data fetching logic
-const users: { avatar: string; id: `usr_${string}` }[] = [
+const users: { avatar: string; id: string }[] = [
 	{ avatar: "https://picsum.photos/200/300", id: "usr_1" },
 	{ avatar: "https://picsum.photos/200/300", id: "usr_2" },
 ];
@@ -123,7 +124,9 @@ export default function TransactionsScreen({
 }: BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>) {
 	// context
 	const { state: transactionsState, deleteItem: deleteTransaction } = useTransactionsContext();
-	const { currentAccount } = useAccountsContext();
+
+	// store
+	const currentAccount = useStore(selectCurrentAccount);
 
 	// state
 	const [isListReady, setIsListReady] = useState(false);
@@ -190,7 +193,7 @@ export default function TransactionsScreen({
 		if (!currentAccount) {
 			return "No account";
 		}
-		return `Balance: ${calculateTotal({ transactions: accountTransactions, startingBalance: currentAccount.startingBalance })}`;
+		return `Balance: ${calculateTotal({ transactions: accountTransactions, startingBalance: currentAccount?.startingBalance })}`;
 	}, [accountTransactions, currentAccount]);
 
 	return (

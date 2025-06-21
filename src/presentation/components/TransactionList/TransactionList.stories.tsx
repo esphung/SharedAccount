@@ -18,13 +18,10 @@ const credits = transactions.filter(
 );
 const data = groupTransactionsByDate(expenses, credits);
 
-const mockUsers: { avatar: string; id: `usr_${string}` }[] = Array.from(
-	{ length: 10 },
-	(_, index) => ({
-		id: `usr_${index + 1}`,
-		avatar: `https://picsum.photos/200/300?random=${index + 1}`,
-	})
-);
+const mockUsers: { avatar: string; id: string }[] = Array.from({ length: 10 }, (_, index) => ({
+	id: `usr_${index + 1}`,
+	avatar: `https://picsum.photos/200/300?random=${index + 1}`,
+}));
 
 const meta = {
 	title: "TransactionList",

@@ -9,7 +9,7 @@ import { SectionList, StyleSheet } from "react-native";
 const ITEM_HEIGHT = 100; // List item height
 
 type TransactionListProps = {
-	users: { avatar: string; id: `usr_${string}` }[];
+	users: { avatar: string; id: string }[];
 	onPress: (id: Transaction["id"]) => void;
 	data: {
 		title: string;
@@ -19,7 +19,7 @@ type TransactionListProps = {
 	isListReady: boolean;
 };
 
-const getUserById = (userId: string, users: { avatar: string; id: `usr_${string}` }[] = []) =>
+const getUserById = (userId: string, users: { avatar: string; id: string }[] = []) =>
 	users.find((user) => user.id === userId);
 
 // Main Component

@@ -20,17 +20,17 @@ export default class TransactionBuilder extends BaseBuilder<Transaction> {
 		super(result, fakerSeed);
 	}
 
-	withId(id: `txn_${string}`): TransactionBuilder {
+	withId(id: string): TransactionBuilder {
 		this.instance.id = id;
 		return this;
 	}
 
-	withSharedAccountId(sharedAccountId: `acct_${string}`): TransactionBuilder {
+	withSharedAccountId(sharedAccountId: string): TransactionBuilder {
 		this.instance.sharedAccountId = sharedAccountId;
 		return this;
 	}
 
-	withUserId(userId: `usr_${string}`): TransactionBuilder {
+	withUserId(userId: string): TransactionBuilder {
 		this.instance.userId = userId;
 		return this;
 	}
