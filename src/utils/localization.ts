@@ -22,6 +22,7 @@ const translations = {
 		SettingsScreen: {
 			signOut: "Sign Out",
 			goBack: "Go Back",
+			createAccount: "Create Account",
 		},
 	},
 	es: {
@@ -45,6 +46,7 @@ const translations = {
 		SettingsScreen: {
 			goBack: "Regresar",
 			signOut: "Cerrar sesión",
+			createAccount: "Crear cuenta",
 		},
 	},
 } as const;

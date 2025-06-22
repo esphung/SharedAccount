@@ -17,21 +17,30 @@ type Props = {
 	accounts: ListAccount[];
 	onPressAccount: (accountId: string) => void;
 	onPressAddAccount: () => void;
+	selectedAccountId?: string | null;
 };
 
 const LOWER_LIMIT_BALANCE_THRESHOLD = 1000; // Example threshold for low balance ($10.00)
 
-const AccountsList: React.FC<Props> = ({ accounts = [], onPressAccount, onPressAddAccount }) => {
+const AccountsList: React.FC<Props> = ({
+	accounts = [],
+	onPressAccount,
+	onPressAddAccount,
+	selectedAccountId,
+}) => {
 	const renderItem = useCallback(
 		({ item }: { item: ListAccount }) => (
 			<TouchableOpacity
-				style={styles.itemContainer}
+				disabled={selectedAccountId === item.id}
+				style={[
+					styles.itemContainer,
+					selectedAccountId === item.id && styles.selectedItemContainer,
+				]}
 				{...generateTestIDs(`account-list-item-${item.id}`, "button")}
 				onPress={() => onPressAccount(item.id)}
 			>
 				<View style={styles.header}>
 					<SharedAccountText
-						type="listItemTitle"
 						{...generateTestIDs(`account-list-item-${item.id}-name`, "text")}
 					>
 						{item.name}
@@ -55,8 +64,7 @@ const AccountsList: React.FC<Props> = ({ accounts = [], onPressAccount, onPressA
 				</View>
 			</TouchableOpacity>
 		),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
+		[onPressAccount, selectedAccountId]
 	);
 
 	const keyExtractor = useCallback((item: ListAccount) => `account-list-item-${item.id}`, []);
@@ -128,5 +136,10 @@ const styles = StyleSheet.create({
 		elevation: 2,
 		marginBottom: padding.screen.vertical.xSmall,
 		padding: padding.screen.horizontal.small,
+	},
+	selectedItemContainer: {
+		borderColor: colors.primary,
+		borderWidth: 1,
+		elevation: 4,
 	},
 });

@@ -1,5 +1,6 @@
 import { mergeAccounts } from "@domain/providers/AccountsProvider.helpers";
 import { useRepository } from "@domain/providers/RepositoryProvider";
+import userDefaultsStorage from "@domain/storage/userDefaultsStorage";
 import { selectCurrentUserId, selectSetAccountSlice } from "@domain/stores/zustand/selectors";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { useStore } from "@stores/zustand/useStore";
@@ -176,11 +177,47 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	// Set the current account if it is not already set
 	useEffect(() => {
 		if (!selectedAccount && accounts.length > 0) {
-			const [firstAccount] = accounts;
-			setCurrentAccount(firstAccount);
+			// Get the last selected account from local storage
+			userDefaultsStorage
+				.getItem("account")
+				.then((lastSelectedAccountId) => {
+					if (lastSelectedAccountId) {
+						const lastSelectedAccount = accounts.find(
+							(account) => account.id === lastSelectedAccountId
+						);
+						if (lastSelectedAccount) {
+							setCurrentAccount(lastSelectedAccount);
+						} else {
+							// If the last selected account is not found, select the first account
+							setCurrentAccount(accounts[0]);
+						}
+					} else {
+						// If no last selected account, select the first account
+						setCurrentAccount(accounts[0]);
+					}
+				})
+				.catch((error) => {
+					console.error("[AccountsProvider] Error getting last selected account:", error);
+					// Fallback to selecting the first account if there's an error
+					if (accounts.length > 0) {
+						setCurrentAccount(accounts[0]);
+					}
+				});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accounts, selectedAccount]);
+
+	// Update the current account in local storage when it changes
+	useEffect(() => {
+		if (selectedAccount) {
+			userDefaultsStorage.saveItem("account", selectedAccount.id).catch((error) => {
+				console.error(
+					"[AccountsProvider] Error setting current account in storage:",
+					error
+				);
+			});
+		}
+	}, [selectedAccount]);
 
 	// Subscribe to live updates
 	useEffect(

@@ -19,6 +19,8 @@ import React, { useCallback, useMemo, useRef } from "react";
 import { Alert, View, type SectionList } from "react-native";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
+import Toast from "react-native-toast-message";
+import MoneyFunctions from "@utils/MoneyFunctions";
 
 const ICON_SIZE = 20;
 
@@ -115,12 +117,33 @@ const AppTabs = () => {
 				paramsWithDefaults.userId = userId;
 				await addTransaction(paramsWithDefaults)
 					.then(() => {
-						Alert.alert("Transaction added successfully");
 						closeTransactionModal();
+
+						if (listRef.current) {
+							listRef.current.scrollToLocation({
+								itemIndex: 0,
+								sectionIndex: 0,
+								animated: true,
+								viewPosition: 0,
+								viewOffset: 0,
+							});
+						}
+
+						Toast.show({
+							type: "success",
+							text1: "Transaction added",
+							text2: `You've added ${params.type[0] === "expense" ? "an expense" : "a credit"} of ~${MoneyFunctions.formatMoney(params.amount)} for ${params.category}`,
+							autoHide: true,
+							visibilityTime: 4600,
+						});
 					})
 					.catch((error) => {
 						console.error("[TransactionsScreen] Error adding transaction:", error);
-						Alert.alert("Error", "Failed to add transaction. Please try again.");
+						Toast.show({
+							type: "error",
+							text1: "Error adding transaction",
+							text2: `${error instanceof Error ? error.message : "Unknown error"}`,
+						});
 					});
 			} catch (error) {
 				console.error("[TransactionsScreen] Error adding transaction:", error);
@@ -178,11 +201,11 @@ const AppTabs = () => {
 					}
 				}}
 				onSubmit={handleCreateAccount}
-				nonDismissable
+				nonDismissable={!currentAccountID}
 			/>
 		),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[accountModalVisible]
+		[accountModalVisible, currentAccountID]
 	);
 
 	// Add a fourth button as needed
