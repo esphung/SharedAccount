@@ -4445,6 +4445,7 @@ __metadata:
     react-dom: "npm:19.0.0"
     react-native: "npm:0.78.0"
     react-native-auth0: "npm:^4.6.0"
+    react-native-dotenv: "npm:^3.4.11"
     react-native-file-access: "npm:3.1.1"
     react-native-gesture-handler: "npm:^2.24.0"
     react-native-keyboard-controller: "npm:1.16.8"
@@ -6304,7 +6305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.5.0":
+"dotenv@npm:^16.4.5, dotenv@npm:^16.5.0":
   version: 16.5.0
   resolution: "dotenv@npm:16.5.0"
   checksum: 10/e68a16834f1a41cc2dfb01563bc150668ad675e6cd09191211467b5c0806b6ecd6ec438e021aa8e01cd0e72d2b70ef4302bec7cc0fe15b6955f85230b62dc8a9
@@ -11721,6 +11722,17 @@ __metadata:
     expo:
       optional: true
   checksum: 10/97f6594819e80fb8483cca9bb6ab3072483c26bc40a56bdd45725c3fa125079efd6e6adcc6669e6fbefbc67de25a263ca7ac48ae548b73d7d4d13c68efe9c851
+  languageName: node
+  linkType: hard
+
+"react-native-dotenv@npm:^3.4.11":
+  version: 3.4.11
+  resolution: "react-native-dotenv@npm:3.4.11"
+  dependencies:
+    dotenv: "npm:^16.4.5"
+  peerDependencies:
+    "@babel/runtime": ^7.20.6
+  checksum: 10/09e8a7310fcb01ac021e71db9328e9d342d1e117bf68026b12de0392bfe17292ac6a071f03b88e7fb42c82a8f2fdf03bc520c7dedd2f80a1448cb3de5e03d4fb
   languageName: node
   linkType: hard
 

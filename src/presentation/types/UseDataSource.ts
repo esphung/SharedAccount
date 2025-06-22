@@ -4,4 +4,5 @@ export type UseDataSource<T> = () => {
 	startListening: () => () => void;
 	addItem: (params: Partial<T>) => Promise<void>;
 	deleteItem: (id: string) => Promise<void>;
+	updateItem: (item: T) => Promise<void>;
 };

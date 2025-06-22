@@ -1,27 +1,26 @@
+import { mergeAccounts } from "@domain/providers/AccountsProvider.helpers";
 import { useRepository } from "@domain/providers/RepositoryProvider";
+import { selectCurrentUserId, selectSetAccountSlice } from "@domain/stores/zustand/selectors";
 import type { UseDataSource } from "@presentation/types/UseDataSource";
-import type { BoundState } from "@stores/zustand/useStore";
 import { useStore } from "@stores/zustand/useStore";
 import { mergeRecords } from "@utils/listFunctions";
 import type { ReactNode } from "react";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Account } from "types/Account";
-import { mergeAccounts } from "./AccountsProvider.helpers";
 
-type IAccountContext = ReturnType<UseDataSource<Account>> | undefined;
-
-const AccountsContext = createContext<IAccountContext>(undefined);
-
-const selectSetAccountSlice = (state: BoundState) => state.account;
+const AccountsContext = createContext<ReturnType<UseDataSource<Account>> | undefined>(undefined);
 
 export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 	/* Repositories */
-	const { localAccountRepo, remoteAccountRepo } = useRepository();
+	const { localAccountRepo, remoteAccountRepo, remoteAccountUsersRepo } = useRepository();
 
 	/* State */
 	const [accounts, setAccounts] = useState<Account[]>([]);
+
+	/* Store Selectors */
 	const { setAccount: setCurrentAccount, account: selectedAccount } =
 		useStore(selectSetAccountSlice);
+	const currentUserId = useStore(selectCurrentUserId);
 
 	/* Callbacks */
 	// Fetch accounts from both local and remote repositories, merging them
@@ -95,8 +94,50 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			await remoteAccountRepo.add(newAccount).catch((error) => {
 				console.error("[AccountsProvider] Error adding remote account:", error);
 			});
-			return localAccountRepo.add(newAccount).catch((error) => {
+			await localAccountRepo.add(newAccount).catch((error) => {
 				console.error("[AccountsProvider] Error adding local account:", error);
+			});
+
+			if (!currentUserId) {
+				console.warn(
+					"[AccountsProvider] No current user ID found, cannot add account user."
+				);
+				return;
+			}
+
+			// create account_users entry for the current user
+			await remoteAccountUsersRepo
+				.add({
+					id: Date.now(),
+					sharedAccountId: acctId,
+					userId: currentUserId,
+					role: "admin",
+					accepted: true,
+				})
+				.then(() => {
+					console.info(
+						"[AccountsProvider] Added account_user for current user:",
+						currentUserId
+					);
+				})
+				.catch((error) => {
+					console.error("[AccountsProvider] Error adding account_user remote:", error);
+				});
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[currentUserId]
+	);
+
+	const updateItem = useCallback(
+		async (item: Account) => {
+			setAccounts((prevState: Account[]) => {
+				return prevState.map((account) => (account.id === item.id ? item : account));
+			});
+			await remoteAccountRepo.update(item).catch((error) => {
+				console.error("[AccountsProvider] Error updating remote account:", error);
+			});
+			return localAccountRepo.update(item).catch((error) => {
+				console.error("[AccountsProvider] Error updating local account:", error);
 			});
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,7 +202,7 @@ export const AccountsProvider = ({ children }: { children: ReactNode }) => {
 			deleteItem,
 			addItem,
 			startListening,
-			// selectCurrentAccount,
+			updateItem,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[accounts]

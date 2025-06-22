@@ -1,4 +1,5 @@
 import RepositoryFactory from "@data/repositories/RepositoryFactory";
+import type { AccountUsers } from "@data/types/AccountUsers";
 import type { DataModelRepository } from "@data/types/DataModelRepository";
 import { useStore } from "@stores/zustand/useStore";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
@@ -30,6 +31,8 @@ const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 		const remoteAccountRepo = RepositoryFactory.createRemoteAccountRepository(getTokenCallback);
 		const remoteTransactionRepo =
 			RepositoryFactory.createRemoteTransactionRepository(getTokenCallback);
+		const remoteAccountUsersRepo =
+			RepositoryFactory.createRemoteAccountUsersRepository(getTokenCallback);
 		console.info("[RepositoryProvider] Repositories created");
 
 		return {
@@ -37,6 +40,7 @@ const RepositoryProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 			localAccountRepo,
 			remoteAccountRepo,
 			remoteTransactionRepo,
+			remoteAccountUsersRepo,
 		};
 	}, [getTokenCallback]); // Include getTokenCallback as dependency
 
@@ -48,6 +52,7 @@ const RepositoryContext = createContext<{
 	localAccountRepo: DataModelRepository<Account, "local">;
 	remoteAccountRepo: DataModelRepository<Account, "remote">;
 	remoteTransactionRepo: DataModelRepository<Transaction, "remote">;
+	remoteAccountUsersRepo: DataModelRepository<AccountUsers, "remote">;
 } | null>(null);
 
 export const useRepository = (): {
@@ -55,6 +60,7 @@ export const useRepository = (): {
 	localAccountRepo: DataModelRepository<Account, "local">;
 	remoteAccountRepo: DataModelRepository<Account, "remote">;
 	remoteTransactionRepo: DataModelRepository<Transaction, "remote">;
+	remoteAccountUsersRepo: DataModelRepository<AccountUsers, "remote">;
 } => {
 	const context = useContext(RepositoryContext);
 	if (!context) {

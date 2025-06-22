@@ -148,6 +148,26 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 		[currentUserId, currentAccount]
 	);
 
+	const updateItem = useCallback(
+		async (item: Transaction) => {
+			setTransactions((prevState: Transaction[]) => {
+				return prevState.map((transaction) =>
+					transaction.id === item.id ? { ...transaction, ...item } : transaction
+				);
+			});
+			// Update remote repository first
+			await remoteTransactionRepo.update(item).catch((error) => {
+				console.error("[TransactionsProvider] Error updating remote transaction:", error);
+			});
+			// Then update local repository
+			return localTransactionRepo.update(item).catch((error) => {
+				console.error("[TransactionsProvider] Error updating local transaction:", error);
+			});
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
 	// Start listening for live updates
 	const startListening = useCallback(() => {
 		const onUpdate = (updates: Transaction[]) => {
@@ -195,6 +215,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 			deleteItem,
 			addItem,
 			startListening,
+			updateItem,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[transactions, addItem]

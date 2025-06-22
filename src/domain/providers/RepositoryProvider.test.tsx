@@ -1,4 +1,5 @@
 import RepositoryProvider, { useRepository } from "@domain/providers/RepositoryProvider";
+import type { BoundState } from "@domain/stores/zustand/useStore";
 import { render } from "@testing-library/react-native";
 import React from "react";
 
@@ -8,14 +9,26 @@ jest.mock("@data/repositories/RepositoryFactory", () => ({
 	createAccountRepository: jest.fn(() => "localAccountRepoMock"),
 	createRemoteAccountRepository: jest.fn(() => "remoteAccountRepoMock"),
 	createRemoteTransactionRepository: jest.fn(() => "remoteTransactionRepoMock"),
+	createRemoteAccountUsersRepository: jest.fn(() => "remoteAccountUsersRepoMock"),
 }));
 
 // Patch useStore.getState to return a token
 jest.mock("@stores/zustand/useStore", () => ({
 	useStore: {
-		getState: () => ({
-			authentication: { token: null }, // For testing without a token
-		}),
+		getState: () =>
+			({
+				authentication: { token: null, setToken: jest.fn() },
+				user: { userId: "user123", setUserId: jest.fn() },
+				account: {
+					setAccount: jest.fn(),
+					account: {
+						id: "account123",
+						name: "Test Account",
+						startingBalance: 100,
+						version: 1,
+					},
+				},
+			}) satisfies BoundState,
 	},
 }));
 

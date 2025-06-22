@@ -1,4 +1,5 @@
 import { realmSchema, realmSchemaVersion } from "@config/realmSchema";
+import { AccountUsersProvider } from "@domain/providers/AccountUsersProvider";
 import { AccountsProvider } from "@domain/providers/AccountsProvider";
 import RepositoryProvider from "@domain/providers/RepositoryProvider";
 import { TransactionsProvider } from "@domain/providers/TransactionsProvider";
@@ -20,7 +21,9 @@ const AllRemoteLocalRepositoriesWrapper = ({ children }: { children: React.React
 	return (
 		<RepositoryProvider>
 			<TransactionsProvider>
-				<AccountsProvider>{children}</AccountsProvider>
+				<AccountsProvider>
+					<AccountUsersProvider>{children}</AccountUsersProvider>
+				</AccountsProvider>
 			</TransactionsProvider>
 		</RepositoryProvider>
 	);

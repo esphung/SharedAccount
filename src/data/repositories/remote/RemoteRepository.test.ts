@@ -23,7 +23,7 @@ describe("RemoteAccountRepository constructor", () => {
 	it("should initialize with provided apiClient, route, and adapter", () => {
 		const repo = new RemoteAccountRepository<TestModel>(
 			mockApiClient,
-			route,
+			route as "/transactions", // Ensure route is a valid string literal
 			adapter,
 			() => "mock-token"
 		);

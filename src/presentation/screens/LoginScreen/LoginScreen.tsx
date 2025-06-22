@@ -16,13 +16,7 @@ import PKG_JSON from "./../../../../package.json";
 const selectSetUserId = (state: BoundState) => state.user.setUserId;
 
 const LoginScreen = () => {
-	const {
-		authorize,
-		user: auth0User,
-		// getCredentials,
-		clearCredentials,
-		clearSession,
-	} = useAuth0();
+	const { authorize, user: auth0User, clearCredentials, clearSession } = useAuth0();
 
 	// store
 	const token = useStore(selectAuth0Token);
@@ -63,8 +57,15 @@ const LoginScreen = () => {
 				<SharedAccountText {...generateTestIDs("package-version-label", "text")}>
 					{trans("LoginScreen.version")}: {PKG_JSON.version}
 				</SharedAccountText>
-				<SharedAccountText {...generateTestIDs("login-screen-subtitle", "text")}>
-					{token ? trans("LoginScreen.loggedIn") : trans("LoginScreen.notLoggedIn")}
+				{PKG_JSON.debugLocalHost && (
+					<SharedAccountText {...generateTestIDs("package-version-label", "text")}>
+						{trans("LoginScreen.version")}: Debugging on localhost
+					</SharedAccountText>
+				)}
+				<SharedAccountText {...generateTestIDs("login-screen-env-label", "text")}>
+					{process.env.APP_ENV
+						? `APP_ENV: ${process.env.APP_ENV}`
+						: "APP_ENV is not set in the environment variables."}
 				</SharedAccountText>
 			</View>
 			<View style={styles.centerPanel}>

@@ -31,7 +31,7 @@ const translations = {
 	},
 } as const;
 
-const getCurrentLanguage = (): keyof typeof translations => {
+export const getCurrentLanguage = (): keyof typeof translations => {
 	// TODO: Add localStorage support
 	return "en";
 };
