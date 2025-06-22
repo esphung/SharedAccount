@@ -1,7 +1,7 @@
 {
 	"name": "SharedAccount",
-	"version": "0.0.12",
-	"versionCode": 13,
+	"version": "1.0.0",
+	"versionCode": 14,
 	"private": true,
 	"scripts": {
 		"android": "npx @react-native-community/cli run-android",
