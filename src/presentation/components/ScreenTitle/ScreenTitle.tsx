@@ -1,38 +1,20 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
-import { selectAuth0SetToken } from "@domain/stores/zustand/actions";
-import { selectAuth0Token } from "@domain/stores/zustand/selectors";
-import { useStore } from "@domain/stores/zustand/useStore";
+import { padding } from "@presentation/constants/layout";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
-import React, { useCallback } from "react";
-import { Button, StyleSheet, View } from "react-native";
-import { useAuth0 } from "react-native-auth0";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-type ScreenTitleProps = { title: string; subtitle?: string };
+type ScreenTitleProps = {
+	title: string;
+	subtitle?: string;
+	onPressRightSide?: () => void;
+};
 
-const ScreenTitle: React.FC<ScreenTitleProps> = ({ title, subtitle }) => {
-	const { clearSession, clearCredentials } = useAuth0();
-
-	const token = useStore(selectAuth0Token);
-	const setToken = useStore(selectAuth0SetToken);
-
-	const handleSignOut = useCallback(async () => {
-		try {
-			await clearCredentials();
-			await clearSession({ federated: true });
-			// Clear the token in Zustand store
-			setToken(null);
-			console.info("[ScreenTitle] User signed out successfully");
-		} catch (error) {
-			console.error("[ScreenTitle] Error signing out:", error);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
+const ScreenTitle: React.FC<ScreenTitleProps> = ({ title, subtitle, onPressRightSide }) => {
 	return (
-		<>
-			<Button title="Sign Out" onPress={handleSignOut} disabled={!token} />
-			<View {...generateTestIDs("screen-title-container")} style={styles.row}>
-				<View style={styles.container}>
+		<View {...generateTestIDs("screen-title-container")} style={styles.row}>
+			<View style={styles.container}>
+				<View style={styles.leftSide}>
 					<SharedAccountText
 						{...generateTestIDs("screen-title-text", "text")}
 						type="screenHeader"
@@ -40,29 +22,54 @@ const ScreenTitle: React.FC<ScreenTitleProps> = ({ title, subtitle }) => {
 						{title}
 					</SharedAccountText>
 				</View>
-				<View {...generateTestIDs("screen-subtitle-container")} style={styles.container}>
-					<SharedAccountText
-						{...generateTestIDs("screen-subtitle-text", "text")}
-						type="listItemSubtitle"
+				{subtitle && (
+					<TouchableOpacity
+						{...generateTestIDs("screen-subtitle-btn-container", "button")}
+						onPress={onPressRightSide}
+						style={styles.rightSide}
 					>
-						{subtitle}
-					</SharedAccountText>
-				</View>
+						<SharedAccountText
+							{...generateTestIDs("screen-subtitle-text", "text")}
+							style={styles.textAlignSubtitle}
+						>
+							{subtitle}
+						</SharedAccountText>
+					</TouchableOpacity>
+				)}
 			</View>
-		</>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		paddingHorizontal: 16,
-		paddingVertical: 8,
+		alignItems: "center",
+		flexDirection: "row",
+		height: 80,
+		justifyContent: "space-between",
+		paddingLeft: padding.screen.horizontal.xSmall,
+		paddingRight: padding.screen.horizontal.small,
+		paddingVertical: padding.screen.vertical.xSmall,
+		width: "100%",
+	},
+	leftSide: {
+		alignItems: "flex-start",
+		justifyContent: "center",
+		paddingLeft: padding.screen.horizontal.xSmall,
+	},
+	rightSide: {
+		alignItems: "flex-end",
+		justifyContent: "center",
+		paddingRight: padding.screen.horizontal.xSmall,
 	},
 	row: {
 		alignItems: "center",
 		flexDirection: "row",
 		justifyContent: "space-between",
 		paddingVertical: 8,
+	},
+	textAlignSubtitle: {
+		textAlign: "right", // Right align the subtitle text
 	},
 });
 

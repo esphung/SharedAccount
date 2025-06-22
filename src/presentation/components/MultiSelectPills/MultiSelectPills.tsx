@@ -4,12 +4,12 @@ import React from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Option = {
-	id: number;
+	id: string;
 	label: string;
 };
 
 type SingleSelectPillsProps = {
-	options?: Option[];
+	options: Option[];
 	selected: string;
 	onChange: (selected: string) => void;
 	disabled?: boolean;

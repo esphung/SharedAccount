@@ -5,9 +5,9 @@ import colors from "@config/themes/colors";
 
 describe("SingleSelectPills", () => {
 	const options = [
-		{ id: 1, label: "Option 1" },
-		{ id: 2, label: "Option 2" },
-		{ id: 3, label: "Option 3" },
+		{ id: "1", label: "Option 1" },
+		{ id: "2", label: "Option 2" },
+		{ id: "3", label: "Option 3" },
 	];
 
 	it("renders all options", () => {

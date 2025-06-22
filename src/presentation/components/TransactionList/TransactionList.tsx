@@ -2,6 +2,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import TransactionListItem from "@components/TransactionList/TransactionListItem";
 import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
+import { padding } from "@presentation/constants/layout";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React, { forwardRef, useCallback } from "react";
 import { SectionList, StyleSheet } from "react-native";
@@ -9,7 +10,7 @@ import { SectionList, StyleSheet } from "react-native";
 const ITEM_HEIGHT = 100; // List item height
 
 type TransactionListProps = {
-	users: { avatar: string; id: string }[];
+	users: { avatar?: string; id: string }[];
 	onPress: (id: Transaction["id"]) => void;
 	data: {
 		title: string;
@@ -19,7 +20,7 @@ type TransactionListProps = {
 	isListReady: boolean;
 };
 
-const getUserById = (userId: string, users: { avatar: string; id: string }[] = []) =>
+const getUserById = (userId: string, users: { avatar?: string; id: string }[]) =>
 	users.find((user) => user.id === userId);
 
 // Main Component
@@ -59,7 +60,8 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 					{title}
 				</SharedAccountText>
 			)}
-			stickySectionHeadersEnabled={false}
+			// stickySectionHeadersEnabled={false}
+			stickySectionHeadersEnabled
 			getItemLayout={(_, index) => ({
 				length: ITEM_HEIGHT,
 				offset: ITEM_HEIGHT * index,
@@ -75,8 +77,8 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.white,
 		borderBottomColor: colors.light,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-		paddingHorizontal: 16,
-		paddingVertical: 8,
+		paddingHorizontal: padding.screen.horizontal.small,
+		paddingVertical: padding.screen.vertical.small,
 	},
 });
 

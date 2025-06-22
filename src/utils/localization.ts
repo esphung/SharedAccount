@@ -1,4 +1,4 @@
-type TranslationKeys = "SplashScreen" | "LoginScreen";
+type TranslationKeys = "SplashScreen" | "LoginScreen" | "TransactionsScreen" | "SettingsScreen";
 
 const translations = {
 	en: {
@@ -14,6 +14,14 @@ const translations = {
 		SplashScreen: {
 			title: "Welcome to Shared Account",
 		},
+		TransactionsScreen: {
+			noTransactions: "No accounts found",
+			createAccount: "Please create an account to get started",
+		},
+		SettingsScreen: {
+			signOut: "Sign Out",
+			goBack: "Go Back",
+		},
 	},
 	es: {
 		LoginScreen: {
@@ -27,6 +35,14 @@ const translations = {
 		},
 		SplashScreen: {
 			title: "Bienvenido a la Cuenta Compartida",
+		},
+		TransactionsScreen: {
+			noTransactions: "No se encontraron cuentas",
+			createAccount: "Por favor, crea una cuenta para comenzar",
+		},
+		SettingsScreen: {
+			goBack: "Regresar",
+			signOut: "Cerrar sesión",
 		},
 	},
 } as const;

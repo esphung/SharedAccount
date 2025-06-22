@@ -10,6 +10,7 @@ import styles from "@navigators/AppTabs/AppTabs.style";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { RouteProp } from "@react-navigation/native";
+import SettingsScreen from "@screens/SettingsScreen/SettingsScreen";
 import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
 import type { BoundState } from "@stores/zustand/useStore";
 import { useStore } from "@stores/zustand/useStore";
@@ -23,6 +24,7 @@ const ICON_SIZE = 24;
 
 export enum AppTabsScreens {
 	Transactions = "TransactionsScreen",
+	Settings = "SettingsScreen",
 }
 
 export type AppTabsParamList = { [key in AppTabsScreens]: undefined };
@@ -31,6 +33,7 @@ type TabRoute = RouteProp<AppTabsParamList, AppTabsScreens>;
 
 const screenOptions = (_params: { route: TabRoute }): BottomTabNavigationOptions => ({
 	headerShown: false,
+	headerStyle: { display: "none" }, // Hide the default header
 	tabBarStyle: { display: "none" }, // Hide the default tab bar
 });
 
@@ -79,7 +82,7 @@ const AppTabs = () => {
 	const currentAccountID = useStore(selectCurrentAccountID);
 
 	const { addItem: addAccount } = useAccountsContext();
-	const { addItem: addTransaction } = useTransactionsContext();
+	const { addItem: addTransaction, categoryPills = [] } = useTransactionsContext();
 	const userId = useStore(selectUserId);
 
 	// callbacks
@@ -138,10 +141,11 @@ const AppTabs = () => {
 					}
 				}}
 				onSubmit={handleCreateTransaction}
+				categoryPills={categoryPills}
 			/>
 		),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[transactionModalVisible]
+		[transactionModalVisible, categoryPills]
 	);
 
 	const handleCreateAccount = useCallback(
@@ -211,6 +215,13 @@ const AppTabs = () => {
 				screenOptions={screenOptions}
 			>
 				<Tab.Screen name={AppTabsScreens.Transactions} component={TransactionsScreen} />
+				<Tab.Screen
+					name={AppTabsScreens.Settings}
+					component={SettingsScreen}
+					options={{
+						tabBarStyle: { display: "none" }, // Hide the default tab bar for Settings
+					}}
+				/>
 			</Tab.Navigator>
 			<View {...generateTestIDs("add-account-button-view")} style={styles.buttonBar}>
 				{btnList.map(mapBtnFromList)}

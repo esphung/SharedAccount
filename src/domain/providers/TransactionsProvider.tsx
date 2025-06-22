@@ -5,8 +5,11 @@ import type { UseDataSource } from "@presentation/types/UseDataSource";
 import { mergeRecords } from "@utils/listFunctions";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Transaction } from "types/Transaction";
+import { aggregateCategoryPills } from "@domain/providers/TransactionsProvider.helpers";
 
-type TransactionsContextProps = ReturnType<UseDataSource<Transaction>>;
+type TransactionsContextProps = ReturnType<UseDataSource<Transaction>> & {
+	categoryPills: { id: string; label: string }[];
+};
 
 const TransactionsContext = createContext<TransactionsContextProps | undefined>(undefined);
 
@@ -188,6 +191,10 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	/* Category pills for UI */
+	// Aggregate categories into pills for UI
+	const categoryPills = useMemo(() => aggregateCategoryPills(transactions), [transactions]);
+
 	/* Side effects */
 	// Fetch initial transactions when the provider mounts
 	useEffect(() => {
@@ -216,6 +223,7 @@ export const TransactionsProvider = ({ children }: { children: React.ReactNode }
 			addItem,
 			startListening,
 			updateItem,
+			categoryPills,
 		}),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[transactions, addItem]

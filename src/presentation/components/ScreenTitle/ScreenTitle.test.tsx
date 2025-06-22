@@ -28,21 +28,6 @@ describe("ScreenTitle", () => {
 		expect(screen.queryByText("Subtitle")).toBeFalsy();
 	});
 
-	it("applies the correct styles to the subtitle container", () => {
-		render(<ScreenTitle title="Main Title" subtitle="Styled Subtitle" />);
-		const subtitleContainer = screen.getByTestId("screen-subtitle-container");
-
-		expect(subtitleContainer.props.style).toMatchObject({
-			paddingVertical: 8,
-		});
-	});
-
-	it("renders the subtitle with the correct type", () => {
-		render(<ScreenTitle title="Main Title" subtitle="Subtitle" />);
-		const subtitleText = screen.getByTestId("screen-subtitle-text");
-		expect(subtitleText.props.type).toBe("listItemSubtitle");
-	});
-
 	it("renders the title with the correct type", () => {
 		render(<ScreenTitle title="Main Title" />);
 		const titleText = screen.getByTestId("screen-title-text");
