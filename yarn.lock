@@ -4456,6 +4456,7 @@ __metadata:
     react-native-screens: "npm:^4.9.2"
     react-native-svg: "npm:^15.11.2"
     react-native-svg-transformer: "npm:^1.5.0"
+    react-native-toast-message: "npm:^2.3.0"
     react-test-renderer: "npm:19.0.0"
     realm: "npm:12.14.1"
     release-it: "npm:^19.0.1"
@@ -11879,6 +11880,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/e7df04154fcb76a5a7b0b4e376395f44cc4b90ca6df9d04cff8835546b0a501acf31c2d468742f4accf9ba6fe9e5efd8e5880133d518ad6fc1f3164d79674c8f
+  languageName: node
+  linkType: hard
+
+"react-native-toast-message@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "react-native-toast-message@npm:2.3.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/50c2d13299dd08f3a08d99e761e6e61732fd089ac77a154885abbc4d90f83a950cdc2c3f8d5a6c88f53330fe25f2e97ad0e102e57d07180a0d9185bec1be7daf
   languageName: node
   linkType: hard
 

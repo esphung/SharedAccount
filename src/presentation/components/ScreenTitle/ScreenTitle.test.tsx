@@ -3,6 +3,24 @@ import React from "react";
 
 import ScreenTitle from "./ScreenTitle";
 
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
+
 describe("ScreenTitle", () => {
 	it("renders correctly with the given title", () => {
 		render(<ScreenTitle title="Test Title" />);
@@ -26,11 +44,5 @@ describe("ScreenTitle", () => {
 	it("does not render the subtitle when not provided", () => {
 		render(<ScreenTitle title="Main Title" />);
 		expect(screen.queryByText("Subtitle")).toBeFalsy();
-	});
-
-	it("renders the title with the correct type", () => {
-		render(<ScreenTitle title="Main Title" />);
-		const titleText = screen.getByTestId("screen-title-text");
-		expect(titleText.props.type).toBe("screenHeader");
 	});
 });

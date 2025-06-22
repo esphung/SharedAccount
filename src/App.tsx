@@ -1,28 +1,36 @@
-import { SheetModalProvider } from "@domain/providers/SheetModalProvider";
-import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from "@env";
 import useDevMenu from "@presentation/hooks/useDevMenu";
 import RootStack from "@presentation/navigators/RootStack/RootStack";
-import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { LogBox } from "react-native";
-import { Auth0Provider } from "react-native-auth0";
-import { KeyboardProvider } from "react-native-keyboard-controller";
+import type { ToastProps } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
+import AppProviders from "@domain/providers/AppProviders";
 
 if (__DEV__) {
 	LogBox.ignoreAllLogs();
+	// ignore: Sending `onAnimatedValueUpdate` with no listeners registered.
 }
+
+const toastProps: ToastProps = {
+	type: "info",
+	position: "top",
+	bottomOffset: 100,
+	onPress: () => Toast.hide(),
+	autoHide: false,
+	avoidKeyboard: true,
+	swipeable: true,
+	topOffset: 64,
+};
 
 export default function App() {
 	useDevMenu();
+
 	return (
-		<KeyboardProvider>
-			<SheetModalProvider>
-				<Auth0Provider domain={AUTH0_DOMAIN} clientId={AUTH0_CLIENT_ID}>
-					<NavigationContainer>
-						<RootStack />
-					</NavigationContainer>
-				</Auth0Provider>
-			</SheetModalProvider>
-		</KeyboardProvider>
+		<>
+			<AppProviders>
+				<RootStack />
+			</AppProviders>
+			<Toast {...toastProps} />
+		</>
 	);
 }

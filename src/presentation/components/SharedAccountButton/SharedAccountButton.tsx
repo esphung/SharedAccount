@@ -1,46 +1,61 @@
 import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import colors from "@config/themes/colors";
+import { useTheme } from "@react-navigation/native";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React from "react";
-import type { TouchableOpacityProps } from "react-native";
+import type { TouchableOpacityProps, ViewStyle } from "react-native";
 import { StyleSheet, TouchableOpacity } from "react-native";
-
-type ButtonStyleKeys = keyof typeof styles;
-
-type ButtonTextStyleKey = `${string}Text`;
-
-type ExcludeExtraStyles = Exclude<ButtonStyleKeys, "disabled" | ButtonTextStyleKey>;
 
 type SharedAccountButtonProps = {
 	title: string;
-	type?: ExcludeExtraStyles;
 } & TouchableOpacityProps;
 
-export default function SharedAccountButton(props: SharedAccountButtonProps) {
-	const { title, type = "primary", style, disabled, ...rest } = props;
+const baseStyle: ViewStyle = {
+	borderRadius: 8,
+	height: 48,
+	justifyContent: "center",
+	paddingHorizontal: 16,
+	paddingVertical: 8,
+};
 
-	const memoizedStyle = React.useMemo(() => {
-		const typeStyle = {
-			borderColor: colors.transparent,
-			...styles[type],
-		};
-		return StyleSheet.flatten([typeStyle, style, disabled && styles.disabled]);
-	}, [type, disabled, style]);
+export default function SharedAccountButton(props: SharedAccountButtonProps) {
+	const { title, style, disabled, ...rest } = props;
+
+	const theme = useTheme();
 
 	return (
 		<TouchableOpacity
-			testID="sharedAccountButton"
+			{...generateTestIDs("sharedAccountButton", "button")}
 			disabled={disabled}
-			style={memoizedStyle}
-			activeOpacity={0.7}
+			style={[
+				baseStyle,
+				theme.dark
+					? {
+							...styles.secondary,
+							borderColor: colors.primary,
+							backgroundColor: colors.primary,
+						}
+					: {
+							...styles.primary,
+							borderColor: colors.dark,
+							backgroundColor: colors.dark,
+						},
+				disabled ? styles.disabled : {},
+				style,
+				disabled && styles.disabled,
+			]}
 			{...rest}
 		>
 			<SharedAccountText
-				type={type === "secondary" ? "secondaryButtonTitle" : "buttonTitle"}
-				style={StyleSheet.flatten([
-					disabled && styles.disabledText,
-					// @ts-expect-error - type is a string
-					styles[`${type}Text` as ButtonTextStyleKey],
-				])}
+				style={[
+					styles.text,
+					{
+						fontWeight: theme.fonts.heavy.fontWeight,
+						fontFamily: theme.fonts.heavy.fontFamily,
+					},
+					{ color: colors.white },
+					disabled && styles.disabled,
+				]}
 			>
 				{title}
 			</SharedAccountText>
@@ -50,13 +65,8 @@ export default function SharedAccountButton(props: SharedAccountButtonProps) {
 
 const styles = StyleSheet.create({
 	disabled: {
-		backgroundColor: colors.disabled,
-		opacity: 0.4,
+		opacity: 0.5,
 	},
-	disabledText: {
-		color: colors.white,
-	},
-	// eslint-disable-next-line react-native/no-unused-styles
 	primary: {
 		backgroundColor: colors.primary,
 		borderRadius: 8,
@@ -65,7 +75,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 8,
 	},
-	// eslint-disable-next-line react-native/no-unused-styles
 	secondary: {
 		borderColor: colors.secondary,
 		borderRadius: 8,
@@ -88,5 +97,9 @@ const styles = StyleSheet.create({
 	// eslint-disable-next-line react-native/no-unused-styles
 	suggestionItemText: {
 		color: colors.dark,
+	},
+	text: {
+		fontSize: 16,
+		textAlign: "center",
 	},
 });

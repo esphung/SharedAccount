@@ -8,6 +8,8 @@ type CircleButtonProps = {
 	onPress: (event: GestureResponderEvent) => void;
 	children?: React.ReactNode;
 	containerStyle?: ViewStyle;
+	disabled?: boolean;
+	backgroundColor?: string;
 } & TouchableOpacityProps;
 
 const CIRCLE_BUTTON_SIZE = 64;
@@ -17,6 +19,7 @@ const CircleButton = ({
 	children,
 	containerStyle,
 	disabled,
+	backgroundColor = colors.primary,
 	...rest
 }: CircleButtonProps) => {
 	return (
@@ -28,7 +31,9 @@ const CircleButton = ({
 			activeOpacity={0.8}
 			{...rest}
 		>
-			<View style={[styles.circle, disabled && styles.disabled]}>{children}</View>
+			<View style={[styles.circle, disabled && styles.disabled, { backgroundColor }]}>
+				{children}
+			</View>
 		</TouchableOpacity>
 	);
 };
@@ -36,15 +41,15 @@ const CircleButton = ({
 const styles = StyleSheet.create({
 	circle: {
 		alignItems: "center",
-		backgroundColor: colors.primary,
+		// backgroundColor: colors.primary,
 		borderRadius: CIRCLE_BUTTON_SIZE / 2,
 		elevation: 8,
 		height: CIRCLE_BUTTON_SIZE,
 		justifyContent: "center",
-		shadowColor: colors.black,
-		shadowOffset: { width: 0, height: 4 },
-		shadowOpacity: 0.3,
-		shadowRadius: 4,
+		// shadowColor: colors.black,
+		// shadowOffset: { width: 0, height: 4 },
+		// shadowOpacity: 0.3,
+		// shadowRadius: 4,
 		width: CIRCLE_BUTTON_SIZE,
 	},
 	container: {

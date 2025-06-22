@@ -5,19 +5,20 @@ import TransactionList from "@components/TransactionList/TransactionList";
 import { useAccountsContext } from "@domain/providers/AccountsProvider";
 import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
-import { selectCurrentAccount } from "@domain/stores/zustand/selectors";
+import { selectSetAccountSlice } from "@domain/stores/zustand/selectors";
 import { useStore } from "@domain/stores/zustand/useStore";
+import { padding } from "@presentation/constants/layout";
 import type { AppTabsParamList } from "@presentation/navigators/AppTabs/AppTabs";
 import { AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import MoneyFunctions from "@utils/MoneyFunctions";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import { DateTime } from "luxon";
 import type { RefObject } from "react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AlertButton, SectionList } from "react-native";
-import { Alert } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import type { Transaction } from "types/Transaction";
+import Toast from "react-native-toast-message";
 
 export const isExpenseTransaction = (
 	transaction: Transaction
@@ -134,7 +135,8 @@ export default function TransactionsScreen({
 	const { openAccountModal } = useSheetModalContext();
 
 	// store
-	const currentAccount = useStore(selectCurrentAccount);
+	const { setAccount: setCurrentAccount, account: currentAccount } =
+		useStore(selectSetAccountSlice);
 
 	// state
 	const [isListReady, setIsListReady] = useState(false);
@@ -143,7 +145,7 @@ export default function TransactionsScreen({
 	const listRef = useRef<SectionList<Transaction>>(null);
 
 	// TODO: Replace with actual transactions fetching logic
-	const accountTransactions: Transaction[] = useMemo(() => {
+	const displayedTransactions: Transaction[] = useMemo(() => {
 		if (!currentAccount) {
 			return [];
 		}
@@ -155,10 +157,10 @@ export default function TransactionsScreen({
 	}, [currentAccount, transactionsState]);
 
 	const sectionsData = useMemo(() => {
-		const expenses = accountTransactions.filter(isExpenseTransaction);
-		const credits = accountTransactions.filter(isCreditTransaction);
+		const expenses = displayedTransactions.filter(isExpenseTransaction);
+		const credits = displayedTransactions.filter(isCreditTransaction);
 		return groupTransactionsByDate(expenses, credits);
-	}, [accountTransactions]);
+	}, [displayedTransactions]);
 
 	useEffect(() => {
 		const onFocus = async () => {
@@ -182,11 +184,21 @@ export default function TransactionsScreen({
 					// Implement the delete transaction logic here
 					deleteTransaction(txnId)
 						.then(() => {
-							Alert.alert("Transaction deleted successfully");
+							scrollToTop(sectionsData, listRef);
+							Toast.show({
+								type: "success",
+								text1: "Transaction deleted successfully",
+								text2: "The transaction has been removed from your account.",
+								autoHide: true,
+								visibilityTime: 6700,
+							});
 						})
 						.catch((error) => {
 							// Handle any errors that occur during deletion
-							console.error("Error deleting transaction:", error);
+							console.error(
+								"[TransactionsScreen] Error deleting transaction:",
+								error
+							);
 						});
 				}
 			}),
@@ -194,59 +206,75 @@ export default function TransactionsScreen({
 		[]
 	);
 
-	const screenTitleBalance = useMemo(() => {
-		if (!currentAccount) {
-			return "No account";
-		}
-		const balance = calculateTotal({
-			transactions: accountTransactions,
-			startingBalance: currentAccount.startingBalance,
-		});
-
-		return `Balance: ${MoneyFunctions.formatMoney(balance, 2)}`;
-	}, [accountTransactions, currentAccount]);
-
 	const processAccountsList = useMemo(() => {
 		// calculate total balance for each account and add it to the account object
-		const list = accounts.map((account) => ({
-			...account,
-			totalBalance: calculateTotal({
-				transactions: accountTransactions.filter(
-					(txn) => txn.sharedAccountId === account.id
-				),
-				startingBalance: account.startingBalance,
-			}),
-		}));
-
+		const list = accounts.map((account) => {
+			const transactionsForAccount = transactionsState.filter(
+				(txn) => txn.sharedAccountId === account.id
+			);
+			return {
+				...account,
+				totalBalance: calculateTotal({
+					transactions: transactionsForAccount,
+					startingBalance: account.startingBalance,
+				}),
+			};
+		});
 		return list;
-	}, [accounts, accountTransactions]);
+	}, [accounts, transactionsState]);
 
-	const handlePressAccount = useCallback((accountId: string) => {
-		console.info("[TransactionsScreen] Pressed account:", accountId);
-	}, []);
+	const handlePressAccount = useCallback(
+		(accountId: string) => {
+			const account = accounts.find((acc) => acc.id === accountId);
+			if (!account) {
+				console.warn("[TransactionsScreen] Account not found:", accountId);
+				return;
+			}
+			// Set the current account in the store
+			setCurrentAccount(account);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[accounts, currentAccount]
+	);
 
 	return (
 		<SharedAccountScreen {...generateTestIDs("transactions-screen")}>
-			<ScreenTitle
-				title="Transactions"
-				subtitle={screenTitleBalance}
-				onPressRightSide={() => {
-					navigation.navigate(AppTabsScreens.Settings);
-				}}
-			/>
-			<AccountsList
-				accounts={processAccountsList}
-				onPressAccount={handlePressAccount}
-				onPressAddAccount={openAccountModal}
-			/>
-			<TransactionList
-				ref={listRef}
-				data={sectionsData}
-				onPress={handleDeleteTransaction}
-				onContentSizeChange={() => scrollToTop(sectionsData, listRef)}
-				isListReady={isListReady}
-				users={users}
-			/>
+			<View style={styles.northPanel}>
+				<ScreenTitle
+					title="Transactions"
+					subtitle="Settings"
+					onPressRightSide={() => {
+						navigation.navigate(AppTabsScreens.Settings);
+					}}
+				/>
+				<AccountsList
+					accounts={processAccountsList}
+					onPressAccount={handlePressAccount}
+					onPressAddAccount={openAccountModal}
+					selectedAccountId={currentAccount?.id}
+				/>
+			</View>
+			<View style={styles.southPanel}>
+				<TransactionList
+					ref={listRef}
+					data={sectionsData}
+					onPress={handleDeleteTransaction}
+					onContentSizeChange={() => scrollToTop(sectionsData, listRef)}
+					isListReady={isListReady}
+					users={users}
+				/>
+			</View>
 		</SharedAccountScreen>
 	);
 }
+
+const styles = StyleSheet.create({
+	northPanel: {
+		flex: 1,
+		height: padding.northPanel.height,
+	},
+	southPanel: {
+		flex: 2,
+		height: padding.southPanel.height,
+	},
+});

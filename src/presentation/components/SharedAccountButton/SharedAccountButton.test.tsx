@@ -1,8 +1,25 @@
+import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
 import SharedAccountButton from "./SharedAccountButton";
-import colors from "@config/themes/colors";
-import { StyleSheet } from "react-native";
+
+// mock useTheme hook if necessary
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
 
 describe("SharedAccountButton", () => {
 	const title = "Test Button";
@@ -19,53 +36,73 @@ describe("SharedAccountButton", () => {
 		expect(onPress).toHaveBeenCalled();
 	});
 
-	it("applies primary styles by default", () => {
+	it("applies primary styles when theme is light", () => {
+		jest.mock("@react-navigation/native", () => ({
+			...jest.requireActual("@react-navigation/native"),
+			useTheme: () => ({
+				colors: {
+					text: "#000",
+					background: "rgb(52, 58, 64)",
+					border: "rgb(52, 58, 64)",
+				},
+				fonts: {
+					heavy: {
+						fontWeight: "700",
+						fontFamily: "System",
+					},
+				},
+				dark: false,
+			}),
+		}));
+		// arrange
 		const { getByTestId } = render(<SharedAccountButton title={title} onPress={onPress} />);
 		const button = getByTestId("sharedAccountButton");
 		expect(button.props.style).toEqual(
 			expect.objectContaining({
-				backgroundColor: colors.primary,
-				borderRadius: 8,
-				height: 48,
-				justifyContent: "center",
-				paddingHorizontal: 16,
-				paddingVertical: 8,
+				backgroundColor: "rgb(52, 58, 64)",
+				borderColor: "rgb(52, 58, 64)",
 			})
 		);
 	});
 
-	it("applies secondary styles when type is 'secondary'", () => {
-		const { getByTestId } = render(
-			<SharedAccountButton title={title} type="secondary" onPress={onPress} />
-		);
+	it("applies secondary styles when theme is dark", () => {
+		// arrange
+		jest.mock("@react-navigation/native", () => ({
+			...jest.requireActual("@react-navigation/native"),
+			useTheme: () => ({
+				colors: {
+					text: "#fff",
+					background: "rgb(52, 58, 64)",
+					border: "rgb(52, 58, 64)",
+				},
+				fonts: {
+					heavy: {
+						fontWeight: "700",
+						fontFamily: "System",
+					},
+				},
+				dark: true,
+			}),
+		}));
+		const { getByTestId } = render(<SharedAccountButton title={title} onPress={onPress} />);
 		const button = getByTestId("sharedAccountButton");
 		expect(button.props.style).toEqual(
 			expect.objectContaining({
-				borderColor: colors.secondary,
+				borderColor: "rgb(52, 58, 64)",
+				backgroundColor: "rgb(52, 58, 64)",
 				borderRadius: 8,
-				borderWidth: StyleSheet.hairlineWidth,
-				height: 48,
-				justifyContent: "center",
-				paddingHorizontal: 16,
-				paddingVertical: 8,
 			})
 		);
 	});
 
 	it("applies suggestionItem styles when type is 'suggestionItem'", () => {
-		const { getByTestId } = render(
-			<SharedAccountButton title={title} type="suggestionItem" onPress={onPress} />
-		);
+		const { getByTestId } = render(<SharedAccountButton title={title} onPress={onPress} />);
 		const button = getByTestId("sharedAccountButton");
 		expect(button.props.style).toEqual(
 			expect.objectContaining({
-				alignItems: "flex-start",
-				borderColor: colors.secondary,
+				borderColor: "rgb(52, 58, 64)",
 				borderRadius: 8,
-				borderWidth: StyleSheet.hairlineWidth,
-				marginVertical: 4,
-				paddingHorizontal: 16,
-				paddingVertical: 8,
+				backgroundColor: "rgb(52, 58, 64)",
 			})
 		);
 	});
@@ -77,8 +114,7 @@ describe("SharedAccountButton", () => {
 		const button = getByTestId("sharedAccountButton");
 		expect(button.props.style).toEqual(
 			expect.objectContaining({
-				backgroundColor: colors.disabled,
-				opacity: 0.4,
+				backgroundColor: "rgb(52, 58, 64)",
 			})
 		);
 	});

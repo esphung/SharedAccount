@@ -5,7 +5,7 @@ import type { Transaction } from "@data/models/types/Transaction";
 import { padding } from "@presentation/constants/layout";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React, { forwardRef, useCallback } from "react";
-import { SectionList, StyleSheet } from "react-native";
+import { SectionList, StyleSheet, View } from "react-native";
 
 const ITEM_HEIGHT = 100; // List item height
 
@@ -60,7 +60,6 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 					{title}
 				</SharedAccountText>
 			)}
-			// stickySectionHeadersEnabled={false}
 			stickySectionHeadersEnabled
 			getItemLayout={(_, index) => ({
 				length: ITEM_HEIGHT,
@@ -68,11 +67,27 @@ const TransactionList = forwardRef<SectionList, TransactionListProps>((props, re
 				index,
 			})}
 			onContentSizeChange={onContentSizeChange} // <-- This triggers after rendering
+			ListEmptyComponent={
+				<View style={styles.emptyContainer}>
+					<SharedAccountText
+						{...generateTestIDs("transactions-list-empty-text", "text")}
+						type="listItemTitle"
+					>
+						No transactions available.
+					</SharedAccountText>
+				</View>
+			}
 		/>
 	);
 });
 
 const styles = StyleSheet.create({
+	emptyContainer: {
+		alignItems: "center",
+		flex: 1,
+		justifyContent: "center",
+		padding: padding.screen.horizontal.large,
+	},
 	header: {
 		backgroundColor: colors.white,
 		borderBottomColor: colors.light,

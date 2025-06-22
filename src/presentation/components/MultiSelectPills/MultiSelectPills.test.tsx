@@ -3,6 +3,24 @@ import { render, fireEvent } from "@testing-library/react-native";
 import SingleSelectPills from "./MultiSelectPills";
 import colors from "@config/themes/colors";
 
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
+
 describe("SingleSelectPills", () => {
 	const options = [
 		{ id: "1", label: "Option 1" },
@@ -29,7 +47,7 @@ describe("SingleSelectPills", () => {
 			expect.objectContaining({
 				color: "rgb(248, 249, 250)",
 				fontSize: 16,
-				fontWeight: "400",
+				fontWeight: "regular",
 			})
 		);
 	});

@@ -4,6 +4,24 @@ import React from "react";
 
 import SheetModal from "./SheetModal";
 
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
+
 describe("SheetModal", () => {
 	const setModalVisibleMock = jest.fn();
 	const onDismissMock = jest.fn();

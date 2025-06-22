@@ -10,6 +10,7 @@ const translations = {
 			pleaseLogIn: "Please log in to continue.",
 			loggedIn: "You are logged in.",
 			notLoggedIn: "You are not logged in.",
+			env: "Environment",
 		},
 		SplashScreen: {
 			title: "Welcome to Shared Account",
@@ -21,6 +22,7 @@ const translations = {
 		SettingsScreen: {
 			signOut: "Sign Out",
 			goBack: "Go Back",
+			createAccount: "Create Account",
 		},
 	},
 	es: {
@@ -32,6 +34,7 @@ const translations = {
 			pleaseLogIn: "Por favor, inicia sesión para continuar.",
 			loggedIn: "Has iniciado sesión.",
 			notLoggedIn: "No has iniciado sesión.",
+			env: "Entorno",
 		},
 		SplashScreen: {
 			title: "Bienvenido a la Cuenta Compartida",
@@ -43,6 +46,7 @@ const translations = {
 		SettingsScreen: {
 			goBack: "Regresar",
 			signOut: "Cerrar sesión",
+			createAccount: "Crear cuenta",
 		},
 	},
 } as const;

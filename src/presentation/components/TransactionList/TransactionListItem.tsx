@@ -4,6 +4,7 @@ import SharedAccountText from "@components/SharedAccountText/SharedAccountText";
 import SkeletonLoader from "@components/SkeletonLoader/SkeletonLoader";
 import colors from "@config/themes/colors";
 import type { Transaction } from "@data/models/types/Transaction";
+import { padding } from "@presentation/constants/layout";
 import MoneyFunctions from "@utils/MoneyFunctions";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import { DateTime } from "luxon";
@@ -20,7 +21,7 @@ type TransactionListItemProps = {
 };
 
 // Constants
-const ICON_SIZE = 20;
+const ICON_SIZE = 16;
 const AVATAR_SIZE = 40;
 const AVATAR_RADIUS = AVATAR_SIZE / 2;
 const DEFAULT_AVATAR = "https://picsum.photos/200/300";
@@ -58,11 +59,26 @@ export default function TransactionListItem({
 		<TouchableOpacity
 			accessibilityState={{ selected: false }}
 			{...generateTestIDs("transaction-list-item", "button")}
-			style={[styles.container, { height: itemHeight }]}
+			style={[
+				styles.container,
+				{ height: itemHeight },
+				{
+					paddingLeft: padding.screen.horizontal.xSmall,
+					paddingRight: padding.screen.horizontal.xSmall,
+				},
+			]}
 			onPress={() => onPress(item.id)}
 			activeOpacity={0.7}
 		>
-			<View style={styles.leftContainer}>
+			<View
+				style={[
+					styles.leftContainer,
+					styles.row,
+					{
+						marginVertical: padding.screen.vertical.large,
+					},
+				]}
+			>
 				<View style={styles.avatarContainer}>
 					<SkeletonLoader
 						{...generateTestIDs("avatar-skeleton-placeholder")}
@@ -77,79 +93,100 @@ export default function TransactionListItem({
 						style={styles.avatar}
 					/>
 				</View>
-
 				<View>
-					{formattedAmount ? (
-						<SharedAccountText type="listItemTitle">
-							{formattedAmount}
-						</SharedAccountText>
-					) : (
-						<SkeletonLoader
-							{...generateTestIDs("transaction-name-skeleton-placeholder")}
-							width="100%"
-							style={styles.subtitleSkeleton}
-						/>
-					)}
-					<SharedAccountText>
-						{categoryValue ? (
-							<>
-								<SharedAccountText numberOfLines={1}>
-									{categoryValue}
-								</SharedAccountText>
-								{itemName && (
-									<SharedAccountText>
-										<SharedAccountText
-											numberOfLines={1}
-											type="listItemSubtitle"
-										>
-											{" | "}
-										</SharedAccountText>
-										<SharedAccountText
-											numberOfLines={1}
-											type="listItemSubtitle"
-										>
-											{itemName}
-										</SharedAccountText>
-									</SharedAccountText>
-								)}
-							</>
+					<View style={styles.amountViewPadding}>
+						{formattedAmount ? (
+							<SharedAccountText type="listItemTitle">
+								{formattedAmount}
+							</SharedAccountText>
 						) : (
 							<SkeletonLoader
-								testID="transaction-category-skeleton-placeholder"
-								width="90%"
+								{...generateTestIDs("transaction-name-skeleton-placeholder")}
+								width="100%"
+								style={styles.subtitleSkeleton}
 							/>
 						)}
-					</SharedAccountText>
+					</View>
+					<View style={styles.categoryViewPadding}>
+						<SharedAccountText>
+							{categoryValue ? (
+								<>
+									<SharedAccountText numberOfLines={1}>
+										{categoryValue}
+									</SharedAccountText>
+									{itemName && (
+										<SharedAccountText>
+											<SharedAccountText
+												numberOfLines={1}
+												type="listItemSubtitle"
+											>
+												{" | "}
+											</SharedAccountText>
+											<SharedAccountText
+												numberOfLines={1}
+												type="listItemSubtitle"
+											>
+												{itemName}
+											</SharedAccountText>
+										</SharedAccountText>
+									)}
+								</>
+							) : (
+								<SkeletonLoader
+									testID="transaction-category-skeleton-placeholder"
+									width="90%"
+								/>
+							)}
+						</SharedAccountText>
+					</View>
 				</View>
 			</View>
 
-			<View style={styles.rightContainer}>
-				{transactionDate ? (
-					<SharedAccountText>{transactionDate}</SharedAccountText>
-				) : (
-					<SkeletonLoader width="80%" />
-				)}
-				{isCredit ? (
-					<ArrowUpSvg
-						width={ICON_SIZE}
-						height={ICON_SIZE}
-						{...generateTestIDs("arrow-up-svg", "image")}
-						fill={colors.green}
-					/>
-				) : (
-					<ArrowDownSvg
-						{...generateTestIDs("arrow-down-svg", "image")}
-						width={ICON_SIZE}
-						height={ICON_SIZE}
-						fill={colors.red}
-					/>
-				)}
+			<View
+				style={[
+					styles.rightContainer,
+					{
+						marginVertical: padding.screen.vertical.large,
+					},
+				]}
+			>
+				<View style={styles.dateViewPadding}>
+					{transactionDate ? (
+						<SharedAccountText>{transactionDate}</SharedAccountText>
+					) : (
+						<SkeletonLoader width="80%" />
+					)}
+				</View>
+				<View style={styles.circleArrowViewPadding}>
+					{isCredit ? (
+						<ArrowUpSvg
+							width={ICON_SIZE}
+							height={ICON_SIZE}
+							{...generateTestIDs("arrow-up-svg", "image")}
+							color={colors.green}
+						/>
+					) : (
+						<ArrowDownSvg
+							{...generateTestIDs("arrow-down-svg", "image")}
+							width={ICON_SIZE}
+							height={ICON_SIZE}
+							color={colors.red}
+						/>
+					)}
+				</View>
 			</View>
 		</TouchableOpacity>
 	);
 }
 
 const styles = StyleSheet.create({
+	amountViewPadding: {
+		alignItems: "flex-start",
+		flex: 1,
+		justifyContent: "center",
+		paddingLeft: padding.screen.horizontal.xSmall,
+		width: "100%",
+	},
 	avatar: {
 		borderColor: colors.dark,
 		borderRadius: AVATAR_RADIUS,
@@ -159,21 +196,34 @@ const styles = StyleSheet.create({
 	avatarContainer: {
 		alignItems: "center",
 		justifyContent: "center",
-		marginHorizontal: 12,
+	},
+	categoryViewPadding: {
+		alignItems: "flex-start",
+		flex: 1,
+		justifyContent: "center",
+		paddingLeft: padding.screen.horizontal.xSmall,
+	},
+	circleArrowViewPadding: {
+		alignItems: "flex-end",
+		flex: 1,
+		justifyContent: "center",
 	},
 	container: {
 		borderBottomColor: colors.light,
 		borderBottomWidth: 1,
 		flexDirection: "row",
-		paddingHorizontal: 12,
+	},
+	dateViewPadding: {
+		alignItems: "flex-end",
+		flexGrow: 1,
+		justifyContent: "center",
+		width: "100%",
 	},
 	leftContainer: {
 		alignItems: "center",
 		flex: 1,
-		flexDirection: "row",
-		height: 100,
+		// flexDirection: "row",
 		justifyContent: "flex-start",
-		paddingVertical: 8,
 	},
 	placeholderContainer: {
 		justifyContent: "center",
@@ -182,11 +232,13 @@ const styles = StyleSheet.create({
 	},
 	rightContainer: {
 		alignItems: "flex-end",
-		gap: 4,
-		height: 100,
-		justifyContent: "center",
+		justifyContent: "space-between",
+		// justifyContent: "center",
 		paddingRight: 16,
 		width: "50%",
+	},
+	row: {
+		flexDirection: "row",
 	},
 	skeleton: {
 		left: 0,

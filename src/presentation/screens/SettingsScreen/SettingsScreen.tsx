@@ -10,11 +10,16 @@ import { useStore } from "@domain/stores/zustand/useStore";
 import type { AppTabsParamList, AppTabsScreens } from "@navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { trans } from "@utils/localization";
+import SharedAccountButton from "@components/SharedAccountButton/SharedAccountButton";
+import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
+import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 
 type SettingsScreenProps = BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Settings>;
 
 const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
 	const { clearSession, clearCredentials } = useAuth0();
+
+	const { openAccountModal } = useSheetModalContext();
 
 	const setToken = useStore(selectAuth0SetToken);
 
@@ -59,16 +64,16 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
 	);
 
 	return (
-		<SharedAccountScreen>
+		<SharedAccountScreen {...generateTestIDs("settings-screen")}>
 			<ScreenTitle title="Settings" />
-			<View style={styles.fill}>
-				<Button
-					title={trans("SettingsScreen.goBack")}
-					onPress={() => navigation.goBack()}
+			<View style={styles.contentContainer}>
+				<SharedAccountButton
+					title={trans("SettingsScreen.createAccount")}
+					onPress={openAccountModal}
 				/>
 			</View>
-
 			<View style={styles.footerContainer}>
+				<Button title={trans("SettingsScreen.goBack")} onPress={navigation.goBack} />
 				<Button title={trans("SettingsScreen.signOut")} onPress={handleSignOut} />
 			</View>
 		</SharedAccountScreen>
@@ -76,8 +81,10 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
 };
 
 const styles = StyleSheet.create({
-	fill: {
+	contentContainer: {
 		flex: 1,
+		paddingHorizontal: padding.screen.horizontal.large,
+		paddingVertical: padding.screen.vertical.large,
 	},
 	footerContainer: {
 		padding: padding.screen.vertical.large,

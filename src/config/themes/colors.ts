@@ -23,10 +23,16 @@ const colors = {
 	yellow: "rgb(255, 255, 0)",
 
 	skeleton: "rgba(255,255,255,0.3)",
-	skeletonBg: "#e0e0e0",
-	softGray: "#f0f0f0",
+	skeletonBg: "rgb(224, 224, 224)",
+	softGray: "rgb(240, 240, 240)",
 
-	lightBackground: "#f8f9fa",
+	lightBackground: "rgb(248, 249, 250)",
+	whiteTransparent: "rgba(255, 255, 255, 0.8)",
+
+	card: "rgb(255, 255, 255)", // White card background
+	text: "rgb(33, 37, 41)",
+	border: "rgb(222, 226, 230)",
+	notification: "rgb(255, 99, 71)", // Tomato color for notifications
 };
 
 export default colors;

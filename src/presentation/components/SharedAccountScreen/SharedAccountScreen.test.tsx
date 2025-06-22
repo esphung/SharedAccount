@@ -4,6 +4,24 @@ import React from "react";
 import { Text } from "react-native";
 import SharedAccountScreen from "./SharedAccountScreen";
 
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
+
 describe("SharedAccountScreen", () => {
 	it("renders children correctly", () => {
 		render(
@@ -22,12 +40,11 @@ describe("SharedAccountScreen", () => {
 			</SharedAccountScreen>
 		);
 		const container = screen.getByTestId("container");
-		expect(container.props.style).toEqual(
-			expect.objectContaining({
-				backgroundColor: "red",
-				flex: 1,
-			})
-		);
+		expect(container.props.style).toEqual([
+			{ flex: 1 },
+			{ backgroundColor: "rgb(52, 58, 64)" },
+			{ backgroundColor: "red", flex: 1 },
+		]);
 	});
 
 	it("passes additional props to SafeAreaView", () => {
