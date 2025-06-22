@@ -147,17 +147,17 @@ describe("calculateTotal", () => {
 	it("calculates the total balance correctly with no starting balance and one expense", () => {
 		const transactions = [new TransactionBuilder().withAmount(100).withType("expense").build()];
 		const result = calculateTotal({ transactions, startingBalance: 0 });
-		expect(result).toBe("-$1.00");
+		expect(result).toBe(-100);
 	});
 	it("calculates the total balance correctly with no transactions", () => {
 		const result = calculateTotal({ transactions: [], startingBalance: 0 });
-		expect(result).toBe("$0.00");
+		expect(result).toBe(0);
 	});
 
 	it("calculates the total balance correctly with one credit transaction", () => {
 		const transactions = [new TransactionBuilder().withAmount(200).withType("credit").build()];
 		const result = calculateTotal({ transactions, startingBalance: 0 });
-		expect(result).toBe("$2.00");
+		expect(result).toBe(200);
 	});
 
 	it("calculates the total balance correctly with mixed transactions", () => {
@@ -166,7 +166,7 @@ describe("calculateTotal", () => {
 			new TransactionBuilder().withAmount(200).withType("credit").build(),
 		];
 		const result = calculateTotal({ transactions, startingBalance: 0 });
-		expect(result).toBe("$1.00");
+		expect(result).toBe(100);
 	});
 
 	it("calculates the total balance correctly with a starting balance", () => {
@@ -175,7 +175,7 @@ describe("calculateTotal", () => {
 			new TransactionBuilder().withAmount(200).withType("credit").build(),
 		];
 		const result = calculateTotal({ transactions, startingBalance: 500 });
-		expect(result).toBe("$6.00");
+		expect(result).toBe(600);
 	});
 
 	it("calculates the total balance correctly with negative amounts", () => {
@@ -184,7 +184,7 @@ describe("calculateTotal", () => {
 			new TransactionBuilder().withAmount(-200).withType("credit").build(),
 		];
 		const result = calculateTotal({ transactions, startingBalance: 0 });
-		expect(result).toBe("$1.00");
+		expect(result).toBe(100);
 	});
 });
 

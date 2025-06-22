@@ -19,6 +19,7 @@ type FieldKey = keyof FormState;
 
 type ExpenseFormProps = {
 	onSubmit: (data: FormState) => void;
+	categoryPills: { id: string; label: string }[];
 };
 
 type FormInputField<T extends FieldKey = FieldKey> = {
@@ -54,7 +55,7 @@ const filterInputList = (item: FormInputField, data: FormState) => {
 	return false;
 };
 
-const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
+const ExpenseForm = ({ onSubmit, categoryPills = [] }: ExpenseFormProps) => {
 	const { values, errors, handleChange, validate, resetForm, focusNextField, registerInput } =
 		useForm<FormState>({
 			amount: 0,
@@ -186,17 +187,6 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
 		]
 	);
 
-	const categoryPillsList = useMemo(
-		() => [
-			{ id: 1, label: "Food" },
-			{ id: 2, label: "Transport" },
-			{ id: 3, label: "Entertainment" },
-			{ id: 4, label: "Utilities" },
-			{ id: 5, label: "Rent" },
-		],
-		[]
-	);
-
 	const renderInput = useCallback(
 		({ item }: { item: FormInputField }) => {
 			const { error, label, key, value, placeholder, ref } = item;
@@ -298,7 +288,7 @@ const ExpenseForm = ({ onSubmit }: ExpenseFormProps) => {
 			</View>
 			<View style={styles.southPanel}>
 				<MultiSelectPills
-					options={categoryPillsList}
+					options={categoryPills}
 					selected={category}
 					onChange={(selected) =>
 						selected !== category

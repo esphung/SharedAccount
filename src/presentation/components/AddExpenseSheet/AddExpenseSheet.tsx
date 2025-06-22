@@ -10,11 +10,13 @@ export default function AddExpenseSheet({
 	modalVisible,
 	setModalVisible,
 	onSubmit,
+	categoryPills = [],
 }: {
 	modalVisible: boolean;
 	setModalVisible: (visible: boolean) => void;
 	onSubmit: (data: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => void;
 	listRef: RefObject<SectionList | null>;
+	categoryPills: { id: string; label: string }[];
 }) {
 	const onSubmitCallback = useCallback(
 		(data: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
@@ -33,7 +35,7 @@ export default function AddExpenseSheet({
 			presentationStyle="formSheet"
 		>
 			<View style={styles.content}>
-				<ExpenseForm onSubmit={onSubmitCallback} />
+				<ExpenseForm onSubmit={onSubmitCallback} categoryPills={categoryPills} />
 			</View>
 		</SheetModal>
 	);

@@ -1,10 +1,14 @@
+import AccountsList from "@components/AccountsList/AccountsList";
 import ScreenTitle from "@components/ScreenTitle/ScreenTitle";
 import SharedAccountScreen from "@components/SharedAccountScreen/SharedAccountScreen";
 import TransactionList from "@components/TransactionList/TransactionList";
+import { useAccountsContext } from "@domain/providers/AccountsProvider";
+import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
 import { selectCurrentAccount } from "@domain/stores/zustand/selectors";
 import { useStore } from "@domain/stores/zustand/useStore";
-import type { AppTabsParamList, AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
+import type { AppTabsParamList } from "@presentation/navigators/AppTabs/AppTabs";
+import { AppTabsScreens } from "@presentation/navigators/AppTabs/AppTabs";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import MoneyFunctions from "@utils/MoneyFunctions";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
@@ -29,7 +33,7 @@ export const calculateTotal = ({
 }: {
 	transactions: Transaction[];
 	startingBalance: number;
-}) => {
+}): number => {
 	// Calculate total starting with the starting balance (in cents)
 	const totalInCents = transactions.reduce((acc, transaction) => {
 		if (isExpenseTransaction(transaction)) {
@@ -41,7 +45,9 @@ export const calculateTotal = ({
 	}, startingBalance);
 
 	// Format as currency (assuming amounts are stored in cents)
-	return MoneyFunctions.formatMoney(totalInCents, 2);
+	// return MoneyFunctions.formatMoney(totalInCents, 2);
+
+	return totalInCents; // Convert cents to dollars
 };
 
 export const groupTransactionsByDate = (expenses: Transaction[], credits: Transaction[]) => {
@@ -124,6 +130,8 @@ export default function TransactionsScreen({
 }: BottomTabScreenProps<AppTabsParamList, AppTabsScreens.Transactions>) {
 	// context
 	const { state: transactionsState, deleteItem: deleteTransaction } = useTransactionsContext();
+	const { state: accounts } = useAccountsContext();
+	const { openAccountModal } = useSheetModalContext();
 
 	// store
 	const currentAccount = useStore(selectCurrentAccount);
@@ -170,9 +178,6 @@ export default function TransactionsScreen({
 				message: "Are you sure you want to delete this transaction?",
 				cancelable: true,
 			}).then((shouldDelete) => {
-				// if (shouldDelete) {
-				// 	throw new Error("Delete transaction not implemented yet");
-				// }
 				if (shouldDelete) {
 					// Implement the delete transaction logic here
 					deleteTransaction(txnId)
@@ -193,12 +198,47 @@ export default function TransactionsScreen({
 		if (!currentAccount) {
 			return "No account";
 		}
-		return `Balance: ${calculateTotal({ transactions: accountTransactions, startingBalance: currentAccount?.startingBalance })}`;
+		const balance = calculateTotal({
+			transactions: accountTransactions,
+			startingBalance: currentAccount.startingBalance,
+		});
+
+		return `Balance: ${MoneyFunctions.formatMoney(balance, 2)}`;
 	}, [accountTransactions, currentAccount]);
+
+	const processAccountsList = useMemo(() => {
+		// calculate total balance for each account and add it to the account object
+		const list = accounts.map((account) => ({
+			...account,
+			totalBalance: calculateTotal({
+				transactions: accountTransactions.filter(
+					(txn) => txn.sharedAccountId === account.id
+				),
+				startingBalance: account.startingBalance,
+			}),
+		}));
+
+		return list;
+	}, [accounts, accountTransactions]);
+
+	const handlePressAccount = useCallback((accountId: string) => {
+		console.info("[TransactionsScreen] Pressed account:", accountId);
+	}, []);
 
 	return (
 		<SharedAccountScreen {...generateTestIDs("transactions-screen")}>
-			<ScreenTitle title="Transactions" subtitle={screenTitleBalance} />
+			<ScreenTitle
+				title="Transactions"
+				subtitle={screenTitleBalance}
+				onPressRightSide={() => {
+					navigation.navigate(AppTabsScreens.Settings);
+				}}
+			/>
+			<AccountsList
+				accounts={processAccountsList}
+				onPressAccount={handlePressAccount}
+				onPressAddAccount={openAccountModal}
+			/>
 			<TransactionList
 				ref={listRef}
 				data={sectionsData}

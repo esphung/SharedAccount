@@ -16,6 +16,14 @@ const meta = {
 	component: ExpenseForm,
 	args: {
 		onSubmit: (_data: { amount: number; category: string; date: Date }) => {},
+		categoryPills: [
+			{ id: "food", label: "Food" },
+			{ id: "transport", label: "Transport" },
+			{ id: "entertainment", label: "Entertainment" },
+			{ id: "utilities", label: "Utilities" },
+			{ id: "health", label: "Health" },
+			{ id: "other", label: "Other" },
+		],
 	},
 	decorators: [
 		(Story: React.FC) => (
@@ -39,5 +47,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	args: {
 		onSubmit: (_data: { amount: number; category: string; date: Date }) => {},
+		categoryPills: [
+			{ id: "food", label: "Food" },
+			{ id: "transport", label: "Transport" },
+			{ id: "entertainment", label: "Entertainment" },
+			{ id: "utilities", label: "Utilities" },
+			{ id: "health", label: "Health" },
+			{ id: "other", label: "Other" },
+		],
 	},
 };

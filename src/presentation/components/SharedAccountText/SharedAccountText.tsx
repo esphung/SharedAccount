@@ -39,6 +39,12 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 	// eslint-disable-next-line react-native/no-unused-styles
+	finePrint: {
+		color: colors.secondary,
+		fontSize: 12,
+		fontWeight: "400",
+	},
+	// eslint-disable-next-line react-native/no-unused-styles
 	link: {
 		// blue color for links
 		color: colors.primary,
