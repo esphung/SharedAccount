@@ -72,10 +72,6 @@ jest.mock("@domain/providers/AccountsProvider", () => ({
 		deleteItem: () => Promise.resolve(),
 		addItem: () => Promise.resolve(),
 		startListening: () => () => {},
-		currentAccount: mockAccount,
-		addTransaction: () => Promise.resolve(),
-		deleteTransaction: () => Promise.resolve(),
-		selectCurrentAccount: (_accountId: string) => {},
 	})),
 	AccountsContext: {
 		Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>,

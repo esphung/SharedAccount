@@ -7,11 +7,12 @@ import { useAccountsContext } from "@domain/providers/AccountsProvider";
 import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
 import styles from "@navigators/AppTabs/AppTabs.style";
-import { handleCatchError } from "@presentation/utilities";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { RouteProp } from "@react-navigation/native";
 import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
+import type { BoundState } from "@stores/zustand/useStore";
+import { useStore } from "@stores/zustand/useStore";
 import { generateTestIDs } from "@utils/testUtils/generateTestIDs";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Alert, View, type SectionList } from "react-native";
@@ -58,6 +59,9 @@ const mapBtnFromList = (
 
 const Tab = createBottomTabNavigator<AppTabsParamList>();
 
+const selectCurrentAccountID = (state: BoundState) => state.account?.account?.id;
+const selectUserId = (state: BoundState) => state.user?.userId;
+
 const AppTabs = () => {
 	// refs
 	const listRef = useRef<SectionList>(null);
@@ -72,19 +76,21 @@ const AppTabs = () => {
 		closeAccountModal,
 	} = useSheetModalContext();
 
-	const { addItem: addAccount, currentAccount } = useAccountsContext();
+	const currentAccountID = useStore(selectCurrentAccountID);
+
+	const { addItem: addAccount } = useAccountsContext();
 	const { addItem: addTransaction } = useTransactionsContext();
+	const userId = useStore(selectUserId);
 
 	// callbacks
 	const handleCreateTransaction = useCallback(
 		async (params: Pick<Transaction, "amount" | "category" | "date" | "type" | "name">) => {
-			const userId = "usr_default"; // Replace with actual user ID logic
-			if (!currentAccount?.id) {
-				console.warn("[TransactionsScreen] No current account");
+			if (!currentAccountID) {
+				console.warn("[AppTabs] No current account");
 				return;
 			}
 			if (!userId) {
-				console.warn("[TransactionsScreen] No user ID");
+				console.warn("[AppTabs] No user ID");
 				return;
 			}
 			try {
@@ -93,21 +99,30 @@ const AppTabs = () => {
 					userId: string;
 				} = {
 					...params,
-					sharedAccountId: currentAccount.id,
+					sharedAccountId: currentAccountID,
 					userId,
 				};
+				if (!paramsWithDefaults.userId || !paramsWithDefaults.sharedAccountId) {
+					throw new Error(
+						"[TransactionsScreen] Missing userId or sharedAccountId in transaction parameters"
+					);
+				}
+				paramsWithDefaults.userId = userId;
 				await addTransaction(paramsWithDefaults)
 					.then(() => {
 						Alert.alert("Transaction added successfully");
 						closeTransactionModal();
 					})
-					.catch(handleCatchError("addTransaction"));
+					.catch((error) => {
+						console.error("[TransactionsScreen] Error adding transaction:", error);
+						Alert.alert("Error", "Failed to add transaction. Please try again.");
+					});
 			} catch (error) {
 				console.error("[TransactionsScreen] Error adding transaction:", error);
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[currentAccount?.id]
+		[currentAccountID]
 	);
 
 	const addExpenseSheet = useMemo(
@@ -136,7 +151,10 @@ const AppTabs = () => {
 					Alert.alert("Account created successfully");
 					closeAccountModal();
 				})
-				.catch(handleCatchError("createAccount"));
+				.catch((error) => {
+					console.error("[AppTabs] Error creating account:", error);
+					Alert.alert("Error", "Failed to create account. Please try again.");
+				});
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
@@ -178,12 +196,12 @@ const AppTabs = () => {
 						strokeWidth={2}
 					/>
 				),
-				onPress: !currentAccount?.id ? openAccountModal : openTransactionModal,
+				onPress: !currentAccountID ? openAccountModal : openTransactionModal,
 				disabled: false,
 			},
 		],
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[currentAccount?.id]
+		[currentAccountID]
 	);
 
 	return (

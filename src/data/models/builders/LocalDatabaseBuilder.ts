@@ -14,9 +14,9 @@ type LocalDatabase = {
 
 export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
 	constructor() {
-		const fakeSharedAccountId: `acct_${string}` = `acct_${faker.database.mongodbObjectId()}`;
-		const fakeUserId1: `usr_${string}` = `usr_${faker.database.mongodbObjectId()}`;
-		const fakeUserId2: `usr_${string}` = `usr_${faker.database.mongodbObjectId()}`;
+		const fakeSharedAccountId: string = `acct_${faker.database.mongodbObjectId()}`;
+		const fakeUserId1: string = `usr_${faker.database.mongodbObjectId()}`;
+		const fakeUserId2: string = `usr_${faker.database.mongodbObjectId()}`;
 
 		// For adding userIds to transactions
 		const users: User[] = [
@@ -26,7 +26,7 @@ export default class LocalDatabaseBuilder extends BaseBuilder<LocalDatabase> {
 
 		const transactions: Transaction[] = [
 			...Array.from({ length: 30 }, (_, i) => {
-				const fakeUserId: `usr_${string}` = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
+				const fakeUserId: string = `usr_${faker.helpers.arrayElement(users).id.replace("usr_", "")}`;
 				return new TransactionBuilder()
 					.withId(`txn_${faker.database.mongodbObjectId()}`)
 					.withType(faker.helpers.arrayElement(["credit", "expense"]))

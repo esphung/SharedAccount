@@ -1,4 +1,5 @@
 import { SheetModalProvider } from "@domain/providers/SheetModalProvider";
+import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from "@env";
 import useDevMenu from "@presentation/hooks/useDevMenu";
 import RootStack from "@presentation/navigators/RootStack/RootStack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -16,10 +17,7 @@ export default function App() {
 	return (
 		<KeyboardProvider>
 			<SheetModalProvider>
-				<Auth0Provider
-					domain={"dev-ffksazh23yw1bfhr.us.auth0.com"}
-					clientId={"pyi4vQIdPj0QaCgETV59PF9aZ7CvGsKG"}
-				>
+				<Auth0Provider domain={AUTH0_DOMAIN} clientId={AUTH0_CLIENT_ID}>
 					<NavigationContainer>
 						<RootStack />
 					</NavigationContainer>

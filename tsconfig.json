@@ -31,7 +31,8 @@
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"typeRoots": ["./types", "./node_modules/@types"]
 	},
 	"exclude": ["./node_modules", "./android", "./ios", "./.storybook/storybook.requires.ts"]
 }

@@ -2,7 +2,7 @@ import type { Account } from "@data/models/types/Account";
 import { Realm } from "@realm/react";
 
 export default class RealmAccount extends Realm.Object implements Account {
-	id: `acct_${string}` = `acct_${Math.random().toString(36).substr(2, 9)}`;
+	id: string = `acct_${Math.random().toString(36).substr(2, 9)}`;
 	name: string = "";
 	startingBalance: number = 0; // kept in cents
 	version: number = 0;

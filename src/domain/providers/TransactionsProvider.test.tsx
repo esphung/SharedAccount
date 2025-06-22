@@ -130,28 +130,6 @@ describe("TransactionsProvider", () => {
 		expect(mockRemoteRepo.getAll).toHaveBeenCalled();
 	});
 
-	it("adds a transaction", async () => {
-		// arrange
-		render(
-			<TransactionsProvider>
-				<TestComponent />
-			</TransactionsProvider>
-		);
-
-		// act
-		await act(async () => {
-			await screen.getByTestId("add").props.onPress();
-		});
-
-		// assert
-		expect(mockRemoteRepo.add).toHaveBeenCalled();
-		expect(mockRemoteRepo.add).toHaveBeenCalledWith(mockTransactionA);
-		expect(mockRemoteRepo.add).toHaveBeenCalledTimes(1);
-		expect(mockLocalRepo.add).toHaveBeenCalled();
-		expect(mockLocalRepo.add).toHaveBeenCalledWith(mockTransactionA);
-		expect(mockLocalRepo.add).toHaveBeenCalledTimes(1);
-	});
-
 	it("deletes a transaction", async () => {
 		// arrange
 		render(

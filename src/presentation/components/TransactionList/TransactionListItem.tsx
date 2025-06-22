@@ -13,7 +13,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 type TransactionListItemProps = {
 	testID?: string;
 	item: Transaction;
-	user: { avatar: string; id: `usr_${string}` };
+	user: { avatar: string; id: string };
 	onPress: (id: Transaction["id"]) => void;
 	itemHeight: number;
 	isListReady?: boolean;

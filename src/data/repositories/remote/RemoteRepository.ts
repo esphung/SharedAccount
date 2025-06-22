@@ -1,9 +1,11 @@
 import type { ApiClient } from "@data/types/ApiClient";
 import type { DataModelRepository } from "@data/types/DataModelRepository";
 
-export default class RemoteAccountRepository<T> implements DataModelRepository<T, "remote"> {
+type EndpointURL = "/accounts" | "/transactions" | "/account_users";
+
+export default class RemoteRepository<T> implements DataModelRepository<T, "remote"> {
 	private apiClient: ApiClient<Partial<T>, T>;
-	private route: string; // The route for the API, e.g., "/accounts"
+	private route: EndpointURL; // The route for the API, e.g., "/accounts"
 	private adapter: {
 		remoteToState: (remote: T) => T;
 		stateToRemote: (state: T) => Partial<T>;
@@ -12,7 +14,7 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 
 	constructor(
 		apiClient: ApiClient<Partial<T>, T>,
-		route: string,
+		route: EndpointURL,
 		adapter: {
 			remoteToState: (remote: T) => T;
 			stateToRemote: (state: T) => Partial<T>;
@@ -33,13 +35,10 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 	async getAll(): Promise<T[]> {
 		try {
 			const headers = this.getAuthHeaders();
-			const { data: responseData } = await this.apiClient.get(
-				this.route,
-				headers // ✅ Pass headers directly, not wrapped in object
-			);
+			const { data: responseData } = await this.apiClient.get(this.route, headers);
 			return responseData.data.map((item: T) => this.adapter.remoteToState(item));
 		} catch (error) {
-			console.error("[RemoteAccountRepository] Error fetching items:", error);
+			console.error("[RemoteRepository] Error fetching items:", error);
 			return [];
 		}
 	}
@@ -47,13 +46,10 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 	async getById(id: string): Promise<T | null> {
 		try {
 			const headers = this.getAuthHeaders();
-			const { data: responseData } = await this.apiClient.get(
-				`${this.route}/${id}`,
-				headers // ✅ Fixed this too
-			);
+			const { data: responseData } = await this.apiClient.get(`${this.route}/${id}`, headers);
 			return this.adapter.remoteToState(responseData.data?.[0]) || null;
 		} catch (error) {
-			console.warn(`[RemoteAccountRepository] Item not found: ${id}`);
+			console.warn(`[RemoteRepository] Item not found: ${id}`);
 			return null;
 		}
 	}
@@ -62,9 +58,9 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 		try {
 			const headers = this.getAuthHeaders();
 			const payload = this.adapter.stateToRemote(item);
-			await this.apiClient.post(this.route, payload, headers); // ✅ Fixed
+			await this.apiClient.post(this.route, payload, headers);
 		} catch (error) {
-			console.error("[RemoteAccountRepository] Error adding item:", error);
+			console.error("[RemoteRepository] Error adding item:", error);
 			throw error;
 		}
 	}
@@ -77,9 +73,9 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 				`${this.route}/${(item as { id: string }).id}`,
 				payload,
 				headers
-			); // ✅ Fixed
+			);
 		} catch (error) {
-			console.error("[RemoteAccountRepository] Error updating item:", error);
+			console.error("[RemoteRepository] Error updating item:", error);
 			throw error;
 		}
 	}
@@ -87,9 +83,9 @@ export default class RemoteAccountRepository<T> implements DataModelRepository<T
 	async delete(id: string): Promise<void> {
 		try {
 			const headers = this.getAuthHeaders();
-			await this.apiClient.delete(`${this.route}/${id}`, headers); // ✅ Fixed
+			await this.apiClient.delete(`${this.route}/${id}`, headers);
 		} catch (error) {
-			console.error("[RemoteAccountRepository] Error deleting item:", error);
+			console.error("[RemoteRepository] Error deleting item:", error);
 			throw error;
 		}
 	}

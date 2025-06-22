@@ -1,14 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import AccountBuilder from "@data/models/builders/AccountBuilder";
-import {
-	AccountsProvider,
-	mergeAccounts,
-	useAccountsContext,
-} from "@domain/providers/AccountsProvider";
+import { AccountsProvider, useAccountsContext } from "@domain/providers/AccountsProvider";
 import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import React from "react";
 import { Button, Text } from "react-native";
 import type { Account } from "types/Account";
+import { mergeAccounts } from "./AccountsProvider.helpers";
 
 const mockAccountA: Account = new AccountBuilder()
 	.withId("acct_2")
@@ -49,10 +46,6 @@ jest.mock("@domain/storage/userDefaultsStorage", () => ({
 	getItem: jest.fn().mockResolvedValue("1"),
 }));
 
-jest.mock("@presentation/utilities", () => ({
-	handleCatchError: () => jest.fn(),
-}));
-
 jest.mock("@utils/listFunctions", () => ({
 	mergeRecords: jest.fn().mockImplementation(({ local, remote }) => {
 		// Just merge by id for test
@@ -65,8 +58,7 @@ jest.mock("@utils/listFunctions", () => ({
 
 // Helper test component
 const TestComponent = () => {
-	const { state, currentAccount, selectCurrentAccount, addItem, deleteItem } =
-		useAccountsContext();
+	const { state, addItem, deleteItem } = useAccountsContext();
 
 	return (
 		<>
@@ -76,12 +68,6 @@ const TestComponent = () => {
 					{JSON.stringify(account)}
 				</Text>
 			))}
-			<Text testID="currentAccount">{JSON.stringify(currentAccount)}</Text>
-			<Button
-				testID="selectCurrent"
-				onPress={() => selectCurrentAccount(state[0])}
-				title="Select Current"
-			/>
 			<Button testID="addAccount" onPress={() => addItem(mockAccountA)} title="Add Account" />
 			<Button
 				testID="deleteAccount"
@@ -97,7 +83,7 @@ describe("AccountsProvider", () => {
 		jest.clearAllMocks();
 	});
 
-	it("provides merged accounts and sets currentAccount", async () => {
+	it("provides merged accounts", async () => {
 		render(
 			<AccountsProvider>
 				<TestComponent />
@@ -109,28 +95,6 @@ describe("AccountsProvider", () => {
 			const accounts = screen.getAllByTestId(/account-/);
 			expect(accounts).toHaveLength(2);
 		});
-
-		// currentAccount should be set to the first account
-		const currentAccount = JSON.parse(screen.getByTestId("currentAccount").props.children);
-		expect(currentAccount.id).toBe("acct_2");
-	});
-
-	it("selectCurrentAccount updates currentAccount", async () => {
-		render(
-			<AccountsProvider>
-				<TestComponent />
-			</AccountsProvider>
-		);
-
-		// Simulate selecting current account
-		await waitFor(async () => {
-			screen.debug();
-			const elem = screen.getByTestId("selectCurrent");
-			await userEvent.press(elem);
-		});
-
-		const currentAccount = JSON.parse(screen.getByTestId("currentAccount").props.children);
-		expect(currentAccount.name).toBe("Mock Account A");
 	});
 
 	it("addItem adds a new account", async () => {
@@ -173,7 +137,6 @@ describe("mergeAccounts", () => {
 	it("merges local and remote accounts by id", () => {
 		const local = [{ id: "1", name: "Local", startingBalance: 10, version: 1 }];
 		const remote = [{ id: "1", name: "Remote", startingBalance: 20, version: 2 }];
-		// @ts-expect-error testing
 		const merged = mergeAccounts(local, remote);
 		expect(merged[0].name).toBe("Remote");
 		expect(merged[0].startingBalance).toBe(20);
@@ -182,7 +145,6 @@ describe("mergeAccounts", () => {
 	it("returns local if no remote match", () => {
 		const local = [{ id: "1", name: "Local", startingBalance: 10, version: 1 }];
 		const remote = [{ id: "2", name: "Remote", startingBalance: 20, version: 2 }];
-		// @ts-expect-error testing
 		const merged = mergeAccounts(local, remote);
 		expect(merged[0].name).toBe("Local");
 	});

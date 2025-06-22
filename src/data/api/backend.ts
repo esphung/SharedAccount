@@ -1,23 +1,29 @@
 import type { ApiClient } from "@data/types/ApiClient";
+// import { CALISTHENICS_API_BASE_URL } from "@env";
 import type { AxiosRequestConfig } from "axios";
 import axios from "axios";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
+import PKG_JSON from "../../../package.json";
+import type { AccountUsers } from "./../types/AccountUsers";
 
-// const BASE_URL = "http://localhost:3000/"; // Change this to your actual API base URL
-const BASE_URL = "https://calisthenics-fitness-server-05fab1519d7f.herokuapp.com/";
+const { debugLocalHost } = PKG_JSON;
+
+const baseURL =
+	debugLocalHost === true
+		? "http://localhost:3000"
+		: process.env.CALISTHENICS_API_BASE_URL || "https://api.calistenics.app";
+
+console.info(`[ApiClient] Using base URL: ${baseURL}`);
 
 const axiosInstance = axios.create({
-	baseURL: BASE_URL,
+	baseURL,
 	headers: {
 		"Content-Type": "application/json",
 	},
 });
 
-const ApiClientFactory = <T extends { id: string; version: number }>(): ApiClient<
-	Partial<T>,
-	T
-> => {
+const ApiClientFactory = <T>(): ApiClient<Partial<T>, T> => {
 	return {
 		get: async (endpoint: string, options: AxiosRequestConfig["headers"]) => {
 			const response = await axiosInstance.get(endpoint, {
@@ -77,3 +83,4 @@ const ApiClientFactory = <T extends { id: string; version: number }>(): ApiClien
 
 export const remoteAccountApi = ApiClientFactory<Account>();
 export const remoteTransactionsApi = ApiClientFactory<Transaction>();
+export const remoteAccountUsersApi = ApiClientFactory<AccountUsers>();

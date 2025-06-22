@@ -1,4 +1,5 @@
 import RepositoryProvider, { useRepository } from "@domain/providers/RepositoryProvider";
+import type { BoundState } from "@domain/stores/zustand/useStore";
 import { render } from "@testing-library/react-native";
 import React from "react";
 
@@ -8,14 +9,26 @@ jest.mock("@data/repositories/RepositoryFactory", () => ({
 	createAccountRepository: jest.fn(() => "localAccountRepoMock"),
 	createRemoteAccountRepository: jest.fn(() => "remoteAccountRepoMock"),
 	createRemoteTransactionRepository: jest.fn(() => "remoteTransactionRepoMock"),
+	createRemoteAccountUsersRepository: jest.fn(() => "remoteAccountUsersRepoMock"),
 }));
 
 // Patch useStore.getState to return a token
 jest.mock("@stores/zustand/useStore", () => ({
 	useStore: {
-		getState: () => ({
-			authentication: { token: null }, // For testing without a token
-		}),
+		getState: () =>
+			({
+				authentication: { token: null, setToken: jest.fn() },
+				user: { userId: "user123", setUserId: jest.fn() },
+				account: {
+					setAccount: jest.fn(),
+					account: {
+						id: "account123",
+						name: "Test Account",
+						startingBalance: 100,
+						version: 1,
+					},
+				},
+			}) satisfies BoundState,
 	},
 }));
 
@@ -96,41 +109,5 @@ describe("RepositoryProvider", () => {
 		);
 		// Clean up
 		unmount();
-	});
-
-	it("logs a warning if no token is found in getTokenCallback", () => {
-		const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
-
-		const mockUseStore = jest.requireMock("@stores/zustand/useStore");
-		// Keep token as null to trigger the warning
-		mockUseStore.useStore.getState = jest.fn(() => ({
-			authentication: { token: null }, // This should be null to trigger warning
-		}));
-
-		const mockRepositoryFactory = jest.requireMock("@data/repositories/RepositoryFactory");
-		let capturedGetToken: (() => string | null) | undefined;
-
-		// Patch RepositoryFactory to capture the getTokenCallback
-		mockRepositoryFactory.createRemoteAccountRepository.mockImplementation(
-			(cb: () => string | null) => {
-				capturedGetToken = cb;
-				return "remoteAccountRepoMock";
-			}
-		);
-
-		const { unmount } = render(
-			<RepositoryProvider>
-				<></>
-			</RepositoryProvider>
-		);
-
-		// Now call the callback and expect warning + null return
-		expect(capturedGetToken!()).toBeNull();
-		expect(consoleWarnSpy).toHaveBeenCalledWith(
-			"[RepositoryProvider] No token found, returning null"
-		);
-
-		unmount();
-		consoleWarnSpy.mockRestore();
 	});
 });

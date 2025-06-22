@@ -1,38 +1,60 @@
+import type { Account } from "types/Account";
+import type { StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
 
-/* types */
-type AuthenticationState = {
-	token: string | null;
-	setToken: (token: string | null) => void;
-};
-
-export type StoreState = {
-	authentication: AuthenticationState;
-};
-
-/* Simple selectors */
-export const selectAuth0Token = (state: StoreState) => state.authentication.token;
-
-/* Action creators */
-export const setAuth0Token = (state: StoreState) => state.authentication.setToken;
-
-// store
-export const useStore = create<StoreState>((set) => ({
+export type BoundState = {
 	authentication: {
-		token: null,
+		token: string | null;
+		setToken: (token: string | null) => void;
+	};
+	account: {
+		account: Account | null;
+		setAccount: (account: Account | null) => void;
+	};
+	user: {
+		userId: string | null;
+		setUserId: (userId: string | null) => void;
+	};
+};
 
+export const useStore = create((set) => ({
+	authentication: {
+		token: null, // Auth0 token, null if not authenticated
 		setToken: (token: string | null) =>
-			set((state) => {
-				if (state.authentication.token === token) {
-					return state;
-				}
+			set((prevState: BoundState) => {
 				return {
-					...state,
+					...prevState,
 					authentication: {
-						...state.authentication,
+						...prevState.authentication,
 						token,
 					},
 				};
 			}),
 	},
-}));
+	account: {
+		account: null,
+		setAccount: (account: Account | null) =>
+			set((prevState: BoundState) => {
+				return {
+					...prevState,
+					account: {
+						...prevState.account,
+						account,
+					},
+				};
+			}),
+	},
+	user: {
+		userId: null, // User ID, null if not logged in
+		setUserId: (userId: string | null) =>
+			set((prevState: BoundState) => {
+				return {
+					...prevState,
+					user: {
+						...prevState.user,
+						userId,
+					},
+				};
+			}),
+	},
+})) as UseBoundStore<StoreApi<BoundState>>;

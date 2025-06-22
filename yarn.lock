@@ -3415,6 +3415,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-navigation/elements@npm:^2.4.6":
+  version: 2.4.6
+  resolution: "@react-navigation/elements@npm:2.4.6"
+  dependencies:
+    color: "npm:^4.2.3"
+    use-latest-callback: "npm:^0.2.4"
+    use-sync-external-store: "npm:^1.5.0"
+  peerDependencies:
+    "@react-native-masked-view/masked-view": ">= 0.2.0"
+    "@react-navigation/native": ^7.1.13
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-safe-area-context: ">= 4.0.0"
+  peerDependenciesMeta:
+    "@react-native-masked-view/masked-view":
+      optional: true
+  checksum: 10/da131f7a9b8819c7ce69ec0e74463750c3c733fba3c3ac594e6fd2de8dfe1381adc4604598008160747aeb93cf9f0477f12a53ff58a0b146868d5fc50faf2cf0
+  languageName: node
+  linkType: hard
+
 "@react-navigation/native@npm:^7.0.15":
   version: 7.1.11
   resolution: "@react-navigation/native@npm:7.1.11"
@@ -3437,6 +3457,23 @@ __metadata:
   dependencies:
     nanoid: "npm:^3.3.11"
   checksum: 10/67fca3e78d83336747de98a0b6797cba394e73a717fd0fad6add5434c7938327501ed71962bd8916c94141c552013f081f45de81960dd4c9c0d918174b732c49
+  languageName: node
+  linkType: hard
+
+"@react-navigation/stack@npm:^7.3.6":
+  version: 7.3.6
+  resolution: "@react-navigation/stack@npm:7.3.6"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.4.6"
+    color: "npm:^4.2.3"
+  peerDependencies:
+    "@react-navigation/native": ^7.1.13
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-gesture-handler: ">= 2.0.0"
+    react-native-safe-area-context: ">= 4.0.0"
+    react-native-screens: ">= 4.0.0"
+  checksum: 10/0d96d3a7d01bae90b06494d5d92e6ec5188b0e7e1b983fc623bd418093b06cf910d43459aa78011680e377bb22febcfd1e44224facf76bcfcf4fd871065dfb9e
   languageName: node
   linkType: hard
 
@@ -4383,6 +4420,7 @@ __metadata:
     "@react-native/typescript-config": "npm:0.78.0"
     "@react-navigation/bottom-tabs": "npm:^7.2.1"
     "@react-navigation/native": "npm:^7.0.15"
+    "@react-navigation/stack": "npm:^7.3.6"
     "@realm/react": "npm:^0.11.0"
     "@storybook/addon-ondevice-controls": "npm:^8.6.1"
     "@storybook/react-native": "npm:^8.6.1"
@@ -4407,6 +4445,7 @@ __metadata:
     react-dom: "npm:19.0.0"
     react-native: "npm:0.78.0"
     react-native-auth0: "npm:^4.6.0"
+    react-native-dotenv: "npm:^3.4.11"
     react-native-file-access: "npm:3.1.1"
     react-native-gesture-handler: "npm:^2.24.0"
     react-native-keyboard-controller: "npm:1.16.8"
@@ -6266,7 +6305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.5.0":
+"dotenv@npm:^16.4.5, dotenv@npm:^16.5.0":
   version: 16.5.0
   resolution: "dotenv@npm:16.5.0"
   checksum: 10/e68a16834f1a41cc2dfb01563bc150668ad675e6cd09191211467b5c0806b6ecd6ec438e021aa8e01cd0e72d2b70ef4302bec7cc0fe15b6955f85230b62dc8a9
@@ -11683,6 +11722,17 @@ __metadata:
     expo:
       optional: true
   checksum: 10/97f6594819e80fb8483cca9bb6ab3072483c26bc40a56bdd45725c3fa125079efd6e6adcc6669e6fbefbc67de25a263ca7ac48ae548b73d7d4d13c68efe9c851
+  languageName: node
+  linkType: hard
+
+"react-native-dotenv@npm:^3.4.11":
+  version: 3.4.11
+  resolution: "react-native-dotenv@npm:3.4.11"
+  dependencies:
+    dotenv: "npm:^16.4.5"
+  peerDependencies:
+    "@babel/runtime": ^7.20.6
+  checksum: 10/09e8a7310fcb01ac021e71db9328e9d342d1e117bf68026b12de0392bfe17292ac6a071f03b88e7fb42c82a8f2fdf03bc520c7dedd2f80a1448cb3de5e03d4fb
   languageName: node
   linkType: hard
 

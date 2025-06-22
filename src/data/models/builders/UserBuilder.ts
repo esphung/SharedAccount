@@ -5,7 +5,7 @@ export default class UserBuilder extends BaseBuilder<User> {
 	constructor(initialInstance?: Partial<User>, fakerSeed?: number) {
 		if (!initialInstance) {
 			initialInstance = {
-				id: "usr_1234567890" as `usr_${string}`,
+				id: "usr_1234567890" as string,
 				name: "John Doe",
 				email: "foo@gmail.com",
 				avatar: "https://example.com/avatar.jpg",
@@ -14,7 +14,7 @@ export default class UserBuilder extends BaseBuilder<User> {
 		super(initialInstance as User, fakerSeed);
 	}
 
-	withId(id: `usr_${string}`): UserBuilder {
+	withId(id: string): UserBuilder {
 		// Ensure the ID starts with "usr_"
 		this.instance.id = id;
 		return this;
