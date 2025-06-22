@@ -2,7 +2,6 @@ import PlusSvgIcon from "@assets/svg/plus-svgrepo-com.svg";
 import AddAccountSheet from "@components/AddAccountSheet/AddAccountSheet";
 import AddExpenseSheet from "@components/AddExpenseSheet/AddExpenseSheet";
 import CircleButton from "@components/CircleButton/CircleButton";
-import colors from "@config/themes/colors";
 import { useAccountsContext } from "@domain/providers/AccountsProvider";
 import { useSheetModalContext } from "@domain/providers/SheetModalProvider";
 import { useTransactionsContext } from "@domain/providers/TransactionsProvider";
@@ -10,6 +9,7 @@ import styles from "@navigators/AppTabs/AppTabs.style";
 import type { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { RouteProp } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import SettingsScreen from "@screens/SettingsScreen/SettingsScreen";
 import TransactionsScreen from "@screens/TransactionsScreen/TransactionsScreen";
 import type { BoundState } from "@stores/zustand/useStore";
@@ -20,7 +20,7 @@ import { Alert, View, type SectionList } from "react-native";
 import type { Account } from "types/Account";
 import type { Transaction } from "types/Transaction";
 
-const ICON_SIZE = 24;
+const ICON_SIZE = 20;
 
 export enum AppTabsScreens {
 	Transactions = "TransactionsScreen",
@@ -80,6 +80,8 @@ const AppTabs = () => {
 	} = useSheetModalContext();
 
 	const currentAccountID = useStore(selectCurrentAccountID);
+
+	const theme = useTheme();
 
 	const { addItem: addAccount } = useAccountsContext();
 	const { addItem: addTransaction, categoryPills = [] } = useTransactionsContext();
@@ -194,18 +196,19 @@ const AppTabs = () => {
 				icon: (
 					<PlusSvgIcon
 						{...generateTestIDs("add-account-button-icon", "image")}
+						color={theme.colors.background}
 						width={ICON_SIZE}
 						height={ICON_SIZE}
-						stroke={colors.primary}
-						strokeWidth={2}
 					/>
 				),
 				onPress: !currentAccountID ? openAccountModal : openTransactionModal,
 				disabled: false,
+				backgroundColor: theme.colors.primary,
 			},
 		],
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[currentAccountID]
+		[currentAccountID, theme]
 	);
 
 	return (

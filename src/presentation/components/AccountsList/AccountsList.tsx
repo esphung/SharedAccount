@@ -53,13 +53,6 @@ const AccountsList: React.FC<Props> = ({ accounts = [], onPressAccount, onPressA
 						{MoneyFunctions.formatMoney(item.totalBalance, 2)}
 					</SharedAccountText>
 				</View>
-				<SharedAccountText
-					style={styles.bottomLeftLabel}
-					type="finePrint"
-					{...generateTestIDs(`account-list-item-version-${item.id}`, "text")}
-				>
-					v{item.version}
-				</SharedAccountText>
 			</TouchableOpacity>
 		),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,15 +122,11 @@ const styles = StyleSheet.create({
 	},
 	itemContainer: {
 		backgroundColor: colors.lightBackground,
-		borderColor: colors.light,
+		borderColor: colors.lightBackground,
 		borderRadius: 8,
 		borderWidth: StyleSheet.hairlineWidth,
 		elevation: 2,
 		marginBottom: padding.screen.vertical.xSmall,
 		padding: padding.screen.horizontal.small,
-		shadowColor: colors.black,
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.2,
-		shadowRadius: 1.41, // For Android shadow
 	},
 });

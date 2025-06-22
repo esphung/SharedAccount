@@ -86,11 +86,6 @@ function RootStack() {
 
 	return (
 		<RealmProvider schema={realmSchema} schemaVersion={realmSchemaVersion}>
-			{/* <RepositoryProvider>
-				<TransactionsProvider>
-					<AccountsProvider>{memoizedStack}</AccountsProvider>
-				</TransactionsProvider>
-			</RepositoryProvider> */}
 			{memoizedStack}
 		</RealmProvider>
 	);

@@ -5,7 +5,7 @@ exports[`SkeletonLoader matches snapshot with custom props 1`] = `
   style={
     [
       {
-        "backgroundColor": "#e0e0e0",
+        "backgroundColor": "rgb(224, 224, 224)",
         "overflow": "hidden",
       },
       {
@@ -47,7 +47,7 @@ exports[`SkeletonLoader matches snapshot with default props 1`] = `
   style={
     [
       {
-        "backgroundColor": "#e0e0e0",
+        "backgroundColor": "rgb(224, 224, 224)",
         "overflow": "hidden",
       },
       {

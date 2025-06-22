@@ -2,6 +2,24 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import SegmentedControl from "./SegmentedControl";
 
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useTheme: () => ({
+		colors: {
+			text: "#000",
+			background: "rgb(52, 58, 64)",
+			border: "rgb(52, 58, 64)",
+		},
+		fonts: {
+			heavy: {
+				fontWeight: "700",
+				fontFamily: "System",
+			},
+		},
+		dark: false,
+	}),
+}));
+
 describe("SegmentedControl", () => {
 	const options = ["Option 1", "Option 2", "Option 3"];
 	const onSelect = jest.fn();
@@ -28,7 +46,7 @@ describe("SegmentedControl", () => {
 		expect(selectedOption.parent?.props.style).toEqual({
 			color: "rgb(106, 178, 193)",
 			fontSize: 16,
-			fontWeight: "700",
+			fontWeight: "bold",
 			textAlign: "center",
 		});
 	});

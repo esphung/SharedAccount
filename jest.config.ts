@@ -19,6 +19,8 @@ export default async (): Promise<Config> => {
 			"!src/config/*",
 			"!src/utils/testUtils/*",
 			"!src/data/models/builders/*",
+			"!src/config/themes/*",
+			"!src/config/constants/*",
 		],
 		coverageProvider: "babel",
 		coverageReporters: ["text", "lcov", "html"],
